@@ -24,11 +24,12 @@ public class CViewController extends ViewController {
     }
 
     private function popToRoot(event: Event): void {
-
+        this.navigationController.popToRootViewController(true);
     }
 
     private function popToScreenBButton(event: Event): void {
         this.dismiss(true, null);
+        this.navigationController.popViewController(true);
     }
 }
 }

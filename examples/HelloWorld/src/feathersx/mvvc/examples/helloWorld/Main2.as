@@ -6,6 +6,8 @@ import com.demonsters.debugger.MonsterDebugger;
 
 import feathers.themes.MetalWorksMobileTheme;
 
+import feathersx.mvvc.ViewController;
+
 import starling.display.Sprite;
 import starling.events.Event;
 
@@ -17,13 +19,13 @@ public class Main2 extends Sprite {
         MonsterDebugger.trace(this, "Hello World!");
         this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
     }
-    private var rootViewController: AViewController;
+    private var rootViewController: ViewController;
     protected function addedToStageHandler(event:Event):void {
         this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 
         new MetalWorksMobileTheme();
 
-        this.rootViewController = new AViewController();
+        this.rootViewController = new MainController();
         this.rootViewController.setAsRootViewController(this);
     }
 }

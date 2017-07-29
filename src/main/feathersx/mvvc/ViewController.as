@@ -47,15 +47,23 @@ public class ViewController {
         _presentedViewController = vc;
     }
 
+    private var _navigationController: NavigationController;
     public function get navigationController(): NavigationController {
-        if (this is NavigationController) {
-            return this as NavigationController;
-        } else if (presentingViewController != null) {
-            return presentingViewController.navigationController;
-        } else {
-            return null;
-        }
+        return _navigationController;
     }
+    public function setNavigationController(nc:NavigationController) {
+        _navigationController = nc;
+    }
+
+//    public function get navigationController(): NavigationController {
+//        if (this is NavigationController) {
+//            return this as NavigationController;
+//        } else if (presentingViewController != null) {
+//            return presentingViewController.navigationController;
+//        } else {
+//            return null;
+//        }
+//    }
 
     //--------------------------------------------------------------------------
     //
@@ -130,42 +138,46 @@ public class ViewController {
     //--------------------------------------------------------------------------
 
     public function show(vc: ViewController, sender: Object = null): void {
-        if (navigationController) {
-
-        } else {
-            var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
-            if (navigator.hasScreen(vc.identifier)) {
-                navigator.removeScreen(vc.identifier);
-            }
-            navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
-            vc.setPresentingViewController(this);
-            navigator.showScreen(vc.identifier);
-            this.setPresentedViewController(vc);
+        if (_navigationController != null) {
+            return;
         }
+
+        var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
+        if (navigator.hasScreen(vc.identifier)) {
+            navigator.removeScreen(vc.identifier);
+        }
+        navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
+        vc.setPresentingViewController(this);
+        navigator.showScreen(vc.identifier);
+        this.setPresentedViewController(vc);
     }
 
     public function showDetailViewController(vc: ViewController, sender: Object = null): void {
-        
+        if (_navigationController != null) {
+            return;
+        }
     }
 
     public function present(vc: ViewController, animated: Boolean, completion: Function): void {
-
+        if (_navigationController != null) {
+            return;
+        }
     }
 
     public function dismiss(animated: Boolean, completion: Function): void {
+        if (_navigationController != null) {
+            return;
+        }
+
         if (presentedViewController == null) {
             presentingViewController.dismiss(animated, completion);
             return;
         }
 
-        if (navigationController) {
-
-        } else {
-            var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
-            presentedViewController.setPresentingViewController(null);
-            navigator.showScreen(this.identifier);
-            this.setPresentedViewController(null);
-        }
+        var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
+        presentedViewController.setPresentingViewController(null);
+        navigator.showScreen(this.identifier);
+        this.setPresentedViewController(null);
     }
 
     public function replaceWithViewController(vc: ViewController, sender: Object = null): void {
@@ -210,7 +222,14 @@ public class ViewController {
     }
 
     protected function createNavigator():BaseScreenNavigator {
-        return new ScreenNavigator();
+        var navigator:ScreenNavigator = new ScreenNavigator();
+        return navigator;
+    }
+
+    protected function setupNavigatorAsRoot():void {
+        var navigator:ScreenNavigator = navigator as ScreenNavigator;
+        navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
+        navigator.showScreen(this.identifier);
     }
 
     //------------------------------------
@@ -228,9 +247,8 @@ public class ViewController {
         }
         _root = root;
         if (_root != null) {
-            var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
-            navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
-            navigator.showScreen(this.identifier);
+            createNavigatorIfRequired();
+            setupNavigatorAsRoot();
         }
     }
 }

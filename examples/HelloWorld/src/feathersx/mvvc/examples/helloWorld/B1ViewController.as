@@ -26,11 +26,13 @@ public class B1ViewController extends ViewController {
 
     public function popToScreenA(): void {
         this.dismiss(true, null);
+        navigationController.popViewController(true);
     }
 
     public function pushScreenC(): void {
         var c: CViewController = new CViewController();
         this.show(c);
+        this.navigationController.pushViewController(c, true);
     }
 
     public function replaceWithScreenB2(): void {

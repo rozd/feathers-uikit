@@ -2,12 +2,15 @@
  * Created by max.rozdobudko@gmail.com on 7/22/17.
  */
 package feathersx.mvvc {
+import feathers.controls.AutoSizeMode;
+import feathers.controls.LayoutGroup;
 import feathers.controls.StackScreenNavigator;
-import feathers.controls.StackScreenNavigatorItem;
-import feathers.controls.supportClasses.BaseScreenNavigator;
+import feathers.layout.VerticalLayout;
+import feathers.layout.VerticalLayoutData;
 import feathers.motion.Slide;
 
 import starling.display.DisplayObject;
+import starling.display.Quad;
 
 public class NavigationController extends ViewController {
 
@@ -93,12 +96,52 @@ public class NavigationController extends ViewController {
         }
     }
 
+    private var _navigationBar:NavigationBar;
+    public function get navigationBar(): NavigationBar {
+        if (presentingViewController is NavigationController) {
+            return NavigationController(presentingViewController).navigationBar;
+        } else {
+            return _navigationBar;
+        }
+    }
+
+    private var _toolbar:Toolbar;
+    public function get toolbar(): Toolbar {
+        if (presentingViewController is NavigationController) {
+            return NavigationController(presentingViewController).toolbar;
+        } else {
+            return _toolbar;
+        }
+    }
+
+    public function set toolbar(value: Toolbar): void {
+        _toolbar = value;
+    }
+
     override protected function setupViewContainer(): void {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");
         }
+        var container:LayoutGroup = new LayoutGroup();
+        container.autoSizeMode = AutoSizeMode.STAGE;
+        container.layout = new VerticalLayout();
+        _root.addChild(container);
+
+        _navigationBar = new NavigationBar();
+        _navigationBar.layoutData = new VerticalLayoutData(100);
+        _navigationBar.height = 60;
+        _navigationBar.backgroundSkin = new Quad(100, 100, 0xFF000);
+        container.addChild(_navigationBar);
+
         _navigator = new StackScreenNavigator();
-        _root.addChild(navigator);
+        _navigator.layoutData = new VerticalLayoutData(100, 100);
+        container.addChild(_navigator);
+
+        _toolbar = new Toolbar();
+        _toolbar.layoutData = new VerticalLayoutData(100);
+        _toolbar.height = 40;
+        container.addChild(_toolbar);
+
         _navigator.addScreen(rootViewController.identifier, new ViewControllerNavigatorItem(rootViewController));
         _navigator.rootScreenID = rootViewController.identifier;
     }

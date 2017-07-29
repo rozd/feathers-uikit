@@ -19,8 +19,11 @@ public class AViewController extends ViewController {
 
     override protected function viewDidLoad() {
         var aView:AView = this.view as AView;
-        aView.button.addEventListener(Event.TRIGGERED, showB1View);
+        aView.pushScreenB1Button.addEventListener(Event.TRIGGERED, showB1View);
+        aView.presentScreenDButton.addEventListener(Event.TRIGGERED, presentScreenD);
     }
+
+
 
     public function showB1View(): void {
         var b1:B1ViewController = new B1ViewController();
@@ -28,6 +31,11 @@ public class AViewController extends ViewController {
         if (this.navigationController) {
             this.navigationController.pushViewController(b1, true);
         }
+    }
+
+    public function presentScreenD(): void {
+        var d:DNavigationController = new DNavigationController();
+        present(d, true);
     }
 }
 }

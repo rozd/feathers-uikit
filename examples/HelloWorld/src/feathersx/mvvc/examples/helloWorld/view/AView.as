@@ -5,39 +5,32 @@ package feathersx.mvvc.examples.helloWorld.view {
 import feathers.controls.Button;
 import feathers.controls.LayoutGroup;
 import feathers.controls.TextCallout;
+import feathers.layout.VerticalLayout;
 
 import starling.events.Event;
 
 public class AView extends LayoutGroup {
     public function AView() {
         super();
+        layout = new VerticalLayout();
     }
 
-    public var button:Button;
+    public var pushScreenB1Button:Button;
+
+    public var presentScreenDButton:Button;
 
     override protected function initialize(): void {
         super.initialize();
 
-        //create a button and give it some text to display.
-        this.button = new Button();
-        this.button.label = "Push Screen B1";
+        pushScreenB1Button = new Button();
+        pushScreenB1Button.label = "Push Screen B1";
+        addChild(pushScreenB1Button);
+        pushScreenB1Button.validate();
 
-        //an event that tells us when the user has tapped the button.
-//        this.button.addEventListener(Event.TRIGGERED, button_triggeredHandler);
-        //add the button to the display list, just like you would with any
-        //other Starling display object. this is where the theme give some
-        //skins to the button.
-        this.addChild(this.button);
-
-        //the button won't have a width and height until it "validates". it
-        //will validate on its own before the next frame is rendered by
-        //Starling, but we want to access the dimension immediately, so tell
-        //it to validate right now.
-        this.button.validate();
-
-        //center the button
-        this.button.x = Math.round((this.stage.stageWidth - this.button.width) / 2);
-        this.button.y = Math.round((this.stage.stageHeight - this.button.height) / 2);
+        presentScreenDButton = new Button();
+        presentScreenDButton.label = "Present Screen D (Modally)";
+        addChild(presentScreenDButton);
+        presentScreenDButton.validate();
     }
 
     /**
@@ -45,7 +38,7 @@ public class AView extends LayoutGroup {
      */
     protected function button_triggeredHandler(event:Event):void
     {
-        TextCallout.show("Hi, I'm Feathers!\nHave a nice day.", this.button);
+        TextCallout.show("Hi, I'm Feathers!\nHave a nice day.", pushScreenB1Button);
     }
 }
 }

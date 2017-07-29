@@ -5,10 +5,10 @@ package feathersx.mvvc {
 import avmplus.getQualifiedClassName;
 
 import feathers.controls.ScreenNavigator;
-import feathers.controls.ScreenNavigatorItem;
-import feathers.controls.supportClasses.BaseScreenNavigator;
-import feathers.controls.supportClasses.IScreenNavigatorItem;
+import feathers.core.PopUpManager;
 import feathers.events.FeathersEventType;
+import feathers.motion.Cover;
+import feathers.motion.Reveal;
 
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
@@ -54,16 +54,6 @@ public class ViewController {
     public function setNavigationController(nc:NavigationController) {
         _navigationController = nc;
     }
-
-//    public function get navigationController(): NavigationController {
-//        if (this is NavigationController) {
-//            return this as NavigationController;
-//        } else if (presentingViewController != null) {
-//            return presentingViewController.navigationController;
-//        } else {
-//            return null;
-//        }
-//    }
 
     //--------------------------------------------------------------------------
     //
@@ -147,7 +137,7 @@ public class ViewController {
         }
         navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
         vc.setPresentingViewController(this);
-        navigator.showScreen(vc.identifier);
+        navigator.showScreen(vc.identifier, Cover.createCoverUpTransition());
         this.setPresentedViewController(vc);
     }
 
@@ -157,24 +147,29 @@ public class ViewController {
         }
     }
 
-    public function present(vc: ViewController, animated: Boolean, completion: Function): void {
-        if (_navigationController != null) {
-            return;
-        }
+    public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
+        vc.setPresentingViewController(this);
+        PopUpManager.addPopUp(vc.view);
+        this.setPresentedViewController(vc);
     }
 
-    public function dismiss(animated: Boolean, completion: Function): void {
-        if (_navigationController != null) {
-            return;
-        }
+    public function dismiss(animated: Boolean, completion: Function = null): void {
 
         if (presentedViewController == null) {
-            presentingViewController.dismiss(animated, completion);
+            if (presentingViewController != null) {
+                presentingViewController.dismiss(animated, completion);
+            }
             return;
         }
 
         presentedViewController.setPresentingViewController(null);
-        navigator.showScreen(this.identifier);
+
+        if (PopUpManager.isPopUp(presentedViewController.view)) {
+            PopUpManager.removePopUp(presentedViewController.view);
+        } else {
+            navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
+        }
+
         this.setPresentedViewController(null);
     }
 

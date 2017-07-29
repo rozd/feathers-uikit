@@ -143,11 +143,10 @@ public class NavigationController extends ViewController {
         _toolbar = value;
     }
 
-    override protected function setupViewContainer(): void {
+    override protected function setupRootView(): void {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");
         }
-
         _root.addChild(this.view);
     }
 }

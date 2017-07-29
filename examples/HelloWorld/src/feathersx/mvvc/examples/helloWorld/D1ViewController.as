@@ -18,7 +18,7 @@ public class D1ViewController extends ViewController {
     }
 
 
-    override protected function viewDidLoad() {
+    override protected function viewDidLoad():void {
         var view:D1View = this.view as D1View;
         view.dismissButton.addEventListener(Event.TRIGGERED, dismissSelf);
     }

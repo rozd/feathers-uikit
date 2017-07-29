@@ -17,11 +17,32 @@ public class B1ViewController extends ViewController {
         return new B1View();
     }
 
-    override protected function viewDidLoad() {
+    override protected function viewDidLoad():void {
+        trace("viewDidLoad");
         var view:B1View = this.view as B1View;
         view.popToScreenAButton.addEventListener(Event.TRIGGERED, popToScreenA);
         view.pushScreenCButton.addEventListener(Event.TRIGGERED, pushScreenC);
         view.replaceWithScreenB2Button.addEventListener(Event.TRIGGERED, replaceWithScreenB2);
+    }
+
+    override protected function viewWillLoad():void {
+        trace("viewWillLoad");
+    }
+
+    override protected function viewWillAppear():void {
+        trace("viewWillAppear");
+    }
+
+    override protected function viewDidAppear():void {
+        trace("viewDidAppear");
+    }
+
+    override protected function viewWillDisappear():void {
+        trace("viewWillDisappear");
+    }
+
+    override protected function viewDidDisappear():void {
+        trace("viewDidDisappear");
     }
 
     public function popToScreenA(): void {

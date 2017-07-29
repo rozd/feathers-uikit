@@ -17,7 +17,7 @@ public class CViewController extends ViewController {
         return new CView();
     }
 
-    override protected function viewDidLoad() {
+    override protected function viewDidLoad():void {
         var view:CView = view as CView;
         view.popToRootButton.addEventListener(Event.TRIGGERED, popToRoot);
         view.popToScreenBButton.addEventListener(Event.TRIGGERED, popToScreenBButton);

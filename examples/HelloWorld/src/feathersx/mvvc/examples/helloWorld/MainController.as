@@ -9,5 +9,29 @@ public class MainController extends NavigationController {
     public function MainController() {
         super(new AViewController());
     }
+
+    override protected function viewDidLoad():void {
+        trace("viewDidLoad");
+    }
+
+    override protected function viewWillLoad():void {
+        trace("viewWillLoad");
+    }
+
+    override protected function viewWillAppear():void {
+        trace("viewWillAppear");
+    }
+
+    override protected function viewDidAppear():void {
+        trace("viewDidAppear");
+    }
+
+    override protected function viewWillDisappear():void {
+        trace("viewWillDisappear");
+    }
+
+    override protected function viewDidDisappear():void {
+        trace("viewDidDisappear");
+    }
 }
 }

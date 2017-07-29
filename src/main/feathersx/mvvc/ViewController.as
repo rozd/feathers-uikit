@@ -96,6 +96,22 @@ public class ViewController {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
                 viewDidLoad();
             });
+            _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function (event:Event):void {
+                _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
+                viewWillAppear();
+            });
+            _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
+                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
+                viewDidAppear();
+            });
+            _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function (event:Event):void {
+                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
+                viewWillDisappear();
+            });
+            _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
+                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
+                viewDidDisappear();
+            });
         }
     }
 
@@ -103,19 +119,19 @@ public class ViewController {
     //  View Lifecycle
     //------------------------------------
 
-    protected function viewWillLoad() {
+    protected function viewWillLoad():void {
 
     }
 
-    protected function viewDidLoad() {
+    protected function viewDidLoad():void {
 
     }
 
-    protected function viewWillAppear() {
+    protected function viewWillAppear():void {
 
     }
 
-    protected function viewDidAppear() {
+    protected function viewDidAppear():void {
 
     }
 
@@ -226,11 +242,11 @@ public class ViewController {
         }
         _root = root;
         if (_root != null) {
-            setupViewContainer();
+            setupRootView();
         }
     }
 
-    protected function setupViewContainer(): void {
+    protected function setupRootView(): void {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");
         }

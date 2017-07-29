@@ -87,6 +87,31 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
+    override protected function loadView(): DisplayObject {
+        var view:LayoutGroup = new LayoutGroup();
+        view.autoSizeMode = AutoSizeMode.STAGE;
+        view.layout = new VerticalLayout();
+
+        _navigationBar = new NavigationBar();
+        _navigationBar.layoutData = new VerticalLayoutData(100);
+        _navigationBar.height = 60;
+        _navigationBar.backgroundSkin = new Quad(100, 100, 0xFF000);
+        view.addChild(_navigationBar);
+
+        _navigator = new StackScreenNavigator();
+        _navigator.layoutData = new VerticalLayoutData(100, 100);
+        _navigator.addScreen(rootViewController.identifier, new ViewControllerNavigatorItem(rootViewController));
+        _navigator.rootScreenID = rootViewController.identifier;
+        view.addChild(_navigator);
+
+        _toolbar = new Toolbar();
+        _toolbar.layoutData = new VerticalLayoutData(100);
+        _toolbar.height = 40;
+        view.addChild(_toolbar);
+
+        return view;
+    }
+
     private var _navigator:StackScreenNavigator;
     public function get navigator(): StackScreenNavigator {
         if (presentingViewController is NavigationController) {
@@ -122,28 +147,8 @@ public class NavigationController extends ViewController {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");
         }
-        var container:LayoutGroup = new LayoutGroup();
-        container.autoSizeMode = AutoSizeMode.STAGE;
-        container.layout = new VerticalLayout();
-        _root.addChild(container);
 
-        _navigationBar = new NavigationBar();
-        _navigationBar.layoutData = new VerticalLayoutData(100);
-        _navigationBar.height = 60;
-        _navigationBar.backgroundSkin = new Quad(100, 100, 0xFF000);
-        container.addChild(_navigationBar);
-
-        _navigator = new StackScreenNavigator();
-        _navigator.layoutData = new VerticalLayoutData(100, 100);
-        container.addChild(_navigator);
-
-        _toolbar = new Toolbar();
-        _toolbar.layoutData = new VerticalLayoutData(100);
-        _toolbar.height = 40;
-        container.addChild(_toolbar);
-
-        _navigator.addScreen(rootViewController.identifier, new ViewControllerNavigatorItem(rootViewController));
-        _navigator.rootScreenID = rootViewController.identifier;
+        _root.addChild(this.view);
     }
 }
 }

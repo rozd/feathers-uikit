@@ -33,7 +33,13 @@ public class ViewController {
 
     private var _presentingViewController: ViewController;
     public function get presentingViewController(): ViewController {
-        return _presentingViewController;
+        if (_presentingViewController != null) {
+            return _presentingViewController;
+        }
+        if (_navigationController != null) {
+            return _navigationController.presentingViewController;
+        }
+        return null;
     }
     protected function setPresentingViewController(vc: ViewController) {
         _presentingViewController = vc;
@@ -159,6 +165,7 @@ public class ViewController {
             if (presentingViewController != null) {
                 presentingViewController.dismiss(animated, completion);
             }
+
             return;
         }
 

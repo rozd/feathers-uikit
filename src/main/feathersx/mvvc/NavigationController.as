@@ -52,7 +52,7 @@ public class NavigationController extends ViewController {
     }
 
     public function pushViewController(vc:ViewController, animated:Boolean):void {
-        var navigator:StackScreenNavigator = this.navigator as StackScreenNavigator;
+        var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
         if (navigator.hasScreen(vc.identifier)) {
             navigator.removeScreen(vc.identifier);
         }
@@ -63,7 +63,7 @@ public class NavigationController extends ViewController {
     }
 
     public function popViewController(animated:Boolean):ViewController {
-        var navigator:StackScreenNavigator = this.navigator as StackScreenNavigator;
+        var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
         var transition:Function = animated ? popTransition : null;
         var view:DisplayObject = navigator.popScreen(transition);
 //        navigator.sc
@@ -84,15 +84,23 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    override protected function createNavigator():BaseScreenNavigator {
-        var navigator: StackScreenNavigator = new StackScreenNavigator();
-        return navigator;
+    private var _navigator:StackScreenNavigator;
+    public function get navigator(): StackScreenNavigator {
+        if (presentingViewController is NavigationController) {
+            return NavigationController(presentingViewController).navigator;
+        } else {
+            return _navigator;
+        }
     }
 
-    override protected function setupNavigatorAsRoot(): void {
-        var navigator: StackScreenNavigator = navigator as StackScreenNavigator;
-        navigator.addScreen(rootViewController.identifier, new ViewControllerNavigatorItem(rootViewController));
-        navigator.rootScreenID = rootViewController.identifier;
+    override protected function setupViewContainer(): void {
+        if (_root == null) {
+            throw new Error("[mvvc] root must be set.");
+        }
+        _navigator = new StackScreenNavigator();
+        _root.addChild(navigator);
+        _navigator.addScreen(rootViewController.identifier, new ViewControllerNavigatorItem(rootViewController));
+        _navigator.rootScreenID = rootViewController.identifier;
     }
 }
 }

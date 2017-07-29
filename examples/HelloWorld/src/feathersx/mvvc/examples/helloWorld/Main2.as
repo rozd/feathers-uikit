@@ -26,6 +26,7 @@ public class Main2 extends Sprite {
         new MetalWorksMobileTheme();
 
         this.rootViewController = new MainController();
+//        this.rootViewController = new AViewController();
         this.rootViewController.setAsRootViewController(this);
     }
 }

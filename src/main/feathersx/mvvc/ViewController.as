@@ -142,7 +142,6 @@ public class ViewController {
             return;
         }
 
-        var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
         if (navigator.hasScreen(vc.identifier)) {
             navigator.removeScreen(vc.identifier);
         }
@@ -174,7 +173,6 @@ public class ViewController {
             return;
         }
 
-        var navigator:ScreenNavigator = this.navigator as ScreenNavigator;
         presentedViewController.setPresentingViewController(null);
         navigator.showScreen(this.identifier);
         this.setPresentedViewController(null);
@@ -202,41 +200,20 @@ public class ViewController {
         return getQualifiedClassName(this);
     }
 
-    private var _navigator:BaseScreenNavigator;
-    public function get navigator(): BaseScreenNavigator {
+    private var _navigator:ScreenNavigator;
+    private function get navigator(): ScreenNavigator {
         if (presentingViewController) {
             return presentingViewController.navigator;
         } else {
-            createNavigatorIfRequired();
             return _navigator;
         }
-    }
-
-    private function createNavigatorIfRequired(): void {
-        if (_navigator != null) return;
-        _navigator = createNavigator();
-        if (_root == null) {
-            throw new Error("[mvvc] root must be set.");
-        }
-        _root.addChild(_navigator);
-    }
-
-    protected function createNavigator():BaseScreenNavigator {
-        var navigator:ScreenNavigator = new ScreenNavigator();
-        return navigator;
-    }
-
-    protected function setupNavigatorAsRoot():void {
-        var navigator:ScreenNavigator = navigator as ScreenNavigator;
-        navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
-        navigator.showScreen(this.identifier);
     }
 
     //------------------------------------
     //  Work with Root
     //------------------------------------
 
-    private var _root:DisplayObjectContainer;
+    protected var _root:DisplayObjectContainer;
     public function get root(): DisplayObjectContainer {
         return _root;
     }
@@ -247,9 +224,18 @@ public class ViewController {
         }
         _root = root;
         if (_root != null) {
-            createNavigatorIfRequired();
-            setupNavigatorAsRoot();
+            setupViewContainer();
         }
+    }
+
+    protected function setupViewContainer(): void {
+        if (_root == null) {
+            throw new Error("[mvvc] root must be set.");
+        }
+        _navigator = new ScreenNavigator();
+        _root.addChild(_navigator);
+        _navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
+        _navigator.showScreen(this.identifier);
     }
 }
 }

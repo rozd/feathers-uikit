@@ -25,7 +25,9 @@ public class AViewController extends ViewController {
     public function showB1View(): void {
         var b1:B1ViewController = new B1ViewController();
         this.show(b1);
-        this.navigationController.pushViewController(b1, true);
+        if (this.navigationController) {
+            this.navigationController.pushViewController(b1, true);
+        }
     }
 }
 }

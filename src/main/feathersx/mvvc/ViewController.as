@@ -53,6 +53,12 @@ public class ViewController {
         _presentedViewController = vc;
     }
 
+    //--------------------------------------------------------------------------
+    //
+    //  Navigation Controller
+    //
+    //--------------------------------------------------------------------------
+
     private var _navigationController: NavigationController;
     public function get navigationController(): NavigationController {
         return _navigationController;
@@ -61,11 +67,13 @@ public class ViewController {
         _navigationController = nc;
     }
 
-    //--------------------------------------------------------------------------
-    //
-    //  Methods
-    //
-    //--------------------------------------------------------------------------
+    private var _navigationItem: NavigationItem;
+    public function get navigationItem(): NavigationItem {
+        if (_navigationItem == null) {
+            _navigationItem = new NavigationItem(this.identifier);
+        }
+        return _navigationItem;
+    }
 
     //--------------------------------------------------------------------------
     //

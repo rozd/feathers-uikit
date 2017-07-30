@@ -7,7 +7,9 @@ import feathers.controls.LayoutGroup;
 import feathers.controls.StackScreenNavigator;
 import feathers.layout.VerticalLayout;
 import feathers.layout.VerticalLayoutData;
-import feathers.motion.Slide;
+import feathersx.motion.Slide;
+
+import starling.animation.Transitions;
 
 import starling.display.DisplayObject;
 import starling.display.Quad;
@@ -36,13 +38,31 @@ public class NavigationController extends ViewController {
 
     //--------------------------------------------------------------------------
     //
-    //  Push & Pop stack items
+    //  Transition
     //
     //--------------------------------------------------------------------------
 
-    public var pushTransition:Function = Slide.createSlideLeftTransition();
+    protected function getPushTransition(animated:Boolean):Function {
+        var onProgress:Function = function (progress:Number) {
+            trace("onProgress: " + progress);
+        };
+        var onComplete:Function = function () {
+            trace("onComplete");
+        };
 
-    public var popTransition:Function = Slide.createSlideRightTransition();
+        return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+    }
+
+    protected function getPopTransition(animated:Boolean):Function {
+        var onProgress:Function = function (progress:Number) {
+            trace("onProgress: " + progress);
+        };
+        var onComplete:Function = function () {
+            trace("onComplete");
+        };
+
+        return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -60,16 +80,20 @@ public class NavigationController extends ViewController {
             navigator.removeScreen(vc.identifier);
         }
         navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
-        var transition:Function = animated ? pushTransition : null;
+        var transition:Function = getPushTransition(animated);
         navigator.pushScreen(vc.identifier, null, transition);
         vc.setNavigationController(this);
+
+        _navigationBar.pushItem(vc.navigationItem, animated);
     }
 
     public function popViewController(animated:Boolean):ViewController {
         var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
-        var transition:Function = animated ? popTransition : null;
+        var transition:Function = getPopTransition(animated);
         var view:DisplayObject = navigator.popScreen(transition);
 //        navigator.sc
+
+        _navigationBar.popItem(animated);
         return null;
     }
 
@@ -92,10 +116,10 @@ public class NavigationController extends ViewController {
         view.autoSizeMode = AutoSizeMode.STAGE;
         view.layout = new VerticalLayout();
 
-        _navigationBar = new NavigationBar();
+        _navigationBar = new NavigationBar(rootViewController.navigationItem);
         _navigationBar.layoutData = new VerticalLayoutData(100);
+        _navigationBar.onBack = navigationBarOnBack;
         _navigationBar.height = 60;
-        _navigationBar.backgroundSkin = new Quad(100, 100, 0xFF000);
         view.addChild(_navigationBar);
 
         _navigator = new StackScreenNavigator();
@@ -121,6 +145,12 @@ public class NavigationController extends ViewController {
         }
     }
 
+    //--------------------------------------------------------------------------
+    //
+    //  NavigatorBar
+    //
+    //--------------------------------------------------------------------------
+
     private var _navigationBar:NavigationBar;
     public function get navigationBar(): NavigationBar {
         if (presentingViewController is NavigationController) {
@@ -138,6 +168,16 @@ public class NavigationController extends ViewController {
             return _toolbar;
         }
     }
+
+    private function navigationBarOnBack(): void {
+        popViewController(true);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Toolbar
+    //
+    //--------------------------------------------------------------------------
 
     public function set toolbar(value: Toolbar): void {
         _toolbar = value;

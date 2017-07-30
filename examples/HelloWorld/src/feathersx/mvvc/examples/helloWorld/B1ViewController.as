@@ -11,6 +11,8 @@ import starling.events.Event;
 
 public class B1ViewController extends ViewController {
     public function B1ViewController() {
+        super();
+        this.navigationItem.title = "B1";
     }
 
     override protected function loadView(): DisplayObject {

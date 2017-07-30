@@ -2,6 +2,9 @@
  * Created by max.rozdobudko@gmail.com on 7/23/17.
  */
 package feathersx.mvvc.examples.helloWorld {
+import feathers.data.ArrayCollection;
+
+import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.ViewController;
 import feathersx.mvvc.examples.helloWorld.view.AView;
 
@@ -11,6 +14,10 @@ import starling.events.Event;
 public class AViewController extends ViewController {
     public function AViewController() {
         super();
+        this.navigationItem.title = "A";
+        var menuItem: BarButtonItem = new BarButtonItem();
+        menuItem.label = "Menu";
+        this.navigationItem.leftItems = new <BarButtonItem>[menuItem];
     }
 
     override protected function loadView(): DisplayObject {
@@ -18,6 +25,7 @@ public class AViewController extends ViewController {
     }
 
     override protected function viewDidLoad():void {
+
 //        trace("viewDidLoad");
         var aView:AView = this.view as AView;
         aView.pushScreenB1Button.addEventListener(Event.TRIGGERED, showB1View);

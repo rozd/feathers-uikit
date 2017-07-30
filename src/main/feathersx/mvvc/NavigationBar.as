@@ -152,6 +152,20 @@ public class NavigationBar extends StackScreenNavigator {
     public function set isTransparent(value: Boolean): void {
         _isTransparent = value;
     }
+
+
+    //------------------------------------
+    //  titleStyleName
+    //------------------------------------
+
+    private var _titleStyleName:String;
+    public function get titleStyleName(): String {
+        return _titleStyleName || TITLE_STYLE_NAME;
+    }
+
+    public function set titleStyleName(value: String): void {
+        _titleStyleName = value;
+    }
 }
 }
 
@@ -267,11 +281,13 @@ class NavigationBarContent extends Screen {
     }
 
     private function createTitleView(): FeathersControl {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+
         if (_navigationItem.titleView) {
             return _navigationItem.titleView;
         } else {
             var label:Label = new Label();
-            label.styleName = NavigationBar.TITLE_STYLE_NAME;
+            label.styleName = navigationBar.titleStyleName;
             return label;
         }
     }

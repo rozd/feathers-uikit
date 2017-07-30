@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!--
+  Created by max on 7/30/17.
+-->
+<controls:LayoutGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+                      xmlns:controls="feathers.controls.*">
+
+    <controls:Label text="Menu" />
+
+</controls:LayoutGroup>

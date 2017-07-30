@@ -183,6 +183,12 @@ public class NavigationController extends ViewController {
         _toolbar = value;
     }
 
+    //--------------------------------------------------------------------------
+    //
+    //  Root
+    //
+    //--------------------------------------------------------------------------
+
     override protected function setupRootView(): void {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");

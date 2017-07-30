@@ -77,11 +77,34 @@ public class ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Drawers Controller
+    //
+    //--------------------------------------------------------------------------
+
+    private var _drawersController:DrawersController;
+    public function get drawersController(): DrawersController {
+        if (_drawersController != null) {
+            return _drawersController;
+        }
+        if (presentingViewController != null) {
+            return presentingViewController.drawersController;
+        }
+        if (navigationController != null) {
+            return navigationController.drawersController;
+        }
+        return null;
+    }
+    public function setDrawersController(value: DrawersController): void {
+        _drawersController = value;
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Work with View
     //
     //--------------------------------------------------------------------------
 
-    private var _view:DisplayObject;
+    protected var _view:DisplayObject;
 
     public function get view(): DisplayObject {
         loadViewIfRequired();

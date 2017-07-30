@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="fmvvc-drawers-example">
+    <configurations>
+      <configuration name="fmvvc-drawers-example" target-platform="Mobile" main-class="DrawersExample" output-file="DrawersExample.swf" output-folder="$MODULE_DIR$/../../../../potbotics/cannidose/out/production/DrawersExample">
+        <dependencies target-player="26.0">
+          <entries>
+            <entry library-name="feathers-sdk-frameworks-libs" library-level="application">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="MetalWorksMobileTheme" build-configuration-name="feathers-metal-works-mobile-theme">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="feathers-view-controller" build-configuration-name="feathers-view-controller">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="3.3.0" />
+        </dependencies>
+        <compiler-options>
+          <option name="additionalOptions" value="-preloader=" />
+        </compiler-options>
+        <packaging-air-desktop />
+        <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample" />
+        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample" />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="3.3.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="feathers-sdk-frameworks-libs" level="application" />
+    <orderEntry type="module" module-name="feathers-view-controller" exported="" />
+    <orderEntry type="module" module-name="MetalWorksMobileTheme" exported="" />
+  </component>
+</module>

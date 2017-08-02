@@ -115,6 +115,14 @@ public class ViewController {
         _view = value;
     }
 
+    public function get viewIfLoaded(): DisplayObject {
+        return _view;
+    }
+
+    public function get isViewLoaded(): Boolean {
+        return _view != null;
+    }
+
     protected function loadView():DisplayObject {
         return null;
     }
@@ -123,9 +131,9 @@ public class ViewController {
         if (_view == null) {
             viewWillLoad();
             _view = loadView();
+            viewDidLoad();
             _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
-                viewDidLoad();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function (event:Event):void {
                 _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
@@ -206,6 +214,10 @@ public class ViewController {
         this.setPresentedViewController(vc);
     }
 
+    public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
+
+    }
+
     public function dismiss(animated: Boolean, completion: Function = null): void {
 
         if (presentedViewController == null) {
@@ -225,10 +237,6 @@ public class ViewController {
         }
 
         this.setPresentedViewController(null);
-    }
-
-    public function replaceWithViewController(vc: ViewController, sender: Object = null): void {
-
     }
 
     //------------------------------------

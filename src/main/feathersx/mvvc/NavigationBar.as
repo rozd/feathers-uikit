@@ -2,12 +2,14 @@
  * Created by max.rozdobudko@gmail.com on 7/29/17.
  */
 package feathersx.mvvc {
+import feathers.controls.LayoutGroup;
 import feathers.controls.StackScreenNavigator;
 import feathers.controls.StackScreenNavigatorItem;
 
 import feathersx.motion.Slide;
 
 import starling.animation.Transitions;
+import starling.display.DisplayObject;
 import starling.display.Quad;
 
 public class NavigationBar extends StackScreenNavigator {
@@ -24,12 +26,8 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    public function NavigationBar(rootNavigationItem:NavigationItem) {
+    public function NavigationBar() {
         super();
-        addScreen(rootNavigationItem.identifier, new StackScreenNavigatorItem(function(){
-            return createNavigationBarContentFor(rootNavigationItem);
-        }));
-        rootScreenID = rootNavigationItem.identifier;
     }
 
     //--------------------------------------------------------------------------
@@ -91,14 +89,16 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    public function pushItem(item: NavigationItem, animated: Boolean): void {
-        if (hasScreen(item.identifier)) {
-            removeScreen(item.identifier);
+    public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {
+        if (items.length > 0) {
+            var rootNavigationItem: NavigationItem = items[0];
+            addScreenWithNavigationItem(rootNavigationItem);
+            rootScreenID = rootNavigationItem.identifier;
         }
+    }
 
-        addScreen(item.identifier, new StackScreenNavigatorItem(function(){
-            return createNavigationBarContentFor(item);
-        }));
+    public function pushItem(item: NavigationItem, animated: Boolean): void {
+        addScreenWithNavigationItem(item);
 
         pushScreen(item.identifier, null, getPushTransition(animated));
     }
@@ -109,7 +109,28 @@ public class NavigationBar extends StackScreenNavigator {
 
     //--------------------------------------------------------------------------
     //
-    //  Create content
+    //  Work with Navigator
+    //
+    //--------------------------------------------------------------------------
+
+    private function addScreenWithNavigationItem(item: NavigationItem): void {
+        if (hasScreen(item.identifier)) {
+            removeScreen(item.identifier);
+        }
+        addScreen(item.identifier, new StackScreenNavigatorItem(function(){
+            return createNavigationBarContentFor(item);
+        }));
+    }
+
+    private function removeScreenWithNavigationItem(item: NavigationItem): void {
+        if (hasScreen(item.identifier)) {
+            removeScreen(item.identifier);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Work with Content
     //
     //--------------------------------------------------------------------------
 
@@ -153,7 +174,6 @@ public class NavigationBar extends StackScreenNavigator {
         _isTransparent = value;
     }
 
-
     //------------------------------------
     //  titleStyleName
     //------------------------------------
@@ -165,6 +185,20 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function set titleStyleName(value: String): void {
         _titleStyleName = value;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Background
+    //
+    //--------------------------------------------------------------------------
+
+    private var _background:DisplayObject;
+
+    private function createBackground(): void {
+        if (_background == null) {
+            _background = new Quad(100, 100)
+        }
     }
 }
 }

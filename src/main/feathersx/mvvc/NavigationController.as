@@ -146,16 +146,27 @@ public class NavigationController extends ViewController {
     public function setViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean): void {
         if (isViewLoaded) {
 
-            if (viewControllers.length > 0 && navigator.activeScreenID != null) {
-                var newTopViewController: ViewController = viewControllers[viewControllers.length - 1];
-                replaceWithViewController(newTopViewController, animated, function () {
-                    setViewControllersInternal(viewControllers);
-                });
-            } else {
+            var delaySettingViewControllers:Boolean = false;
+
+            if (viewControllers.length > 0) {
+                if (navigator.activeScreenID == null) {
+                    var newRootViewController: ViewController = viewControllers[0];
+                    navigatorAddScreenWithViewController(newRootViewController);
+                    navigator.rootScreenID = newRootViewController.identifier;
+                } else {
+                    var newTopViewController: ViewController = viewControllers[viewControllers.length - 1];
+                    replaceWithViewController(newTopViewController, animated, function () {
+                        setViewControllersInternal(viewControllers);
+                    });
+                    delaySettingViewControllers = true;
+                }
+            }
+
+            if (!delaySettingViewControllers) {
                 setViewControllersInternal(viewControllers);
             }
 
-            _navigationBar.setItems(navigationItemsFromViewControllers(_viewControllers), animated);
+            _navigationBar.setItems(navigationItemsFromViewControllers(viewControllers), animated);
 
         } else {
             _viewControllers = viewControllers;
@@ -177,11 +188,6 @@ public class NavigationController extends ViewController {
         }
 
         _viewControllers = viewControllers;
-
-        if (viewControllers.length > 0) {
-            var newRootViewController: ViewController = viewControllers[0];
-            navigator.rootScreenID = newRootViewController.identifier;
-        }
     }
 
     private function navigatorAddScreenWithViewController(vc: ViewController): void {

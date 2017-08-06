@@ -10,9 +10,13 @@ import feathers.events.FeathersEventType;
 import feathers.motion.Cover;
 import feathers.motion.Reveal;
 
+import starling.core.Starling;
+
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
+import starling.display.Stage;
 import starling.events.Event;
+import starling.events.ResizeEvent;
 
 public class ViewController {
 
@@ -188,6 +192,34 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
+    //-------------------------------------
+    //  presentationStyle
+    //-------------------------------------
+
+    private var _presentationStyle: ModalPresentationStyle = ModalPresentationStyle.fullScreen;
+    public function get presentationStyle(): ModalPresentationStyle {
+        return _presentationStyle;
+    }
+    public function set presentationStyle(value: ModalPresentationStyle): void {
+        _presentationStyle = value;
+    }
+
+    //-------------------------------------
+    //  isModalInPopover
+    //-------------------------------------
+
+    private var _isModalInPopover: Boolean = false;
+    public function get isModalInPopover(): Boolean {
+        return _isModalInPopover;
+    }
+    public function set isModalInPopover(value: Boolean): void {
+        _isModalInPopover = value;
+    }
+
+    //-------------------------------------
+    //  Showing View Controller
+    //-------------------------------------
+
     public function show(vc: ViewController, sender: Object = null): void {
         if (_navigationController != null) {
             return;
@@ -208,10 +240,16 @@ public class ViewController {
         }
     }
 
+    //-------------------------------------
+    //  Presenting View Controller
+    //-------------------------------------
+
     public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
         vc.setPresentingViewController(this);
-        PopUpManager.addPopUp(vc.view);
+        PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+        PopUpManager.addPopUp(vc.view, vc.isModalInPopover);
         this.setPresentedViewController(vc);
+        layoutPresentedViewController();
     }
 
     public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
@@ -231,6 +269,7 @@ public class ViewController {
         presentedViewController.setPresentingViewController(null);
 
         if (PopUpManager.isPopUp(presentedViewController.view)) {
+            PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
             PopUpManager.removePopUp(presentedViewController.view);
         } else {
             navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
@@ -239,9 +278,29 @@ public class ViewController {
         this.setPresentedViewController(null);
     }
 
-    //------------------------------------
-    //  Segues
-    //------------------------------------
+    protected function layoutPresentedViewController(): void {
+        if (presentedViewController == null) {
+            return;
+        }
+
+        var stage:Stage = Starling.current.stage;
+        var view:DisplayObject = presentedViewController.view;
+
+        switch (presentedViewController.presentationStyle) {
+            case ModalPresentationStyle.fullScreen :
+                view.x = 0;
+                view.y = 0;
+                view.width = stage.stageWidth;
+                view.height = stage.stageHeight;
+                break;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Work with Segues
+    //
+    //--------------------------------------------------------------------------
 
     public function performSegue() {
 
@@ -293,6 +352,16 @@ public class ViewController {
         _root.addChild(_navigator);
         _navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
         _navigator.showScreen(this.identifier);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Event handlers
+    //
+    //--------------------------------------------------------------------------
+
+    private function stage_resizeHandler(event: Event): void {
+        layoutPresentedViewController();
     }
 }
 }

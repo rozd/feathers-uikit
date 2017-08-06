@@ -21,7 +21,7 @@ public class NavigationBar extends StackScreenNavigator {
     public static const LEFT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-left-item";
     public static const RIGHT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-right-item";
 
-    public static var PADDING:uint = 8;
+    public static var PADDING:uint = 20;
 
     //--------------------------------------------------------------------------
     //

@@ -328,7 +328,7 @@ class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
     private var _viewController: ViewController;
 
     override public function get canDispose(): Boolean {
-        return false;
+        return true;
     }
 
     override public function getScreen(): DisplayObject {

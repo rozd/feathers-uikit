@@ -271,6 +271,7 @@ public class ViewController {
         if (PopUpManager.isPopUp(presentedViewController.view)) {
             PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
             PopUpManager.removePopUp(presentedViewController.view);
+            presentedViewController.view.dispose();
         } else {
             navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
         }
@@ -387,7 +388,7 @@ class ViewControllerNavigatorItem extends ScreenNavigatorItem {
     private var _viewController: ViewController;
 
     override public function get canDispose(): Boolean {
-        return false;
+        return true;
     }
 
     override public function getScreen(): DisplayObject {

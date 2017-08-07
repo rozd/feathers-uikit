@@ -93,12 +93,20 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    public function showLeftViewController(animated:Boolean): void {
+    public function showLeftViewController(animated: Boolean): void {
         if (!drawers.isLeftDrawerOpen) {
             if (animated) {
                 drawers.toggleLeftDrawer();
             } else {
                 drawers.isLeftDrawerOpen = true;
+            }
+        }
+    }
+
+    public function hideLeftViewController(animated: Boolean): void {
+        if (drawers.isLeftDrawerOpen) {
+            if (animated) {
+                drawers.toggleLeftDrawer()
             }
         }
     }

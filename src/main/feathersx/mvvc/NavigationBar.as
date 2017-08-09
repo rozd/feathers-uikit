@@ -9,6 +9,7 @@ import feathers.events.FeathersEventType;
 import feathers.motion.Fade;
 
 import feathersx.motion.Slide;
+import feathersx.mvvc.NavigationItem;
 
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
@@ -114,12 +115,15 @@ public class NavigationBar extends StackScreenNavigator {
         pushScreen(item.identifier, null, getPushTransition(animated));
 
         _items.push(item);
+        retainNavigationItems(new <NavigationItem>[item]);
     }
 
     public function popItem(animated: Boolean): NavigationItem {
         popScreen(getPopTransition(animated));
         if (_items.length > 0) {
-            return _items.pop();
+            var item:NavigationItem = _items.pop();
+            releaseNavigationItems(new <NavigationItem>[item]);
+            return item;
         } else {
             return null;
         }
@@ -134,7 +138,7 @@ public class NavigationBar extends StackScreenNavigator {
                 completion();
             }
         });
-        addEventListener(FeathersEventType.TRANSITION_CANCEL, function (event:Event) {
+        addEventListener(FeathersEventType.TRANSITION_CANCEL, function (event:Event):void {
             removeEventListener(FeathersEventType.TRANSITION_CANCEL, arguments.callee);
             if (completion != null) {
                 completion();
@@ -153,7 +157,7 @@ public class NavigationBar extends StackScreenNavigator {
                 rootScreenID = newRootItem.identifier;
             } else {
                 var newTopItem: NavigationItem = items[items.length - 1];
-                replaceWithNavigationItem(newTopItem, animated, function () {
+                replaceWithNavigationItem(newTopItem, animated, function ():void {
                     setItemsInternal(items);
                 });
                 delaySettingItems = true;
@@ -166,6 +170,8 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     private function setItemsInternal(items: Vector.<NavigationItem>): void {
+        releaseNavigationItems(_items);
+
         for each (var oldItem: NavigationItem in _items) {
             if (items.indexOf(oldItem) != -1) {
                 continue;
@@ -180,6 +186,22 @@ public class NavigationBar extends StackScreenNavigator {
         }
 
         _items = items;
+
+        retainNavigationItems(_items);
+    }
+
+    private function retainNavigationItems(navigationItems: Vector.<NavigationItem>):void {
+        for each (var navigationItem:NavigationItem in navigationItems) {
+            var item: NavigationBarStackScreenNavigatorItem = getScreen(navigationItem.identifier) as NavigationBarStackScreenNavigatorItem;
+            item.retain();
+        }
+    }
+
+    private function releaseNavigationItems(navigationItems: Vector.<NavigationItem>):void {
+        for each (var vc:NavigationItem in navigationItems) {
+            var item: NavigationBarStackScreenNavigatorItem = getScreen(vc.identifier) as NavigationBarStackScreenNavigatorItem;
+            item.release();
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -192,7 +214,7 @@ public class NavigationBar extends StackScreenNavigator {
         if (hasScreen(item.identifier)) {
             removeScreen(item.identifier);
         }
-        addScreen(item.identifier, new StackScreenNavigatorItem(function(){
+        addScreen(item.identifier, new NavigationBarStackScreenNavigatorItem(function(){
             return createNavigationBarContentFor(item);
         }));
     }
@@ -282,6 +304,7 @@ public class NavigationBar extends StackScreenNavigator {
 import feathers.controls.ButtonGroup;
 import feathers.controls.Label;
 import feathers.controls.Screen;
+import feathers.controls.StackScreenNavigatorItem;
 import feathers.core.FeathersControl;
 import feathers.data.IListCollection;
 import feathers.data.ListCollection;
@@ -289,6 +312,33 @@ import feathers.data.ListCollection;
 import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.NavigationBar;
 import feathersx.mvvc.NavigationItem;
+
+//--------------------------------------------------------------------------
+//
+//  NavigationItemNavigatorItem
+//
+//--------------------------------------------------------------------------
+
+class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
+
+    public function NavigationBarStackScreenNavigatorItem(screen:Object = null, pushEvents:Object = null, popEvent:String = null, properties:Object = null) {
+        super(screen, pushEvents, popEvent, properties);
+    }
+
+    private var _retained: Boolean = false;
+
+    override public function get canDispose(): Boolean {
+        return !_retained;
+    }
+
+    public function retain():void {
+        _retained = true;
+    }
+
+    public function release():void {
+        _retained = false;
+    }
+}
 
 //--------------------------------------------------------------------------
 //

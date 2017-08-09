@@ -93,6 +93,7 @@ public class NavigationController extends ViewController {
         _navigationBar.pushItem(vc.navigationItem, animated);
 
         _viewControllers.push(vc);
+        retainViewControllers(new <ViewController>[vc]);
     }
 
     public function popViewController(animated:Boolean):ViewController {
@@ -102,7 +103,9 @@ public class NavigationController extends ViewController {
 
         _navigationBar.popItem(animated);
 
-        return _viewControllers.pop();
+        var vc: ViewController = _viewControllers.pop();
+        releaseViewControllers(new <ViewController>[vc]);
+        return vc;
     }
 
     public function popToRootViewController(animated:Boolean):Vector.<ViewController> {
@@ -174,6 +177,8 @@ public class NavigationController extends ViewController {
     }
 
     private function setViewControllersInternal(viewControllers: Vector.<ViewController>): void {
+        releaseViewControllers(_viewControllers);
+
         for each (var oldViewController:ViewController in _viewControllers) {
             if (viewControllers.indexOf(oldViewController) != -1) {
                 continue;
@@ -188,6 +193,8 @@ public class NavigationController extends ViewController {
         }
 
         _viewControllers = viewControllers;
+
+        retainViewControllers(_viewControllers);
     }
 
     private function navigatorAddScreenWithViewController(vc: ViewController): void {
@@ -203,6 +210,20 @@ public class NavigationController extends ViewController {
             navigator.removeScreen(vc.identifier);
         }
         vc.setNavigationController(null);
+    }
+
+    private function retainViewControllers(viewControllers: Vector.<ViewController>):void {
+        for each (var vc:ViewController in viewControllers) {
+            var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
+            item.retain();
+        }
+    }
+
+    private function releaseViewControllers(viewControllers: Vector.<ViewController>):void {
+        for each (var vc:ViewController in viewControllers) {
+            var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
+            item.release();
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -325,13 +346,22 @@ class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
         _viewController = vc;
     }
 
+    private var _retained: Boolean = false;
     private var _viewController: ViewController;
 
     override public function get canDispose(): Boolean {
-        return true;
+        return !_retained;
     }
 
     override public function getScreen(): DisplayObject {
         return _viewController.view;
+    }
+
+    public function retain():void {
+        _retained = true;
+    }
+
+    public function release():void {
+        _retained = false;
     }
 }

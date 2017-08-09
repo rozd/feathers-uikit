@@ -282,15 +282,6 @@ public class NavigationController extends ViewController {
         }
     }
 
-    private var _toolbar:Toolbar;
-    public function get toolbar(): Toolbar {
-        if (presentingViewController is NavigationController) {
-            return NavigationController(presentingViewController).toolbar;
-        } else {
-            return _toolbar;
-        }
-    }
-
     private function navigationBarOnBack(): void {
         popViewController(true);
     }
@@ -303,14 +294,35 @@ public class NavigationController extends ViewController {
         return items;
     }
 
+    public function getTopGuide():Number {
+        if (navigationBar != null) {
+            return navigationBar.height;
+        } else {
+            return 0;
+        }
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Toolbar
     //
     //--------------------------------------------------------------------------
 
-    public function set toolbar(value: Toolbar): void {
-        _toolbar = value;
+    private var _toolbar:Toolbar;
+    public function get toolbar(): Toolbar {
+        if (presentingViewController is NavigationController) {
+            return NavigationController(presentingViewController).toolbar;
+        } else {
+            return _toolbar;
+        }
+    }
+
+    public function getBottomGuide():Number {
+        if (toolbar != null) {
+            return toolbar.height;
+        } else {
+            return 0;
+        }
     }
 
     //--------------------------------------------------------------------------

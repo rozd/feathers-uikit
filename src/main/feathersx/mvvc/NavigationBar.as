@@ -11,16 +11,20 @@ import feathers.motion.Fade;
 import feathersx.motion.Slide;
 import feathersx.mvvc.NavigationItem;
 
+import flash.geom.Point;
+
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
 import starling.display.Quad;
 import starling.events.Event;
+import starling.filters.DropShadowFilter;
 
 public class NavigationBar extends StackScreenNavigator {
 
     public static const TITLE_STYLE_NAME:String = "feathers-mvvc-navigation-bar-title";
     public static const LEFT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-left-item";
     public static const RIGHT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-right-item";
+    public static const BACK_BUTTON_STYLE_NAME:String = "feathers-mvvc-navigation-bar-back-button";
 
     public static var PADDING:uint = 20;
 
@@ -233,10 +237,6 @@ public class NavigationBar extends StackScreenNavigator {
 
     private function createNavigationBarContentFor(item:NavigationItem): NavigationBarContent {
         var content:NavigationBarContent = new NavigationBarContent(item);
-        content.backgroundSkin = new Quad(100, 100, _barTintColor);
-        if (_isTransparent) {
-            content.backgroundSkin.visible = false;
-        }
         return content;
     }
 
@@ -266,7 +266,6 @@ public class NavigationBar extends StackScreenNavigator {
     public function get isTransparent(): Boolean {
         return _isTransparent;
     }
-
     public function set isTransparent(value: Boolean): void {
         _isTransparent = value;
     }
@@ -279,9 +278,56 @@ public class NavigationBar extends StackScreenNavigator {
     public function get titleStyleName(): String {
         return _titleStyleName || TITLE_STYLE_NAME;
     }
-
     public function set titleStyleName(value: String): void {
         _titleStyleName = value;
+    }
+
+    //------------------------------------
+    //  shadowColor
+    //------------------------------------
+
+    private var _shadowColor:uint = uint.MAX_VALUE;
+    public function get shadowColor():uint {
+        return _shadowColor;
+    }
+    public function set shadowColor(value:uint):void {
+        _shadowColor = value;
+    }
+
+    //------------------------------------
+    //  shadowOffset
+    //------------------------------------
+
+    private var _shadowOffset:Point;
+    public function get shadowOffset():Point {
+        return _shadowOffset;
+    }
+    public function set shadowOffset(value:Point):void {
+        _shadowOffset = value;
+    }
+
+    //------------------------------------
+    //  shadowRadius
+    //------------------------------------
+
+    private var _shadowRadius:Number;
+    public function get shadowRadius():Number {
+        return _shadowRadius;
+    }
+    public function set shadowRadius(value:Number):void {
+        _shadowRadius = value;
+    }
+
+    //------------------------------------
+    //  shadowAlpha
+    //------------------------------------
+
+    private var _shadowAlpha:Number;
+    public function get shadowAlpha():Number {
+        return _shadowAlpha;
+    }
+    public function set shadowAlpha(value:Number):void {
+        _shadowAlpha = value;
     }
 
     //--------------------------------------------------------------------------
@@ -313,6 +359,12 @@ import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.NavigationBar;
 import feathersx.mvvc.NavigationItem;
 
+import flash.geom.Point;
+
+import starling.display.DisplayObject;
+import starling.display.Quad;
+import starling.filters.DropShadowFilter;
+
 //--------------------------------------------------------------------------
 //
 //  NavigationItemNavigatorItem
@@ -331,12 +383,22 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
         return !_retained;
     }
 
+    private var _navigationBarContent: NavigationBarContent;
+
+    override public function getScreen():DisplayObject {
+        if (_navigationBarContent == null) {
+            _navigationBarContent = super.getScreen() as NavigationBarContent;
+        }
+        return _navigationBarContent;
+    }
+
     public function retain():void {
         _retained = true;
     }
 
     public function release():void {
         _retained = false;
+        _navigationBarContent = null;
     }
 }
 
@@ -380,6 +442,8 @@ class NavigationBarContent extends Screen {
     override protected function initialize(): void {
         super.initialize();
 
+        backgroundSkin = createBackground();
+
         leftButtonGroup = new ButtonGroup();
         leftButtonGroup.customButtonStyleName = NavigationBar.LEFT_ITEM_STYLE_NAME;
         addChild(leftButtonGroup);
@@ -405,6 +469,7 @@ class NavigationBarContent extends Screen {
 
         if (sizeInvalid) {
             layoutChildren();
+            updateDropShadow();
         }
     }
 
@@ -440,6 +505,60 @@ class NavigationBarContent extends Screen {
         titleView.y = (actualHeight - titleView.height) / 2;
     }
 
+    //-------------------------------------
+    //  Background
+    //-------------------------------------
+
+    private function createBackground():DisplayObject {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+
+        var skin:Quad = new Quad(100, 100, navigationBar.barTintColor);
+
+        if (navigationBar.isTransparent) {
+            skin.visible = false;
+        } else if (navigationBar.isTranslucent) {
+            // TODO implement
+        } else {
+            if (navigationBar.shadowColor != uint.MAX_VALUE) {
+                skin.filter = createDropShadow();
+            }
+        }
+
+        return skin;
+    }
+
+    private function createDropShadow():DropShadowFilter {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+
+        if (navigationBar.shadowColor == uint.MAX_VALUE) {
+            return null;
+        }
+
+        var alpha:Number = isNaN(navigationBar.shadowAlpha) ? 0.5 : navigationBar.shadowAlpha;
+        var blur:Number = isNaN(navigationBar.shadowRadius) ? 1.0 : navigationBar.shadowRadius;
+
+        var center:Point = new Point();
+        var offset:Point = navigationBar.shadowOffset || center;
+        var delta:Point = offset.subtract(center);
+
+        var distance:Number = Math.sqrt((offset.x - center.x) ^ 2 + (offset.y - center.y) ^ 2);
+        var angle:Number = Math.atan2(delta.y, delta.x);
+
+        var filter:DropShadowFilter = new DropShadowFilter(distance, angle, navigationBar.shadowColor, alpha, blur);
+        filter.cache();
+        return filter;
+    }
+
+    private function updateDropShadow():void {
+        if (backgroundSkin != null && backgroundSkin.filter is DropShadowFilter) {
+            backgroundSkin.filter.cache();
+        }
+    }
+
+    //-------------------------------------
+    //  Title
+    //-------------------------------------
+
     private function createTitleView(): FeathersControl {
         var navigationBar:NavigationBar = _owner as NavigationBar;
 
@@ -455,14 +574,19 @@ class NavigationBarContent extends Screen {
     private function createBackButtonItem(): BarButtonItem {
         var navigationBar:NavigationBar = _owner as NavigationBar;
 
-        var item: BarButtonItem = new BarButtonItem();
-        item.triggered = function () {
+        var backButtonItem: BarButtonItem = _navigationItem.backBarButtonItem;
+
+        if (backButtonItem == null) {
+            backButtonItem = new BarButtonItem();
+            backButtonItem.defaultIcon = null; // TBA
+            backButtonItem.label = "Back";
+        }
+
+        backButtonItem.triggered = function () {
             navigationBar.notifyBackCallbacks();
         };
 
-        item.label = "Back";
-
-        return item;
+        return backButtonItem;
     }
 
     private function composeLeftItems(): IListCollection {

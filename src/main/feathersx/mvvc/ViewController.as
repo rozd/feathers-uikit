@@ -135,24 +135,28 @@ public class ViewController {
         if (_view == null) {
             viewWillLoad();
             _view = loadView();
+            if (_view is View) {
+                View(_view).topGuide = navigationController ? navigationController.getTopGuide() : 0;
+                View(_view).bottomGuide = navigationController ? navigationController.getBottomGuide() : 0;
+            }
             viewDidLoad();
             _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function (event:Event):void {
-                _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
+//                _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
                 viewWillAppear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
-                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
+//                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
                 viewDidAppear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function (event:Event):void {
-                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
+//                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
                 viewWillDisappear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
-                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
+//                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
                 viewDidDisappear();
             });
         }

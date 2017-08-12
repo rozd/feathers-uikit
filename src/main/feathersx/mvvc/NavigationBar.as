@@ -24,7 +24,6 @@ public class NavigationBar extends StackScreenNavigator {
     public static const TITLE_STYLE_NAME:String = "feathers-mvvc-navigation-bar-title";
     public static const LEFT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-left-item";
     public static const RIGHT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-right-item";
-    public static const BACK_BUTTON_STYLE_NAME:String = "feathers-mvvc-navigation-bar-back-button";
 
     public static var PADDING:uint = 20;
 
@@ -115,6 +114,8 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function pushItem(item: NavigationItem, animated: Boolean): void {
         addScreenWithNavigationItem(item);
+
+        resetAppearanceToDefault();
 
         pushScreen(item.identifier, null, getPushTransition(animated));
 
@@ -330,19 +331,18 @@ public class NavigationBar extends StackScreenNavigator {
         _shadowAlpha = value;
     }
 
-    //--------------------------------------------------------------------------
-    //
-    //  Background
-    //
-    //--------------------------------------------------------------------------
+    //------------------------------------
+    //  Appearance methods
+    //------------------------------------
 
-    private var _background:DisplayObject;
-
-    private function createBackground(): void {
-        if (_background == null) {
-            _background = new Quad(100, 100, 0xFF0000);
-            _background.alpha = 0.5;
-        }
+    private function resetAppearanceToDefault():void {
+        isTranslucent = false;
+        isTransparent = false;
+        titleStyleName = TITLE_STYLE_NAME;
+        shadowColor = uint.MAX_VALUE;
+        shadowOffset = null;
+        shadowRadius = NaN;
+        shadowAlpha = NaN;
     }
 }
 }

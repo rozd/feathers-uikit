@@ -94,6 +94,8 @@ public class NavigationController extends ViewController {
 
         _viewControllers.push(vc);
         retainViewControllers(new <ViewController>[vc]);
+
+        _toolbar.setItems(topViewController.toolbarItems, true);
     }
 
     public function popViewController(animated:Boolean):ViewController {
@@ -105,6 +107,9 @@ public class NavigationController extends ViewController {
 
         var vc: ViewController = _viewControllers.pop();
         releaseViewControllers(new <ViewController>[vc]);
+
+        _toolbar.setItems(topViewController.toolbarItems, true);
+
         return vc;
     }
 
@@ -124,6 +129,19 @@ public class NavigationController extends ViewController {
             if (completion != null) {
                 completion();
             }
+        });
+        _toolbar.setItems(vc.toolbarItems, true);
+    }
+
+    protected function setRootViewController(vc:ViewController, completion: Function = null):void {
+        navigatorAddScreenWithViewController(vc);
+        navigator.rootScreenID = vc.identifier;
+        navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
+            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
+            if (completion != null) {
+                completion();
+            }
+            _toolbar.setItems(vc.toolbarItems, true);
         });
     }
 
@@ -154,8 +172,7 @@ public class NavigationController extends ViewController {
             if (viewControllers.length > 0) {
                 if (navigator.activeScreenID == null) {
                     var newRootViewController: ViewController = viewControllers[0];
-                    navigatorAddScreenWithViewController(newRootViewController);
-                    navigator.rootScreenID = newRootViewController.identifier;
+                    setRootViewController(newRootViewController);
                 } else {
                     var newTopViewController: ViewController = viewControllers[viewControllers.length - 1];
                     replaceWithViewController(newTopViewController, animated, function () {
@@ -249,7 +266,7 @@ public class NavigationController extends ViewController {
 
         _toolbar = new Toolbar();
         _toolbar.layoutData = new AnchorLayoutData(NaN, 0, 0, 0);
-        _toolbar.height = 40;
+        _toolbar.height = 64;
         view.addChild(_toolbar);
 
         setViewControllers(_viewControllers, false);

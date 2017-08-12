@@ -79,6 +79,14 @@ public class ViewController {
         return _navigationItem;
     }
 
+    private var _toolbarItems:Vector.<BarButtonItem>;
+    public function get toolbarItems():Vector.<BarButtonItem> {
+        return _toolbarItems;
+    }
+    public function set toolbarItems(value:Vector.<BarButtonItem>):void {
+        _toolbarItems = value;
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Drawers Controller

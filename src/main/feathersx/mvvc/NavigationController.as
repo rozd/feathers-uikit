@@ -88,6 +88,8 @@ public class NavigationController extends ViewController {
     public function pushViewController(vc:ViewController, animated:Boolean):void {
         navigatorAddScreenWithViewController(vc);
 
+        _navigationBar.resetAppearanceToDefault();
+
         navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
 
         _navigationBar.pushItem(vc.navigationItem, animated);
@@ -136,8 +138,8 @@ public class NavigationController extends ViewController {
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
         navigatorAddScreenWithViewController(vc);
         navigator.rootScreenID = vc.identifier;
-        navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
-            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
+        navigator.addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
+            navigator.removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
             if (completion != null) {
                 completion();
             }
@@ -168,6 +170,8 @@ public class NavigationController extends ViewController {
         if (isViewLoaded) {
 
             var delaySettingViewControllers:Boolean = false;
+
+            _navigationBar.resetAppearanceToDefault();
 
             if (viewControllers.length > 0) {
                 if (navigator.activeScreenID == null) {

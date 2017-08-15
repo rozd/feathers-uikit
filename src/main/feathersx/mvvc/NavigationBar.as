@@ -114,11 +114,7 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function pushItem(item: NavigationItem, animated: Boolean): void {
         addScreenWithNavigationItem(item);
-
-        resetAppearanceToDefault();
-
         pushScreen(item.identifier, null, getPushTransition(animated));
-
         _items.push(item);
         retainNavigationItems(new <NavigationItem>[item]);
     }
@@ -151,6 +147,17 @@ public class NavigationBar extends StackScreenNavigator {
         });
     }
 
+    protected function setRootNavigationItem(item: NavigationItem, completion: Function = null): void {
+        addScreenWithNavigationItem(item);
+        rootScreenID = item.identifier;
+        addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
+            removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
+            if (completion != null) {
+                completion();
+            }
+        });
+    }
+
     public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {
 
         var delaySettingItems: Boolean = false;
@@ -158,8 +165,7 @@ public class NavigationBar extends StackScreenNavigator {
         if (items.length > 0) {
             if (activeScreenID == null) {
                 var newRootItem: NavigationItem = items[0];
-                addScreenWithNavigationItem(newRootItem);
-                rootScreenID = newRootItem.identifier;
+                setRootNavigationItem(newRootItem);
             } else {
                 var newTopItem: NavigationItem = items[items.length - 1];
                 replaceWithNavigationItem(newTopItem, animated, function ():void {
@@ -335,7 +341,7 @@ public class NavigationBar extends StackScreenNavigator {
     //  Appearance methods
     //------------------------------------
 
-    private function resetAppearanceToDefault():void {
+    public function resetAppearanceToDefault():void {
         isTranslucent = false;
         isTransparent = false;
         titleStyleName = TITLE_STYLE_NAME;

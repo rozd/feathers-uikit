@@ -596,15 +596,24 @@ class NavigationBarContent extends Screen {
     }
 
     private function composeLeftItems(): IListCollection {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+
         var items:Vector.<BarButtonItem> = new <BarButtonItem>[];
-        if (_navigationItem.leftItems == null || _navigationItem.leftItems.length == 0) {
-            items.push(createBackButtonItem());
-        } else {
-            if (_navigationItem.leftItemsSupplementBackButton) {
+
+        if (!_navigationItem.hidesBackButton && navigationBar.stackCount > 1) {
+            if (_navigationItem.leftItems == null || _navigationItem.leftItems.length == 0) {
                 items.push(createBackButtonItem());
+            } else {
+                if (_navigationItem.leftItemsSupplementBackButton) {
+                    items.push(createBackButtonItem());
+                }
             }
+        }
+
+        if (_navigationItem.leftItems != null) {
             items = items.concat(_navigationItem.leftItems);
         }
+
         return new ListCollection(items);
     }
 

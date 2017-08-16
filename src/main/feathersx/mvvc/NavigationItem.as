@@ -58,6 +58,18 @@ public class NavigationItem {
     //--------------------------------------------------------------------------
 
     //-------------------------------------
+    //  hidesBackButton
+    //-------------------------------------
+
+    private var _hidesBackButton: Boolean = false;
+    public function get hidesBackButton():Boolean {
+        return _hidesBackButton;
+    }
+    public function set hidesBackButton(value:Boolean):void {
+        _hidesBackButton = value;
+    }
+
+    //-------------------------------------
     //  backBarButtonItem
     //-------------------------------------
 

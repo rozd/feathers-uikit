@@ -88,7 +88,8 @@ public class NavigationController extends ViewController {
     public function pushViewController(vc:ViewController, animated:Boolean):void {
         navigatorAddScreenWithViewController(vc);
 
-        _navigationBar.resetAppearanceToDefault();
+        resetNavigationBar();
+        resetToolbar();
 
         navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
 
@@ -101,6 +102,8 @@ public class NavigationController extends ViewController {
     }
 
     public function popViewController(animated:Boolean):ViewController {
+        resetToolbar();
+
         var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
         var transition:Function = getPopTransition(animated);
         var view:DisplayObject = navigator.popScreen(transition);
@@ -125,6 +128,9 @@ public class NavigationController extends ViewController {
 
     override public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
         navigatorAddScreenWithViewController(vc);
+
+        resetToolbar();
+
         navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
         navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
@@ -136,6 +142,8 @@ public class NavigationController extends ViewController {
     }
 
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
+        resetToolbar();
+
         navigatorAddScreenWithViewController(vc);
         navigator.rootScreenID = vc.identifier;
         navigator.addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
@@ -265,12 +273,13 @@ public class NavigationController extends ViewController {
         _navigationBar = new NavigationBar();
         _navigationBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
         _navigationBar.onBack = navigationBarOnBack;
-        _navigationBar.height = 60;
+        _navigationBar.height = 64;
         view.addChild(_navigationBar);
 
         _toolbar = new Toolbar();
         _toolbar.layoutData = new AnchorLayoutData(NaN, 0, 0, 0);
         _toolbar.height = 64;
+        _toolbar.visible = _toolbar.includeInLayout = !_isToolbarHidden;
         view.addChild(_toolbar);
 
         setViewControllers(_viewControllers, false);
@@ -323,6 +332,10 @@ public class NavigationController extends ViewController {
         }
     }
 
+    private function resetNavigationBar(): void {
+        _navigationBar.resetAppearanceToDefault();
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Toolbar
@@ -338,12 +351,31 @@ public class NavigationController extends ViewController {
         }
     }
 
+    private var _isToolbarHidden: Boolean = true;
+    public function get isToolbarHidden(): Boolean {
+        return _isToolbarHidden;
+    }
+    public function set isToolbarHidden(value: Boolean): void {
+        setToolbarHidden(value, false);
+    }
+
+    public function setToolbarHidden(hidden: Boolean, animated: Boolean): void {
+        _isToolbarHidden = hidden;
+        if (_toolbar != null) {
+            _toolbar.visible = _toolbar.includeInLayout = !_isToolbarHidden;
+        }
+    }
+
     public function getBottomGuide():Number {
-        if (toolbar != null) {
+        if (toolbar != null && toolbar.includeInLayout) {
             return toolbar.height;
         } else {
             return 0;
         }
+    }
+
+    private function resetToolbar(): void {
+        isToolbarHidden = true;
     }
 
     //--------------------------------------------------------------------------

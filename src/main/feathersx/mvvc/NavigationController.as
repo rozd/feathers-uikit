@@ -89,7 +89,6 @@ public class NavigationController extends ViewController {
         navigatorAddScreenWithViewController(vc);
 
         resetNavigationBar();
-        resetToolbar();
 
         navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
 
@@ -102,7 +101,6 @@ public class NavigationController extends ViewController {
     }
 
     public function popViewController(animated:Boolean):ViewController {
-        resetToolbar();
 
         var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
         var transition:Function = getPopTransition(animated);
@@ -128,9 +126,6 @@ public class NavigationController extends ViewController {
 
     override public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
         navigatorAddScreenWithViewController(vc);
-
-        resetToolbar();
-
         navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
         navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
@@ -142,8 +137,6 @@ public class NavigationController extends ViewController {
     }
 
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
-        resetToolbar();
-
         navigatorAddScreenWithViewController(vc);
         navigator.rootScreenID = vc.identifier;
         navigator.addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
@@ -273,7 +266,7 @@ public class NavigationController extends ViewController {
         _navigationBar = new NavigationBar();
         _navigationBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
         _navigationBar.onBack = navigationBarOnBack;
-        _navigationBar.height = 64;
+        _navigationBar.height = 60;
         view.addChild(_navigationBar);
 
         _toolbar = new Toolbar();
@@ -367,15 +360,11 @@ public class NavigationController extends ViewController {
     }
 
     public function getBottomGuide():Number {
-        if (toolbar != null && toolbar.includeInLayout) {
+        if (toolbar != null) {
             return toolbar.height;
         } else {
             return 0;
         }
-    }
-
-    private function resetToolbar(): void {
-        isToolbarHidden = true;
     }
 
     //--------------------------------------------------------------------------

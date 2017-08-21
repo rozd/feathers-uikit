@@ -66,7 +66,7 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    private var _barTintColor:uint = 0xCCCCCC;
+    private var _barTintColor:uint = 0xFFFFFF;
     public function get barTintColor(): uint {
         return _barTintColor;
     }
@@ -342,6 +342,7 @@ public class NavigationBar extends StackScreenNavigator {
     //------------------------------------
 
     public function resetAppearanceToDefault():void {
+        barTintColor = 0xFFFFFF;
         isTranslucent = false;
         isTransparent = false;
         titleStyleName = TITLE_STYLE_NAME;

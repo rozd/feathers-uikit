@@ -273,6 +273,8 @@ public class ViewController {
         if (presentedViewController == null) {
             if (presentingViewController != null) {
                 presentingViewController.dismiss(animated, completion);
+            } else {
+                setAsRootViewController(null);
             }
 
             return;

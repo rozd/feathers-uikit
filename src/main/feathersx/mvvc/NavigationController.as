@@ -14,6 +14,8 @@ import feathers.motion.Fade;
 
 import feathersx.motion.Slide;
 
+import skein.core.WeakReference;
+
 import starling.animation.Transitions;
 
 import starling.display.DisplayObject;
@@ -31,6 +33,20 @@ public class NavigationController extends ViewController {
     public function NavigationController(rootViewController:ViewController) {
         super();
         setViewControllers(new <ViewController>[rootViewController], false);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Delegate
+    //
+    //--------------------------------------------------------------------------
+
+    private var _delegate: WeakReference;
+    public function get delegate(): NavigationControllerDelegate {
+        return _delegate ? _delegate.value : null;
+    }
+    public function set delegate(value: NavigationControllerDelegate): void {
+        _delegate = new WeakReference(value);
     }
 
     //--------------------------------------------------------------------------
@@ -90,6 +106,10 @@ public class NavigationController extends ViewController {
 
         resetNavigationBar();
 
+        if (delegate) {
+            delegate.navigationControllerWillShow(this, vc, animated);
+        }
+        
         navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
 
         _navigationBar.pushItem(vc.navigationItem, animated);

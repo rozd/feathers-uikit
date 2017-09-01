@@ -31,6 +31,27 @@ public class NavigationItem {
 
     //--------------------------------------------------------------------------
     //
+    //  Delegate
+    //
+    //--------------------------------------------------------------------------
+
+    //------------------------------------
+    //  delegate
+    //------------------------------------
+
+    private var _callback: Function;
+    internal function setChangeCallback(callback: Function): void {
+        _callback = callback;
+    }
+
+    protected function notifyChange(): void {
+        if (_callback != null) {
+            _callback();
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Title
     //
     //--------------------------------------------------------------------------
@@ -40,7 +61,9 @@ public class NavigationItem {
         return _title;
     }
     public function set title(value: String): void {
+        if (value == _title) return;
         _title = value;
+        notifyChange();
     }
 
     private var _titleView: FeathersControl;

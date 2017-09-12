@@ -21,6 +21,8 @@ public class NavigationBar extends StackScreenNavigator {
 
     public static var PADDING:uint = 20;
 
+    public static const Height: uint = 60;
+
     //--------------------------------------------------------------------------
     //
     //  Constructor

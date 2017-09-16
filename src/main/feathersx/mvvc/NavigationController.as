@@ -67,7 +67,7 @@ public class NavigationController extends ViewController {
 
     protected function getPushTransition(animated:Boolean):Function {
         var onProgress:Function = function (progress:Number) {
-            trace("onProgress: " + progress);
+//            trace("onProgress: " + progress);
         };
         var onComplete:Function = function () {
             trace("onComplete");
@@ -78,7 +78,7 @@ public class NavigationController extends ViewController {
 
     protected function getPopTransition(animated:Boolean):Function {
         var onProgress:Function = function (progress:Number) {
-            trace("onProgress: " + progress);
+//            trace("onProgress: " + progress);
         };
         var onComplete:Function = function () {
             trace("onComplete");

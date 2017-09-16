@@ -139,7 +139,7 @@ public class ViewController {
         return null;
     }
 
-    private function loadViewIfRequired(): void {
+    protected function loadViewIfRequired(): void {
         if (_view == null) {
             viewWillLoad();
             _view = loadView();

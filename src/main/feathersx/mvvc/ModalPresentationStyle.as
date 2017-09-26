@@ -5,6 +5,7 @@ package feathersx.mvvc {
 public class ModalPresentationStyle {
 
     public static const fullScreen: ModalPresentationStyle = new ModalPresentationStyle();
+    public static const none: ModalPresentationStyle = new ModalPresentationStyle();
 
     public function ModalPresentationStyle() {
     }

@@ -4,6 +4,12 @@
 package feathersx.mvvc.examples.helloWorld {
 import feathers.data.ArrayCollection;
 
+import feathersx.mvvc.AlertAction;
+import feathersx.mvvc.AlertActionStyle;
+
+import feathersx.mvvc.AlertController;
+import feathersx.mvvc.AlertControllerStyle;
+
 import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.ViewController;
 import feathersx.mvvc.examples.helloWorld.view.AView;
@@ -30,6 +36,7 @@ public class AViewController extends ViewController {
         var aView:AView = this.view as AView;
         aView.pushScreenB1Button.addEventListener(Event.TRIGGERED, showB1View);
         aView.presentScreenDButton.addEventListener(Event.TRIGGERED, presentScreenD);
+        aView.showAlertButton.addEventListener(Event.TRIGGERED, showAlert);
     }
 
     override protected function viewWillLoad():void {
@@ -63,6 +70,17 @@ public class AViewController extends ViewController {
     public function presentScreenD(): void {
         var d:DNavigationController = new DNavigationController();
         present(d, true);
+    }
+
+    public function showAlert(): void {
+        var alert: AlertController = new AlertController("Title", "Hello World", AlertControllerStyle.alert);
+        alert.addAction(new AlertAction("OK", AlertActionStyle.normal, function (): void {
+            trace("OK");
+        }));
+        alert.addAction(new AlertAction("Cancel", AlertActionStyle.normal, function (): void {
+            trace("Cancel");
+        }));
+        present(alert, true);
     }
 }
 }

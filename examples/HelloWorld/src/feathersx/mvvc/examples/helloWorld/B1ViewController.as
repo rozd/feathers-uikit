@@ -64,7 +64,7 @@ public class B1ViewController extends ViewController {
 
     public function replaceWithScreenB2(): void {
         var b2:B2ViewController = new B2ViewController();
-        this.replaceWithViewController(b2);
+        this.replaceWithViewController(b2, true);
     }
 }
 }

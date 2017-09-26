@@ -208,12 +208,12 @@ public class ViewController {
     //  presentationStyle
     //-------------------------------------
 
-    private var _presentationStyle: ModalPresentationStyle = ModalPresentationStyle.fullScreen;
-    public function get presentationStyle(): ModalPresentationStyle {
-        return _presentationStyle;
+    protected var _modalPresentationStyle: ModalPresentationStyle = ModalPresentationStyle.fullScreen;
+    public function get modalPresentationStyle(): ModalPresentationStyle {
+        return _modalPresentationStyle;
     }
-    public function set presentationStyle(value: ModalPresentationStyle): void {
-        _presentationStyle = value;
+    public function set modalPresentationStyle(value: ModalPresentationStyle): void {
+        _modalPresentationStyle = value;
     }
 
     //-------------------------------------
@@ -259,7 +259,11 @@ public class ViewController {
     public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
         vc.setPresentingViewController(this);
         PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
-        PopUpManager.addPopUp(vc.view, vc.isModalInPopover);
+        if (vc is AlertController) {
+            PopUpManager.addPopUp(vc.view, vc.isModalInPopover, true);
+        } else {
+            PopUpManager.addPopUp(vc.view, vc.isModalInPopover);
+        }
         this.setPresentedViewController(vc);
         layoutPresentedViewController();
     }
@@ -301,7 +305,7 @@ public class ViewController {
         var stage:Stage = Starling.current.stage;
         var view:DisplayObject = presentedViewController.view;
 
-        switch (presentedViewController.presentationStyle) {
+        switch (presentedViewController.modalPresentationStyle) {
             case ModalPresentationStyle.fullScreen :
                 view.x = 0;
                 view.y = 0;

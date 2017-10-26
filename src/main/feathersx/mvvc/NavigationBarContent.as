@@ -9,6 +9,7 @@ import feathers.controls.StackScreenNavigatorItem;
 import feathers.core.FeathersControl;
 import feathers.data.IListCollection;
 import feathers.data.ListCollection;
+import feathers.layout.Direction;
 
 import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.NavigationBar;
@@ -60,10 +61,14 @@ internal class NavigationBarContent extends Screen {
         backgroundSkin = createBackground();
 
         leftButtonGroup = new ButtonGroup();
+        leftButtonGroup.direction = Direction.HORIZONTAL;
+        leftButtonGroup.gap = 16;
         leftButtonGroup.customButtonStyleName = NavigationBar.LEFT_ITEM_STYLE_NAME;
         addChild(leftButtonGroup);
 
         rightButtonGroup = new ButtonGroup();
+        rightButtonGroup.direction = Direction.HORIZONTAL;
+        rightButtonGroup.gap = 16;
         rightButtonGroup.customButtonStyleName = NavigationBar.RIGHT_ITEM_STYLE_NAME;
         addChild(rightButtonGroup);
 
@@ -112,7 +117,7 @@ internal class NavigationBarContent extends Screen {
         leftButtonGroup.y = (actualHeight - leftButtonGroup.height) / 2;
 
         rightButtonGroup.x = actualWidth - rightButtonGroup.width - padding;
-        rightButtonGroup.y = (actualHeight - rightButtonGroup.width) / 2;
+        rightButtonGroup.y = (actualHeight - rightButtonGroup.height) / 2;
 
         titleView.maxWidth = rightButtonGroup.x - (leftButtonGroup.x + leftButtonGroup.width);
         titleView.validate();

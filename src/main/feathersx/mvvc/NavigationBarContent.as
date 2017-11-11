@@ -60,16 +60,14 @@ internal class NavigationBarContent extends Screen {
 
         backgroundSkin = createBackground();
 
-        leftButtonGroup = new ButtonGroup();
-        leftButtonGroup.direction = Direction.HORIZONTAL;
-        leftButtonGroup.gap = 16;
-        leftButtonGroup.customButtonStyleName = NavigationBar.LEFT_ITEM_STYLE_NAME;
+        if (leftButtonGroup == null) {
+            leftButtonGroup = createLeftButtonGroup();
+        }
         addChild(leftButtonGroup);
 
-        rightButtonGroup = new ButtonGroup();
-        rightButtonGroup.direction = Direction.HORIZONTAL;
-        rightButtonGroup.gap = 16;
-        rightButtonGroup.customButtonStyleName = NavigationBar.RIGHT_ITEM_STYLE_NAME;
+        if (rightButtonGroup == null) {
+            rightButtonGroup = createRightButtonGroup();
+        }
         addChild(rightButtonGroup);
 
         if (titleView == null) {
@@ -191,6 +189,10 @@ internal class NavigationBarContent extends Screen {
         }
     }
 
+    //-------------------------------------
+    //  Back button
+    //-------------------------------------
+
     private function createBackButtonItem(): BarButtonItem {
         var navigationBar:NavigationBar = _owner as NavigationBar;
 
@@ -207,6 +209,20 @@ internal class NavigationBarContent extends Screen {
         };
 
         return backButtonItem;
+    }
+
+    //-------------------------------------
+    //  Left items
+    //-------------------------------------
+
+    private function createLeftButtonGroup(): ButtonGroup {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+
+        var group: ButtonGroup = new ButtonGroup();
+        group.direction = Direction.HORIZONTAL;
+        group.gap = 16;
+        group.customButtonStyleName = navigationBar.leftItemStyleName;
+        return group;
     }
 
     private function composeLeftItems(): IListCollection {
@@ -229,6 +245,19 @@ internal class NavigationBarContent extends Screen {
         }
 
         return new ListCollection(items);
+    }
+
+    //-------------------------------------
+    //  Right items
+    //-------------------------------------
+
+    private function createRightButtonGroup(): ButtonGroup {
+        var navigationBar:NavigationBar = _owner as NavigationBar;
+        var group: ButtonGroup = new ButtonGroup();
+        group.direction = Direction.HORIZONTAL;
+        group.gap = 16;
+        group.customButtonStyleName = navigationBar.rightItemStyleName;
+        return group;
     }
 
     private function composeRightItems(): IListCollection {

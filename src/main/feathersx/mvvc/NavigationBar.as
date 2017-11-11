@@ -334,6 +334,30 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     //------------------------------------
+    //  leftItemStyleName
+    //------------------------------------
+
+    private var _leftItemStyleName:String;
+    public function get leftItemStyleName(): String {
+        return _leftItemStyleName || LEFT_ITEM_STYLE_NAME;
+    }
+    public function set leftItemStyleName(value: String): void {
+        _leftItemStyleName = value;
+    }
+
+    //------------------------------------
+    //  rightItemStyleName
+    //------------------------------------
+
+    private var _rightItemStyleName:String;
+    public function get rightItemStyleName(): String {
+        return _rightItemStyleName || LEFT_ITEM_STYLE_NAME;
+    }
+    public function set rightItemStyleName(value: String): void {
+        _rightItemStyleName = value;
+    }
+
+    //------------------------------------
     //  Appearance methods
     //------------------------------------
 
@@ -342,6 +366,8 @@ public class NavigationBar extends StackScreenNavigator {
         isTranslucent = false;
         isTransparent = false;
         titleStyleName = TITLE_STYLE_NAME;
+        leftItemStyleName = LEFT_ITEM_STYLE_NAME;
+        rightItemStyleName = RIGHT_ITEM_STYLE_NAME;
         shadowColor = uint.MAX_VALUE;
         shadowOffset = null;
         shadowRadius = NaN;

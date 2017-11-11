@@ -5,10 +5,15 @@ package feathersx.mvvc {
 import avmplus.getQualifiedClassName;
 
 import feathers.controls.ScreenNavigator;
+import feathers.controls.Scroller;
 import feathers.core.PopUpManager;
 import feathers.events.FeathersEventType;
 import feathers.motion.Cover;
 import feathers.motion.Reveal;
+
+import feathersx.data.EdgeInsets;
+
+import flash.geom.Rectangle;
 
 import starling.core.Starling;
 
@@ -35,6 +40,8 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
+    // presentingViewController
+
     private var _presentingViewController: ViewController;
     public function get presentingViewController(): ViewController {
         if (_presentingViewController != null) {
@@ -49,12 +56,24 @@ public class ViewController {
         _presentingViewController = vc;
     }
 
+    // presentedViewController
+
     private var _presentedViewController: ViewController;
     public function get presentedViewController(): ViewController {
         return _presentedViewController;
     }
-    protected function setPresentedViewController(vc: ViewController) {
+    protected function setPresentedViewController(vc: ViewController): void {
         _presentedViewController = vc;
+    }
+
+    // automaticallyAdjustsScrollerPadding
+
+    private var _automaticallyAdjustsScrollerInsets: Boolean = true;
+    public function get automaticallyAdjustsScrollerInsets(): Boolean {
+        return _automaticallyAdjustsScrollerInsets;
+    }
+    public function set automaticallyAdjustsScrollerInsets(value: Boolean): void {
+        _automaticallyAdjustsScrollerInsets = value;
     }
 
     //--------------------------------------------------------------------------
@@ -67,7 +86,7 @@ public class ViewController {
     public function get navigationController(): NavigationController {
         return _navigationController;
     }
-    public function setNavigationController(nc:NavigationController) {
+    public function setNavigationController(nc:NavigationController): void {
         _navigationController = nc;
     }
 
@@ -112,17 +131,35 @@ public class ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Work Layout
+    //
+    //--------------------------------------------------------------------------
+
+    public function get safeArea(): EdgeInsets {
+        var top: int = navigationController ? navigationController.getTopGuide() : 0;
+        var bottom: int = navigationController ? navigationController.getBottomGuide() : 0;
+        return new EdgeInsets(top, 0, bottom, 0);
+    }
+
+    private var _additionalSafeAreaInsets: EdgeInsets;
+    public function get additionalSafeAreaInsets(): EdgeInsets {
+        return _additionalSafeAreaInsets;
+    }
+    public function set additionalSafeAreaInsets(value: EdgeInsets): void {
+        _additionalSafeAreaInsets = value;
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Work with View
     //
     //--------------------------------------------------------------------------
 
     protected var _view:DisplayObject;
-
     public function get view(): DisplayObject {
         loadViewIfRequired();
         return _view;
     }
-
     public function set view(value: DisplayObject): void {
         _view = value;
     }
@@ -143,9 +180,18 @@ public class ViewController {
         if (_view == null) {
             viewWillLoad();
             _view = loadView();
+            var topGuide: Number    = safeArea.top    + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.top    : 0);
+            var leftGuide: Number   = safeArea.left   + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.left   : 0);
+            var bottomGuide: Number = safeArea.bottom + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.bottom : 0);
+            var rightGuide: Number  = safeArea.right  + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.right  : 0);
             if (_view is View) {
-                View(_view).topGuide = navigationController ? navigationController.getTopGuide() : 0;
-                View(_view).bottomGuide = navigationController ? navigationController.getBottomGuide() : 0;
+                View(_view).topGuide = topGuide;
+                View(_view).bottomGuide = rightGuide;
+            } else if (_view is Scroller && _automaticallyAdjustsScrollerInsets) {
+                Scroller(_view).paddingTop    = topGuide;
+                Scroller(_view).paddingLeft   = leftGuide;
+                Scroller(_view).paddingBottom = bottomGuide;
+                Scroller(_view).paddingRight  = rightGuide;
             }
             viewDidLoad();
             _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
@@ -153,7 +199,6 @@ public class ViewController {
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
-                viewWillAppear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
@@ -165,6 +210,11 @@ public class ViewController {
             });
             _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
+            });
+            _view.addEventListener(Event.ADDED_TO_STAGE, function (event: Event):void {
+                viewWillAppear();
+            });
+            _view.addEventListener(Event.REMOVED_FROM_STAGE, function (event: Event): void {
                 viewDidDisappear();
             });
         }
@@ -260,7 +310,7 @@ public class ViewController {
         vc.setPresentingViewController(this);
         PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
         if (vc is AlertController) {
-            PopUpManager.addPopUp(vc.view, vc.isModalInPopover, true);
+            AlertController(vc).showAlertFromViewController(this);
         } else {
             PopUpManager.addPopUp(vc.view, vc.isModalInPopover);
         }
@@ -286,7 +336,9 @@ public class ViewController {
 
         presentedViewController.setPresentingViewController(null);
 
-        if (PopUpManager.isPopUp(presentedViewController.view)) {
+        if (presentedViewController is AlertController) {
+            AlertController(presentedViewController).hideAlertFromViewController(this);
+        } else if (PopUpManager.isPopUp(presentedViewController.view)) {
             PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
             PopUpManager.removePopUp(presentedViewController.view);
             presentedViewController.view.dispose();

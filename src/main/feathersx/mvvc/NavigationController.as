@@ -380,7 +380,7 @@ public class NavigationController extends ViewController {
     }
 
     public function getBottomGuide():Number {
-        if (toolbar != null) {
+        if (toolbar != null && !isToolbarHidden) {
             return toolbar.height;
         } else {
             return 0;

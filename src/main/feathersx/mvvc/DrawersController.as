@@ -67,6 +67,25 @@ public class DrawersController extends ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Navigation Controllers
+    //
+    //--------------------------------------------------------------------------
+
+    override public function setNavigationController(nc: NavigationController): void {
+        super.setNavigationController(nc);
+        if (_rootViewController) {
+            _rootViewController.setNavigationController(nc);
+        }
+        if (_leftViewController) {
+            _leftViewController.setNavigationController(nc);
+        }
+        if (_bottomViewController) {
+            _bottomViewController.setNavigationController(nc);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Work with View
     //
     //--------------------------------------------------------------------------

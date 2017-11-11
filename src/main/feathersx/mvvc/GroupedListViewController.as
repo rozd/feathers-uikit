@@ -40,9 +40,17 @@ public class GroupedListViewController extends ViewController {
         return new GroupedList();
     }
 
+    override protected function loadViewIfRequired(): void {
+        var isFirstCall: Boolean = !isViewLoaded;
+        super.loadViewIfRequired();
+        if (isFirstCall) {
+            listView.addEventListener(Event.CHANGE, listView_changeHandler);
+        }
+    }
+
     // Handlers
 
-    protected function list_changeHandler(event: Event): void {
+    protected function listView_changeHandler(event: Event): void {
         if (delegate) {
             if (listView.selectedItem) {
                 delegate.groupedListDidSelectRowAt(listView, listView.selectedGroupIndex, listView.selectedItemIndex, listView.selectedItem);

@@ -62,6 +62,16 @@ public class AlertController extends ViewController implements AlertViewDelegate
         return alert as DisplayObject;
     }
 
+    // Show / Hide Alert
+
+    public function showAlertFromViewController(vc: ViewController): void {
+        AlertView(view).show(isModalInPopover);
+    }
+
+    public function hideAlertFromViewController(vc: ViewController): void {
+        AlertView(view).hide();
+    }
+
     // Actions
 
     private var _actions: Vector.<AlertAction> = new <AlertAction>[];

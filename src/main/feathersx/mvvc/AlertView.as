@@ -11,5 +11,8 @@ public interface AlertView {
     function setMessage(message: String): void;
     function setActions(actions: Vector.<AlertAction>): void;
     function setDefaultAction(action: AlertAction): void;
+
+    function show(modal: Boolean): void;
+    function hide(): void;
 }
 }

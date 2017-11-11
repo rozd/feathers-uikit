@@ -3,6 +3,7 @@
  */
 package feathersx.mvvc {
 import feathers.controls.Alert;
+import feathers.core.PopUpManager;
 import feathers.data.ArrayCollection;
 import feathers.data.VectorCollection;
 
@@ -48,6 +49,9 @@ public class FeathersAlertView extends Alert implements AlertView {
 
     public function setActions(actions: Vector.<AlertAction>): void {
         var buttons: Array = [];
+        if (actions.length == 1) {
+            _defaultAction = actions[0];
+        }
         for (var i:uint = 0, n:uint = actions ? actions.length : 0; i < n; i++) {
             buttons[buttons.length] = {
                 action    : actions[i],
@@ -76,27 +80,6 @@ public class FeathersAlertView extends Alert implements AlertView {
             }
         }
         this.buttonsDataProvider = new ArrayCollection(buttons);
-//        for (var i:uint = 0, n:uint = actions ? actions.length : 0; i < n; i++) {
-//            if (i == 0) {
-//                if (actions[i] == _defaultAction) {
-//                    buttonGroupProperties.customFirstButtonStyleName = BUTTON_DEFAULT;
-//                } else {
-//                    buttonGroupProperties.customFirstButtonStyleName = STYLE_NAMES[actions[i].style];
-//                }
-//            } else if (i == (n - 1)) {
-//                if (actions[i] == _defaultAction) {
-//                    buttonGroupProperties.customLastButtonStyleName = BUTTON_DEFAULT;
-//                } else {
-//                    buttonGroupProperties.customLastButtonStyleName = STYLE_NAMES[actions[i].style];
-//                }
-//            } else {
-//                if (actions[i] == _defaultAction) {
-//                    buttonGroupProperties.customButtonStyleName = BUTTON_DEFAULT;
-//                } else {
-//                    buttonGroupProperties.customButtonStyleName = STYLE_NAMES[actions[i].style];
-//                }
-//            }
-//        }
     }
 
     private var _defaultAction: AlertAction;
@@ -108,6 +91,14 @@ public class FeathersAlertView extends Alert implements AlertView {
         if (delegate) {
             delegate.alertViewDidCloseWithAction(this, button.action as AlertAction);
         }
+    }
+
+    public function show(modal: Boolean): void {
+        PopUpManager.addPopUp(this, modal, true, Alert.overlayFactory);
+    }
+
+    public function hide(): void {
+        PopUpManager.removePopUp(this);
     }
 }
 }

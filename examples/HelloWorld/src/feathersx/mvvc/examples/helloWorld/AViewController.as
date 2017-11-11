@@ -74,6 +74,7 @@ public class AViewController extends ViewController {
 
     public function showAlert(): void {
         var alert: AlertController = new AlertController("Title", "Hello World", AlertControllerStyle.alert);
+        alert.isModalInPopover = true;
         alert.addAction(new AlertAction("OK", AlertActionStyle.normal, function (): void {
             trace("OK");
         }));

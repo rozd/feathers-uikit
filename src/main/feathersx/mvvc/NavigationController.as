@@ -122,7 +122,7 @@ public class NavigationController extends ViewController {
 
     public function popViewController(animated:Boolean):ViewController {
 
-        var navigator:StackScreenNavigator = this._navigator as StackScreenNavigator;
+        var navigator:StackScreenNavigator = _navigator as StackScreenNavigator;
         var transition:Function = getPopTransition(animated);
         var view:DisplayObject = navigator.popScreen(transition);
 

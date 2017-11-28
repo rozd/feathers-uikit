@@ -5,8 +5,6 @@
 package feathersx.mvvc {
 import feathers.controls.GroupedList;
 
-import skein.core.WeakReference;
-
 import starling.display.DisplayObject;
 import starling.events.Event;
 
@@ -16,16 +14,6 @@ public class GroupedListViewController extends ViewController {
 
     public function GroupedListViewController() {
         super();
-    }
-
-    // Delegate
-
-    private var _delegate: WeakReference;
-    public function get delegate(): GroupedListDelegate {
-        return _delegate ? _delegate.value : null;
-    }
-    public function set delegate(value: GroupedListDelegate): void {
-        _delegate = new WeakReference(value);
     }
 
     // GroupedList
@@ -48,15 +36,23 @@ public class GroupedListViewController extends ViewController {
         }
     }
 
+    // Grouped List abstract methods
+
+    protected function didSelectRowAt(groupIndex: int, itemIndex: int, item: Object): void {
+
+    }
+
+    protected function didDeselectRowAt(groupIndex: int, itemIndex: int): void {
+
+    }
+
     // Handlers
 
     protected function listView_changeHandler(event: Event): void {
-        if (delegate) {
-            if (listView.selectedItem) {
-                delegate.groupedListDidSelectRowAt(listView, listView.selectedGroupIndex, listView.selectedItemIndex, listView.selectedItem);
-            } else {
-                delegate.groupedListDidDeselectRowAt(listView, listView.selectedGroupIndex, listView.selectedItemIndex);
-            }
+        if (listView.selectedItem) {
+            didSelectRowAt(listView.selectedGroupIndex, listView.selectedItemIndex, listView.selectedItem);
+        } else {
+            didDeselectRowAt(listView.selectedGroupIndex, listView.selectedItemIndex);
         }
     }
 }

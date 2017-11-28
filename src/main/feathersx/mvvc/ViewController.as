@@ -312,7 +312,9 @@ public class ViewController {
         if (vc is AlertController) {
             AlertController(vc).showAlertFromViewController(this);
         } else {
-            PopUpManager.addPopUp(vc.view, vc.isModalInPopover);
+            vc.view.width = view.stage.stageWidth;
+            vc.view.height = view.stage.stageHeight;
+            PopUpManager.addPopUp(vc.view, vc.isModalInPopover, false);
         }
         this.setPresentedViewController(vc);
         layoutPresentedViewController();
@@ -365,6 +367,54 @@ public class ViewController {
                 view.height = stage.stageHeight;
                 break;
         }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Work with Child view controllers
+    //
+    //--------------------------------------------------------------------------
+
+    private var _isMovingFromParentViewController: Boolean = false;
+    public function get isMovingFromParentViewController(): Boolean {
+        return _isMovingFromParentViewController;
+    }
+    private var _isMovingToParentViewController: Boolean = false;
+    public function get isMovingToParentViewController(): Boolean {
+        return _isMovingToParentViewController;
+    }
+
+    private var _parent: ViewController;
+    public function get parent(): ViewController {
+        return _parent;
+    }
+
+    protected var _childViewControllers: Vector.<ViewController> = new <ViewController>[];
+    public function get childViewControllers(): Vector.<ViewController> {
+        return _childViewControllers;
+    }
+
+    public function addChildViewController(vc: ViewController): void {
+        vc.willMoveToParentViewController(this);
+        _childViewControllers.push(vc);
+        vc.didMoveToParentViewController(this);
+    }
+
+    public function removeFromParentViewController(): void {
+        _isMovingFromParentViewController = true;
+        _parent._childViewControllers.removeAt(_parent._childViewControllers.indexOf(this));
+        _parent = null;
+        _isMovingFromParentViewController = false;
+    }
+
+    protected function willMoveToParentViewController(parent: ViewController): void {
+        _parent = parent;
+        _isMovingToParentViewController = true;
+    }
+
+    protected function didMoveToParentViewController(parent: ViewController): void {
+        _parent = parent;
+        _isMovingToParentViewController = false;
     }
 
     //--------------------------------------------------------------------------

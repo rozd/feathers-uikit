@@ -10,6 +10,8 @@ import feathers.data.IListCollection;
 import feathersx.mvvc.ViewController;
 import feathersx.mvvc.events.ListEventType;
 
+import skein.core.WeakReference;
+
 import starling.display.DisplayObject;
 
 public class List extends feathers.controls.List {
@@ -18,6 +20,16 @@ public class List extends feathers.controls.List {
 
     public function List() {
         super();
+    }
+
+    // Delegate
+
+    private var _delegate: WeakReference;
+    public function get delegate(): ListDelegate {
+        return _delegate ? _delegate.value : null;
+    }
+    public function set delegate(value: ListDelegate): void {
+        _delegate = new WeakReference(value);
     }
 
     // Overridden properties
@@ -34,7 +46,9 @@ public class List extends feathers.controls.List {
 
         function createItemRendererFactory(vc: ViewController): Function {
             return function (): DisplayObject {
-                dispatchEventWith(ListEventType.VIEW_CONTROLLER_WILL_LOAD_VIEW, false, vc);
+                if (delegate) {
+                    delegate.listViewControllerWillLoadView(vc);
+                }
                 return vc.view;
             }
         }

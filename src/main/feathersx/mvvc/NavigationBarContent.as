@@ -138,6 +138,9 @@ internal class NavigationBarContent extends Screen {
             // TODO implement
         } else {
             if (navigationBar.shadowColor != uint.MAX_VALUE) {
+                if (skin.filter) {
+                    skin.filter.dispose();
+                }
                 skin.filter = createDropShadow();
             }
         }

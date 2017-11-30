@@ -85,6 +85,9 @@ public class Toolbar extends FeathersControl {
                 backgroundQuad.visible = true;
                 backgroundQuad.color = _barTintColor;
                 if (shadowColor != uint.MAX_VALUE) {
+                    if (backgroundQuad.filter) {
+                        backgroundQuad.filter.dispose();
+                    }
                     backgroundQuad.filter = createDropShadow();
                 }
             }

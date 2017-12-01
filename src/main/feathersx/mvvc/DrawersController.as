@@ -42,6 +42,18 @@ public class DrawersController extends ViewController {
     }
 
     //-------------------------------------
+    //  topViewController
+    //-------------------------------------
+
+    private var _topViewController: ViewController;
+    public function get topViewController(): ViewController {
+        return _topViewController;
+    }
+    public function set topViewController(value: ViewController): void {
+        _topViewController = value;
+    }
+
+    //-------------------------------------
     //  leftViewController
     //-------------------------------------
 
@@ -65,6 +77,18 @@ public class DrawersController extends ViewController {
         _bottomViewController = value;
     }
 
+    //-------------------------------------
+    //  rightViewController
+    //-------------------------------------
+
+    private var _rightViewController: ViewController;
+    public function get rightViewController(): ViewController {
+        return _rightViewController;
+    }
+    public function set rightViewController(value: ViewController): void {
+        _rightViewController = value;
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Navigation Controllers
@@ -76,11 +100,17 @@ public class DrawersController extends ViewController {
         if (_rootViewController) {
             _rootViewController.setNavigationController(nc);
         }
+        if (_topViewController) {
+            _topViewController.setNavigationController(nc);
+        }
         if (_leftViewController) {
             _leftViewController.setNavigationController(nc);
         }
         if (_bottomViewController) {
             _bottomViewController.setNavigationController(nc);
+        }
+        if (_rightViewController) {
+            _rootViewController.setNavigationController(nc);
         }
     }
 
@@ -210,6 +240,31 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
+    public function isTopViewControllerShown(): Boolean {
+        return drawers.isTopDrawerOpen;
+    }
+    public function showTopViewController(animated: Boolean): void {
+        if (!drawers.isTopDrawerOpen) {
+            if (animated) {
+                drawers.toggleTopDrawer();
+            } else {
+                drawers.isTopDrawerOpen = true;
+            }
+        }
+    }
+    public function hideTopViewController(animated: Boolean): void {
+        if (drawers.isTopDrawerOpen) {
+            if (animated) {
+                drawers.toggleTopDrawer()
+            } else {
+                drawers.isTopDrawerOpen = false;
+            }
+        }
+    }
+
+    public function isLeftViewControllerShown(): Boolean {
+        return drawers.isLeftDrawerOpen;
+    }
     public function showLeftViewController(animated: Boolean): void {
         if (!drawers.isLeftDrawerOpen) {
             if (animated) {
@@ -219,7 +274,6 @@ public class DrawersController extends ViewController {
             }
         }
     }
-
     public function hideLeftViewController(animated: Boolean): void {
         if (drawers.isLeftDrawerOpen) {
             if (animated) {
@@ -230,6 +284,9 @@ public class DrawersController extends ViewController {
         }
     }
 
+    public function isBottomViewControllerShown(): Boolean {
+        return drawers.isBottomDrawerOpen;
+    }
     public function showBottomViewController(animated: Boolean): void {
         if (!drawers.isBottomDrawerOpen) {
             if (animated) {
@@ -245,6 +302,28 @@ public class DrawersController extends ViewController {
                 drawers.toggleBottomDrawer()
             } else {
                 drawers.isBottomDrawerOpen = false;
+            }
+        }
+    }
+
+    public function isRightViewControllerShown(): Boolean {
+        return drawers.isRightDrawerDocked;
+    }
+    public function showRightViewController(animated: Boolean): void {
+        if (!drawers.isRightDrawerOpen) {
+            if (animated) {
+                drawers.toggleRightDrawer()
+            } else {
+                drawers.isRightDrawerOpen = true;
+            }
+        }
+    }
+    public function hideRightViewController(animated: Boolean): void {
+        if (drawers.isRightDrawerOpen) {
+            if (animated) {
+                drawers.toggleRightDrawer()
+            } else {
+                drawers.isRightDrawerOpen = false;
             }
         }
     }

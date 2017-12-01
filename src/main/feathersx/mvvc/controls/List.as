@@ -2,13 +2,10 @@
  * Created by max.rozdobudko@gmail.com on 11/28/17.
  */
 package feathersx.mvvc.controls {
-import avmplus.getQualifiedClassName;
-
 import feathers.controls.List;
 import feathers.data.IListCollection;
 
 import feathersx.mvvc.ViewController;
-import feathersx.mvvc.events.ListEventType;
 
 import skein.core.WeakReference;
 

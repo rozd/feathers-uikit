@@ -27,11 +27,49 @@ public class ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Static methods
+    //
+    //--------------------------------------------------------------------------
+
+    public static function topmostViewController(vc: ViewController): ViewController {
+        if (vc == null) {
+            return null;
+        }
+
+        function findTopmostViewControllerRecursively(vc: ViewController): ViewController {
+            if (vc.presentedViewController) {
+                return findTopmostViewControllerRecursively(vc.presentedViewController);
+            } else if (vc is NavigationController) {
+                return findTopmostViewControllerRecursively(NavigationController(vc).topViewController);
+            } else if (vc is DrawersController) {
+                var drawersController: DrawersController = vc as DrawersController;
+                if (drawersController.isTopViewControllerShown()) {
+                    return findTopmostViewControllerRecursively(drawersController.topViewController);
+                } else if (drawersController.isLeftViewControllerShown()) {
+                    return findTopmostViewControllerRecursively(drawersController.leftViewController);
+                } else if (drawersController.isBottomViewControllerShown()) {
+                    return findTopmostViewControllerRecursively(drawersController.bottomViewController);
+                } else if (drawersController.isRightViewControllerShown()) {
+                    return findTopmostViewControllerRecursively(drawersController.rightViewController);
+                } else {
+                    return findTopmostViewControllerRecursively(drawersController.rootViewController);
+                }
+            } else {
+                return vc;
+            }
+        }
+
+        return findTopmostViewControllerRecursively(vc);
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Constructor
     //
     //--------------------------------------------------------------------------
 
     public function ViewController() {
+        super();
     }
 
     //--------------------------------------------------------------------------
@@ -450,12 +488,12 @@ public class ViewController {
     //  Work with Root
     //------------------------------------
 
-    protected var _root:DisplayObjectContainer;
+    protected var _root: DisplayObjectContainer;
     public function get root(): DisplayObjectContainer {
         return _root;
     }
 
-    public function setAsRootViewController(root:DisplayObjectContainer):void {
+    public function setAsRootViewController(root: DisplayObjectContainer):void {
         if (_root != null) {
             _root.removeChild(_navigator);
         }

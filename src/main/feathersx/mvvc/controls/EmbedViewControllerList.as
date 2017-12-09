@@ -11,21 +11,21 @@ import skein.core.WeakReference;
 
 import starling.display.DisplayObject;
 
-public class List extends feathers.controls.List {
+public class EmbedViewControllerList extends feathers.controls.List {
 
     // Constructor
 
-    public function List() {
+    public function EmbedViewControllerList() {
         super();
     }
 
     // Delegate
 
     private var _delegate: WeakReference;
-    public function get delegate(): ListDelegate {
+    public function get delegate(): EmbedViewControllerListDelegate {
         return _delegate ? _delegate.value : null;
     }
-    public function set delegate(value: ListDelegate): void {
+    public function set delegate(value: EmbedViewControllerListDelegate): void {
         _delegate = new WeakReference(value);
     }
 

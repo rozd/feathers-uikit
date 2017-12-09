@@ -4,7 +4,7 @@
 package feathersx.mvvc.controls {
 import feathersx.mvvc.ViewController;
 
-public interface ListDelegate {
+public interface EmbedViewControllerListDelegate {
     function listViewControllerWillLoadView(vc: ViewController): void;
 }
 }

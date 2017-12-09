@@ -37,7 +37,7 @@ public class ViewController {
         }
 
         function findTopmostViewControllerRecursively(vc: ViewController): ViewController {
-            if (vc.presentedViewController) {
+            if (vc.presentedViewController && !(vc.presentedViewController is AlertController)) {
                 return findTopmostViewControllerRecursively(vc.presentedViewController);
             } else if (vc is NavigationController) {
                 return findTopmostViewControllerRecursively(NavigationController(vc).topViewController);

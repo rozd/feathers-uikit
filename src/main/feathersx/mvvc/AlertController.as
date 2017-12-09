@@ -59,6 +59,8 @@ public class AlertController extends ViewController implements AlertViewDelegate
         alert.setTitle(_title);
         alert.setMessage(_message);
         alert.setActions(_actions);
+        alert.setPreferredStyle(_preferredStyle);
+        alert.setDefaultAction(_preferredAction);
         return alert as DisplayObject;
     }
 

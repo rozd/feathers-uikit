@@ -14,5 +14,7 @@ public interface AlertView {
 
     function show(modal: Boolean): void;
     function hide(): void;
+
+    function setPreferredStyle(preferredStyle: AlertControllerStyle): void;
 }
 }

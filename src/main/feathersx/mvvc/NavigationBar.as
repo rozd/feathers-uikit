@@ -2,9 +2,12 @@
  * Created by max.rozdobudko@gmail.com on 7/29/17.
  */
 package feathersx.mvvc {
+import feathers.controls.Button;
 import feathers.controls.StackScreenNavigator;
 import feathers.events.FeathersEventType;
 import feathers.motion.Fade;
+
+import feathersx.core.feathers_mvvc;
 
 import feathersx.motion.Slide;
 
@@ -76,22 +79,30 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    protected function getPushTransition(animated:Boolean):Function {
+    protected function getPushTransition(animated:Boolean): Function {
         var onProgress:Function = function (progress:Number) {
         };
         var onComplete:Function = function () {
         };
 
-        return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        if (animated) {
+            return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        } else {
+            return null;
+        }
     }
 
-    protected function getPopTransition(animated:Boolean):Function {
+    protected function getPopTransition(animated:Boolean): Function {
         var onProgress:Function = function (progress:Number) {
         };
         var onComplete:Function = function () {
         };
 
-        return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        if (animated) {
+            return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        } else {
+            return null;
+        }
     }
 
     private function getReplaceTransition(animated: Boolean): Function {
@@ -372,6 +383,46 @@ public class NavigationBar extends StackScreenNavigator {
         shadowOffset = null;
         shadowRadius = NaN;
         shadowAlpha = NaN;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Protected API
+    //
+    //--------------------------------------------------------------------------
+
+    feathers_mvvc function getRightButtonAtIndex(index: int): Button {
+        var content: NavigationBarContent = activeScreen as NavigationBarContent;
+        if (content == null) {
+            return null;
+        }
+
+        if (content.rightButtonGroup.numChildren == 0) {
+            return null;
+        }
+
+        if (content.rightButtonGroup.numChildren < index) {
+            return null;
+        }
+
+        return content.rightButtonGroup.getChildAt(index) as Button;
+    }
+
+    feathers_mvvc function getLeftButtonAtIndex(index: int): Button {
+        var content: NavigationBarContent = activeScreen as NavigationBarContent;
+        if (content == null) {
+            return null;
+        }
+
+        if (content.leftButtonGroup.numChildren == 0) {
+            return null;
+        }
+
+        if (content.leftButtonGroup.numChildren < index) {
+            return null;
+        }
+
+        return content.leftButtonGroup.getChildAt(index) as Button;
     }
 }
 }

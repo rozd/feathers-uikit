@@ -65,7 +65,7 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    protected function getPushTransition(animated:Boolean):Function {
+    protected function getPushTransition(animated:Boolean): Function {
         var onProgress:Function = function (progress:Number) {
 //            trace("onProgress: " + progress);
         };
@@ -73,10 +73,14 @@ public class NavigationController extends ViewController {
             trace("onComplete");
         };
 
-        return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        if (animated) {
+            return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        } else {
+            return null;
+        }
     }
 
-    protected function getPopTransition(animated:Boolean):Function {
+    protected function getPopTransition(animated:Boolean): Function {
         var onProgress:Function = function (progress:Number) {
 //            trace("onProgress: " + progress);
         };
@@ -84,7 +88,11 @@ public class NavigationController extends ViewController {
             trace("onComplete");
         };
 
-        return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        if (animated) {
+            return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+        } else {
+            return null;
+        }
     }
 
     private function getReplaceTransition(animated: Boolean): Function {

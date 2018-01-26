@@ -70,7 +70,7 @@ public class NavigationController extends ViewController {
 //            trace("onProgress: " + progress);
         };
         var onComplete:Function = function () {
-            trace("onComplete");
+//            trace("onComplete");
         };
 
         if (animated) {
@@ -85,7 +85,7 @@ public class NavigationController extends ViewController {
 //            trace("onProgress: " + progress);
         };
         var onComplete:Function = function () {
-            trace("onComplete");
+//            trace("onComplete");
         };
 
         if (animated) {

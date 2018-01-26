@@ -15,6 +15,10 @@ import feathersx.data.EdgeInsets;
 
 import flash.geom.Rectangle;
 
+import skein.logger.Log;
+
+import skein.utils.StringUtil;
+
 import starling.core.Starling;
 
 import starling.display.DisplayObject;
@@ -70,6 +74,7 @@ public class ViewController {
 
     public function ViewController() {
         super();
+        Log.w("feathers-mvvm", this);
     }
 
     //--------------------------------------------------------------------------
@@ -345,6 +350,11 @@ public class ViewController {
     //-------------------------------------
 
     public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
+        if (presentedViewController != null) {
+            Log.w("feathers-mvvm", StringUtil.substitute("Warning: Attempt to present {0} on {1} which is already presenting {2}", vc, this, presentedViewController));
+            return;
+        }
+
         vc.setPresentingViewController(this);
         PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
         if (vc is AlertController) {

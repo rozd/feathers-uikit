@@ -74,7 +74,6 @@ public class ViewController {
 
     public function ViewController() {
         super();
-        Log.w("feathers-mvvm", this);
     }
 
     //--------------------------------------------------------------------------

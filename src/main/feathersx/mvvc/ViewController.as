@@ -74,6 +74,7 @@ public class ViewController {
 
     public function ViewController() {
         super();
+        trace(this);
     }
 
     //--------------------------------------------------------------------------
@@ -484,7 +485,7 @@ public class ViewController {
         return getQualifiedClassName(this);
     }
 
-    private var _navigator:ScreenNavigator;
+    private var _navigator: ScreenNavigator;
     private function get navigator(): ScreenNavigator {
         if (presentingViewController) {
             return presentingViewController.navigator;
@@ -504,11 +505,18 @@ public class ViewController {
 
     public function setAsRootViewController(root: DisplayObjectContainer):void {
         if (_root != null) {
-            _root.removeChild(_navigator);
+            cleanRootView();
         }
         _root = root;
         if (_root != null) {
             setupRootView();
+        }
+    }
+
+    protected function cleanRootView(): void {
+        if (_root != null) {
+            _root.removeChild(_navigator);
+            _navigator = null;
         }
     }
 
@@ -520,6 +528,15 @@ public class ViewController {
         _root.addChild(_navigator);
         _navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
         _navigator.showScreen(this.identifier);
+    }
+
+    public function dispose(): void {
+        if (isViewLoaded) {
+            this.view.dispose();
+        }
+        if (_navigator) {
+            _navigator.dispose();
+        }
     }
 
     //--------------------------------------------------------------------------

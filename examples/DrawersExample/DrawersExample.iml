@@ -5,13 +5,13 @@
       <configuration name="fmvvc-drawers-example" target-platform="Mobile" main-class="DrawersExample" output-file="DrawersExample.swf" output-folder="$MODULE_DIR$/../../../../potbotics/cannidose/out/production/DrawersExample">
         <dependencies target-player="26.0">
           <entries>
-            <entry library-name="feathers-sdk-frameworks-libs" library-level="application">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="MetalWorksMobileTheme" build-configuration-name="feathers-metal-works-mobile-theme">
-              <dependency linkage="Merged" />
-            </entry>
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="421c01ab-9436-440e-8382-b92bf3e280d7">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="f514d8c8-597f-4d5e-90c3-8b980bf6e0d7">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -22,7 +22,9 @@
         </compiler-options>
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample" />
-        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample" />
+        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample">
+          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
+        </packaging-ios>
       </configuration>
     </configurations>
     <compiler-options />
@@ -36,5 +38,26 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="feathers-sdk-frameworks-libs" level="application" />
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="421c01ab-9436-440e-8382-b92bf3e280d7" />
+        <CLASSES>
+          <root url="file://$USER_HOME$/sdks/feathers/3.3.1/frameworks/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.3.1/frameworks/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="f514d8c8-597f-4d5e-90c3-8b980bf6e0d7" />
+        <CLASSES>
+          <root url="jar://$USER_HOME$/sdks/feathers/3.3.1/frameworks/themes/MetalWorksMobileTheme/MetalWorksMobileTheme.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

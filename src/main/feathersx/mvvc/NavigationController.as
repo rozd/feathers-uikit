@@ -401,6 +401,12 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
+    override protected function cleanRootView(): void {
+        if (_root != null) {
+            _root.removeChild(this.view);
+        }
+    }
+
     override protected function setupRootView(): void {
         if (_root == null) {
             throw new Error("[mvvc] root must be set.");

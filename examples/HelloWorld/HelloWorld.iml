@@ -11,10 +11,10 @@
             <entry library-id="a0ddd04f-eb02-4103-98f6-a682bd4e7507">
               <dependency linkage="Merged" />
             </entry>
-            <entry module-name="MetalWorksMobileTheme" build-configuration-name="feathers-metal-works-mobile-theme">
+            <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
               <dependency linkage="Merged" />
             </entry>
-            <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
+            <entry library-id="d346c702-efa9-4c67-921e-a6251ce72a2b">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -25,7 +25,9 @@
         </compiler-options>
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld" />
-        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld" />
+        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld">
+          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
+        </packaging-ios>
       </configuration>
     </configurations>
     <compiler-options />
@@ -60,5 +62,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="d346c702-efa9-4c67-921e-a6251ce72a2b" />
+        <CLASSES>
+          <root url="jar://$USER_HOME$/sdks/feathers/3.3.1/frameworks/themes/MetalWorksMobileTheme/MetalWorksMobileTheme.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

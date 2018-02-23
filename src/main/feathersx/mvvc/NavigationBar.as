@@ -139,30 +139,42 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function replaceWithNavigationItem(item: NavigationItem, animated: Boolean, completion: Function = null): void {
         addScreenWithNavigationItem(item);
+
+        function transitionStartHandler(event: Event): void {
+            removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            addEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
+        }
+
+        function transitionCompleteHandler(event: Event): void {
+            removeEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
+            if (completion != null) {
+                completion();
+            }
+        }
+
+        addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+
         replaceScreen(item.identifier, getReplaceTransition(animated));
-        addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
-            removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
-            if (completion != null) {
-                completion();
-            }
-        });
-        addEventListener(FeathersEventType.TRANSITION_CANCEL, function (event:Event):void {
-            removeEventListener(FeathersEventType.TRANSITION_CANCEL, arguments.callee);
-            if (completion != null) {
-                completion();
-            }
-        });
     }
 
     protected function setRootNavigationItem(item: NavigationItem, completion: Function = null): void {
         addScreenWithNavigationItem(item);
-        rootScreenID = item.identifier;
-        addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
-            removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
+
+        function transitionStartHandler(event: Event): void {
+            removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            addEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
+        }
+
+        function transitionCompleteHandler(event: Event): void {
+            removeEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
             if (completion != null) {
                 completion();
             }
-        });
+        }
+
+        addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+
+        rootScreenID = item.identifier;
     }
 
     public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {

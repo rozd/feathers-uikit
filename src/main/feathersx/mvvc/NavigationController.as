@@ -96,7 +96,11 @@ public class NavigationController extends ViewController {
     }
 
     private function getReplaceTransition(animated: Boolean): Function {
-        return Fade.createFadeInTransition();
+        if (animated) {
+            return Fade.createFadeInTransition();
+        } else {
+            return null;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -154,19 +158,29 @@ public class NavigationController extends ViewController {
 
     override public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
         navigatorAddScreenWithViewController(vc);
-        navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
-        navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function (event:Event):void {
-            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
+
+        function transitionStartHandler(event: Event): void {
+            navigator.removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+
+            navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
+
+            _toolbar.setItems(vc.toolbarItems, true);
+        }
+
+        function transitionCompleteHandler(event: Event): void {
+            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
+
             if (completion != null) {
                 completion();
             }
-        });
-        _toolbar.setItems(vc.toolbarItems, true);
+        }
+
+        navigator.addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+        navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
     }
 
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
         navigatorAddScreenWithViewController(vc);
-        navigator.rootScreenID = vc.identifier;
         navigator.addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
             if (completion != null) {
@@ -174,6 +188,7 @@ public class NavigationController extends ViewController {
             }
             _toolbar.setItems(vc.toolbarItems, true);
         });
+        navigator.rootScreenID = vc.identifier;
     }
 
     //--------------------------------------------------------------------------
@@ -208,7 +223,7 @@ public class NavigationController extends ViewController {
                     setRootViewController(newRootViewController);
                 } else {
                     var newTopViewController: ViewController = viewControllers[viewControllers.length - 1];
-                    replaceWithViewController(newTopViewController, animated, function () {
+                    replaceWithViewController(newTopViewController, animated, function(): void {
                         setViewControllersInternal(viewControllers);
                     });
                     delaySettingViewControllers = true;

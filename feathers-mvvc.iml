@@ -14,10 +14,7 @@
             <entry module-name="skein-logger" build-configuration-name="skein-logger">
               <dependency linkage="Merged" />
             </entry>
-            <entry module-name="starling" build-configuration-name="starling">
-              <dependency linkage="External" />
-            </entry>
-            <entry module-name="feathers" build-configuration-name="feathers">
+            <entry library-id="ddbecb6f-ea79-4f2f-8a91-f32618055400">
               <dependency linkage="External" />
             </entry>
           </entries>
@@ -41,7 +38,16 @@
     <orderEntry type="module" module-name="skein-utils" exported="" />
     <orderEntry type="module" module-name="skein-core" exported="" />
     <orderEntry type="module" module-name="skein-logger" exported="" />
-    <orderEntry type="module" module-name="starling" exported="" />
-    <orderEntry type="module" module-name="feathers" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="ddbecb6f-ea79-4f2f-8a91-f32618055400" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

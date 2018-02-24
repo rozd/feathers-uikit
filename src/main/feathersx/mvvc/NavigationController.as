@@ -262,33 +262,34 @@ public class NavigationController extends ViewController {
         retainViewControllers(_viewControllers);
     }
 
-    private function navigatorAddScreenWithViewController(vc: ViewController): void {
-        if (navigator.hasScreen(vc.identifier)) {
-            navigator.removeScreen(vc.identifier);
-        }
-        navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
-        vc.setNavigationController(this);
-    }
-
-    private function navigatorRemoveScreenWithViewController(vc: ViewController): void {
-        if (navigator.hasScreen(vc.identifier)) {
-            navigator.removeScreen(vc.identifier);
-        }
-        vc.setNavigationController(null);
-    }
-
-    private function retainViewControllers(viewControllers: Vector.<ViewController>):void {
+    protected function retainViewControllers(viewControllers: Vector.<ViewController>):void {
         for each (var vc:ViewController in viewControllers) {
             var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
             item.retain();
         }
     }
 
-    private function releaseViewControllers(viewControllers: Vector.<ViewController>):void {
+    protected function releaseViewControllers(viewControllers: Vector.<ViewController>):void {
         for each (var vc:ViewController in viewControllers) {
             var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
             item.release();
         }
+    }
+
+    // StackScreenNavigator utils
+
+    protected function navigatorAddScreenWithViewController(vc: ViewController): void {
+        if (!navigator.hasScreen(vc.identifier)) {
+            navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
+        }
+        vc.setNavigationController(this);
+    }
+
+    protected function navigatorRemoveScreenWithViewController(vc: ViewController): void {
+        if (navigator.hasScreen(vc.identifier)) {
+            navigator.removeScreen(vc.identifier);
+        }
+        vc.setNavigationController(null);
     }
 
     //--------------------------------------------------------------------------

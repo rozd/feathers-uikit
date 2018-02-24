@@ -14,6 +14,7 @@ import feathersx.motion.Slide;
 import flash.geom.Point;
 
 import starling.animation.Transitions;
+import starling.display.DisplayObject;
 import starling.events.Event;
 
 public class NavigationBar extends StackScreenNavigator {
@@ -241,12 +242,11 @@ public class NavigationBar extends StackScreenNavigator {
     //--------------------------------------------------------------------------
 
     private function addScreenWithNavigationItem(item: NavigationItem): void {
-        if (hasScreen(item.identifier)) {
-            removeScreen(item.identifier);
+        if (!hasScreen(item.identifier)) {
+            addScreen(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
+                return createNavigationBarContentFor(item);
+            }));
         }
-        addScreen(item.identifier, new NavigationBarStackScreenNavigatorItem(function(){
-            return createNavigationBarContentFor(item);
-        }));
     }
 
     private function removeScreenWithNavigationItem(item: NavigationItem): void {

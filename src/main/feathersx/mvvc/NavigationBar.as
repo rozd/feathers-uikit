@@ -10,6 +10,7 @@ import feathers.motion.Fade;
 import feathersx.core.feathers_mvvc;
 
 import feathersx.motion.Slide;
+import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 
 import flash.geom.Point;
 
@@ -121,8 +122,12 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function pushItem(item: NavigationItem, animated: Boolean): void {
-        addScreenWithNavigationItem(item);
-        pushScreen(item.identifier, null, getPushTransition(animated));
+
+        addScreenForNavigationItem(item, function(): void {
+            pushScreen(item.identifier, null, getPushTransition(animated));
+
+        });
+
         _items.push(item);
         retainNavigationItems(new <NavigationItem>[item]);
     }
@@ -139,7 +144,11 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function replaceWithNavigationItem(item: NavigationItem, animated: Boolean, completion: Function = null): void {
-        addScreenWithNavigationItem(item);
+
+        addScreenForNavigationItem(item, function(): void {
+            addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            replaceScreen(item.identifier, getReplaceTransition(animated));
+        });
 
         function transitionStartHandler(event: Event): void {
             removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
@@ -152,14 +161,14 @@ public class NavigationBar extends StackScreenNavigator {
                 completion();
             }
         }
-
-        addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-
-        replaceScreen(item.identifier, getReplaceTransition(animated));
     }
 
     protected function setRootNavigationItem(item: NavigationItem, completion: Function = null): void {
-        addScreenWithNavigationItem(item);
+
+        addScreenForNavigationItem(item, function(): void {
+            addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            rootScreenID = item.identifier;
+        });
 
         function transitionStartHandler(event: Event): void {
             removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
@@ -172,10 +181,6 @@ public class NavigationBar extends StackScreenNavigator {
                 completion();
             }
         }
-
-        addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-
-        rootScreenID = item.identifier;
     }
 
     public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {
@@ -207,13 +212,13 @@ public class NavigationBar extends StackScreenNavigator {
             if (items.indexOf(oldItem) != -1) {
                 continue;
             }
-            removeScreenWithNavigationItem(oldItem);
+            removeScreenOfNavigationItem(oldItem, null);
         }
         for each (var newItem: NavigationItem in items) {
             if (hasScreen(newItem.identifier)) {
                 continue;
             }
-            addScreenWithNavigationItem(newItem);
+            addScreenForNavigationItem(newItem, null);
         }
 
         _items = items;
@@ -241,18 +246,14 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    private function addScreenWithNavigationItem(item: NavigationItem): void {
-        if (!hasScreen(item.identifier)) {
-            addScreen(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
-                return createNavigationBarContentFor(item);
-            }));
-        }
+    protected function addScreenForNavigationItem(item: NavigationItem, completion: Function): void {
+        new StackScreenNavigatorHolderHelper(this).addScreenWithId(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
+            return createNavigationBarContentFor(item);
+        }), completion);
     }
 
-    private function removeScreenWithNavigationItem(item: NavigationItem): void {
-        if (hasScreen(item.identifier)) {
-            removeScreen(item.identifier);
-        }
+    protected function removeScreenOfNavigationItem(item: NavigationItem, completion: Function): void {
+        new StackScreenNavigatorHolderHelper(this).removeScreenWithId(item.identifier, completion);
     }
 
     //--------------------------------------------------------------------------

@@ -13,6 +13,7 @@ import feathers.layout.VerticalLayoutData;
 import feathers.motion.Fade;
 
 import feathersx.motion.Slide;
+import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 
 import skein.core.WeakReference;
 
@@ -66,10 +67,10 @@ public class NavigationController extends ViewController {
     //--------------------------------------------------------------------------
 
     protected function getPushTransition(animated:Boolean): Function {
-        var onProgress:Function = function (progress:Number) {
+        var onProgress:Function = function (progress:Number): void {
 //            trace("onProgress: " + progress);
         };
-        var onComplete:Function = function () {
+        var onComplete:Function = function (): void {
 //            trace("onComplete");
         };
 
@@ -113,24 +114,29 @@ public class NavigationController extends ViewController {
         pushViewController(vc, true);
     }
 
-    public function pushViewController(vc:ViewController, animated:Boolean):void {
-        navigatorAddScreenWithViewController(vc);
+    // Push
+
+    public function pushViewController(vc: ViewController, animated: Boolean):void {
 
         resetNavigationBar();
 
         if (delegate) {
             delegate.navigationControllerWillShow(this, vc, animated);
         }
-        
-        navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
 
-        _navigationBar.pushItem(vc.navigationItem, animated);
+        navigationAddScreenOfViewController(vc, function (): void {
+            navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
+        });
 
         _viewControllers.push(vc);
         retainViewControllers(new <ViewController>[vc]);
 
+        _navigationBar.pushItem(vc.navigationItem, animated);
+
         _toolbar.setItems(topViewController.toolbarItems, true);
     }
+
+    // Pop
 
     public function popViewController(animated:Boolean):ViewController {
 
@@ -157,7 +163,11 @@ public class NavigationController extends ViewController {
     }
 
     override public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
-        navigatorAddScreenWithViewController(vc);
+
+        navigationAddScreenOfViewController(vc, function(): void {
+            navigator.addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
+        });
 
         function transitionStartHandler(event: Event): void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
@@ -174,21 +184,24 @@ public class NavigationController extends ViewController {
                 completion();
             }
         }
-
-        navigator.addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-        navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
     }
 
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
-        navigatorAddScreenWithViewController(vc);
-        navigator.addEventListener(FeathersEventType.TRANSITION_START, function (event:Event):void {
-            navigator.removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
+
+        navigationAddScreenOfViewController(vc, function(): void {
+            navigator.addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+            navigator.rootScreenID = vc.identifier;
+        });
+
+        function transitionStartHandler(event: Event): void {
+            navigator.removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
+
+            _toolbar.setItems(vc.toolbarItems, true);
+
             if (completion != null) {
                 completion();
             }
-            _toolbar.setItems(vc.toolbarItems, true);
-        });
-        navigator.rootScreenID = vc.identifier;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -213,25 +226,20 @@ public class NavigationController extends ViewController {
     public function setViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean): void {
         if (isViewLoaded) {
 
-            var delaySettingViewControllers:Boolean = false;
-
             _navigationBar.resetAppearanceToDefault();
 
             if (viewControllers.length > 0) {
                 if (navigator.activeScreenID == null) {
                     var newRootViewController: ViewController = viewControllers[0];
-                    setRootViewController(newRootViewController);
+                    setRootViewController(newRootViewController, function(): void {
+                        setViewControllersInternal(viewControllers);
+                    });
                 } else {
                     var newTopViewController: ViewController = viewControllers[viewControllers.length - 1];
                     replaceWithViewController(newTopViewController, animated, function(): void {
                         setViewControllersInternal(viewControllers);
                     });
-                    delaySettingViewControllers = true;
                 }
-            }
-
-            if (!delaySettingViewControllers) {
-                setViewControllersInternal(viewControllers);
             }
 
             _navigationBar.setItems(navigationItemsFromViewControllers(viewControllers), animated);
@@ -242,19 +250,21 @@ public class NavigationController extends ViewController {
     }
 
     private function setViewControllersInternal(viewControllers: Vector.<ViewController>): void {
-        releaseViewControllers(_viewControllers);
+        if (viewControllers != _viewControllers) {
+            releaseViewControllers(_viewControllers);
+        }
 
         for each (var oldViewController:ViewController in _viewControllers) {
             if (viewControllers.indexOf(oldViewController) != -1) {
                 continue;
             }
-            navigatorRemoveScreenWithViewController(oldViewController);
+            navigatorRemoveScreenWithViewController(oldViewController, null);
         }
         for each (var newViewController:ViewController in viewControllers) {
             if (navigator.hasScreen(newViewController.identifier)) {
                 continue;
             }
-            navigatorAddScreenWithViewController(newViewController);
+            navigationAddScreenOfViewController(newViewController, null);
         }
 
         _viewControllers = viewControllers;
@@ -271,6 +281,7 @@ public class NavigationController extends ViewController {
 
     protected function releaseViewControllers(viewControllers: Vector.<ViewController>):void {
         for each (var vc:ViewController in viewControllers) {
+            vc.setNavigationController(null);
             var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
             item.release();
         }
@@ -278,18 +289,27 @@ public class NavigationController extends ViewController {
 
     // StackScreenNavigator utils
 
-    protected function navigatorAddScreenWithViewController(vc: ViewController): void {
-        if (!navigator.hasScreen(vc.identifier)) {
-            navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
-        }
+    protected function navigationAddScreenOfViewController(vc: ViewController, completion: Function): void {
+
         vc.setNavigationController(this);
+
+        new StackScreenNavigatorHolderHelper(navigator)
+            .addScreenWithId(vc.identifier, new ViewControllerNavigatorItem(vc), function(): void {
+                if (completion != null) {
+                    completion();
+                }
+            });
     }
 
-    protected function navigatorRemoveScreenWithViewController(vc: ViewController): void {
-        if (navigator.hasScreen(vc.identifier)) {
-            navigator.removeScreen(vc.identifier);
-        }
-        vc.setNavigationController(null);
+    protected function navigatorRemoveScreenWithViewController(vc: ViewController, completion: Function): void {
+
+        new StackScreenNavigatorHolderHelper(navigator)
+            .removeScreenWithId(vc.identifier, function(): void {
+                vc.setNavigationController(null);
+                if (completion != null) {
+                    completion();
+                }
+            });
     }
 
     //--------------------------------------------------------------------------

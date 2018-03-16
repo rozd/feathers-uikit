@@ -6,7 +6,9 @@ import starling.display.DisplayObject;
 import starling.display.Image;
 
 public class BarButtonItem extends BarItem {
+
     public function BarButtonItem() {
+        super();
     }
 
     public var defaultIcon:DisplayObject;

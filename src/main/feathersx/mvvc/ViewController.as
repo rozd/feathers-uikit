@@ -363,6 +363,17 @@ public class ViewController {
             vc.view.width = view.stage.stageWidth;
             vc.view.height = view.stage.stageHeight;
             PopUpManager.addPopUp(vc.view, vc.isModalInPopover, false);
+            if (animated) {
+                currentPresentTransition(this, vc, function(): void {
+                    if (completion != null) {
+                        completion();
+                    }
+                });
+            } else {
+                if (completion != null) {
+                    completion();
+                }
+            }
         }
         this.setPresentedViewController(vc);
         layoutPresentedViewController();
@@ -415,6 +426,34 @@ public class ViewController {
                 view.height = stage.stageHeight;
                 break;
         }
+    }
+
+    //-------------------------------------
+    //  Transitions
+    //-------------------------------------
+
+    protected static function defaultPresentTransition(presentingViewController: ViewController, presentedViewController: ViewController, completeCallback: Function): void {
+        completeCallback();
+    }
+
+    public static var _presentTransition: Function;
+    public static function get presentTransition(): Function {
+        return _presentTransition;
+    }
+    public static function set presentTransition(value: Function): void {
+        _presentTransition = value;
+    }
+
+    private var _presentTransition: Function;
+    public function get presentTransition(): Function {
+        return _presentTransition;
+    }
+    public function set presentTransition(value: Function): void {
+        _presentTransition = value;
+    }
+
+    protected function get currentPresentTransition(): Function {
+        return _presentTransition || ViewController._presentTransition || defaultPresentTransition;
     }
 
     //--------------------------------------------------------------------------

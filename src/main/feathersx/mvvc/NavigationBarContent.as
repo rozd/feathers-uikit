@@ -17,6 +17,8 @@ import feathersx.mvvc.NavigationItem;
 
 import flash.geom.Point;
 
+import starling.core.Starling;
+
 import starling.display.DisplayObject;
 import starling.display.Quad;
 import starling.filters.DropShadowFilter;
@@ -32,7 +34,8 @@ internal class NavigationBarContent extends Screen {
     public function NavigationBarContent(navigationItem: NavigationItem): void {
         super();
         _navigationItem = navigationItem;
-        _navigationItem.setChangeCallback(function (): void {
+        _navigationItem.setChangeCallback(function (titleChangeAnimated: Boolean): void {
+            _titleChangeAnimated = titleChangeAnimated;
             invalidate(INVALIDATION_FLAG_DATA);
         });
     }
@@ -48,6 +51,8 @@ internal class NavigationBarContent extends Screen {
     public var leftButtonGroup: ButtonGroup;
     public var titleView: FeathersControl;
     public var rightButtonGroup: ButtonGroup;
+
+    protected var _titleChangeAnimated: Boolean = false;
 
     //--------------------------------------------------------------------------
     //
@@ -85,7 +90,7 @@ internal class NavigationBarContent extends Screen {
             commitData();
         }
 
-        if (sizeInvalid) {
+        if (sizeInvalid || dataInvalid) {
             layoutChildren();
             updateDropShadow();
         }
@@ -97,16 +102,38 @@ internal class NavigationBarContent extends Screen {
     //
     //--------------------------------------------------------------------------
 
-    private function commitData(): void {
+    protected function commitData(): void {
         leftButtonGroup.dataProvider = composeLeftItems();
         rightButtonGroup.dataProvider = composeRightItems();
 
-        if (titleView is Label) {
-            Label(titleView).text = _navigationItem.title;
-        }
+        updateTitle();
     }
 
-    private function layoutChildren(): void {
+    private function updateTitle(): void {
+        var titleLabel: Label = titleView as Label;
+
+        if (titleLabel == null) {
+            return;
+        }
+
+        if (titleLabel.text == _navigationItem.title) {
+            return;
+        }
+
+        if (!_titleChangeAnimated || !titleLabel.text) {
+            titleLabel.text = _navigationItem.title;
+            return;
+        }
+
+        Starling.current.juggler.tween(titleLabel, 0.5, {alpha: 0.0});
+        Starling.current.juggler.delayCall(function (): void {
+            titleLabel.text = _navigationItem.title;
+            Starling.current.juggler.tween(titleLabel, 0.5, {alpha: 1.0});
+            layoutTitle();
+        }, 0.5);
+    }
+
+    protected function layoutChildren(): void {
         var padding:uint = NavigationBar.PADDING;
         leftButtonGroup.validate();
         rightButtonGroup.validate();
@@ -117,6 +144,10 @@ internal class NavigationBarContent extends Screen {
         rightButtonGroup.x = actualWidth - rightButtonGroup.width - padding;
         rightButtonGroup.y = (actualHeight - rightButtonGroup.height) / 2;
 
+        layoutTitle();
+    }
+
+    private function layoutTitle(): void {
         titleView.maxWidth = rightButtonGroup.x - (leftButtonGroup.x + leftButtonGroup.width);
         titleView.validate();
         titleView.x = (actualWidth - titleView.width) / 2;

@@ -44,9 +44,9 @@ public class NavigationItem {
         _callback = callback;
     }
 
-    protected function notifyChange(): void {
+    protected function notifyChange(titleChangeAnimated: Boolean): void {
         if (_callback != null) {
-            _callback();
+            _callback(titleChangeAnimated);
         }
     }
 
@@ -61,9 +61,13 @@ public class NavigationItem {
         return _title;
     }
     public function set title(value: String): void {
+        setTitle(value, false);
+    }
+
+    public function setTitle(value: String, animated: Boolean): void {
         if (value == _title) return;
         _title = value;
-        notifyChange();
+        notifyChange(animated);
     }
 
     private var _titleView: FeathersControl;

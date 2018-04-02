@@ -125,12 +125,32 @@ internal class NavigationBarContent extends Screen {
             return;
         }
 
-        Starling.current.juggler.tween(titleLabel, 0.5, {alpha: 0.0});
-        Starling.current.juggler.delayCall(function (): void {
+        updateTitleAnimated(titleLabel);
+    }
+
+    private var isTitleFadeOutAnimating: Boolean = false;
+    private var isTitleFadeInAnimating: Boolean = false;
+    private function updateTitleAnimated(titleLabel: Label): void {
+        if (isTitleFadeOutAnimating) {
+            return;
+        }
+
+        if (isTitleFadeInAnimating) {
             titleLabel.text = _navigationItem.title;
-            Starling.current.juggler.tween(titleLabel, 0.5, {alpha: 1.0});
+        }
+
+        isTitleFadeOutAnimating = true;
+        Starling.current.juggler.tween(titleLabel, 0.3, {alpha: 0.0});
+        Starling.current.juggler.delayCall(function (): void {
+            isTitleFadeOutAnimating = false;
+            isTitleFadeInAnimating = true;
+            titleLabel.text = _navigationItem.title;
+            Starling.current.juggler.tween(titleLabel, 0.3, {alpha: 1.0});
             layoutTitle();
-        }, 0.5);
+            Starling.current.juggler.delayCall(function(): void {
+                isTitleFadeInAnimating = false;
+            }, 0.3);
+        }, 0.3);
     }
 
     protected function layoutChildren(): void {

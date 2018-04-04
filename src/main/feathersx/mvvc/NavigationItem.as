@@ -148,9 +148,30 @@ public class NavigationItem {
     public function get rightItems(): Vector.<BarButtonItem> {
         return _rightItems;
     }
-
     public function set rightItems(value: Vector.<BarButtonItem>): void {
         _rightItems = value;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Transitions
+    //
+    //--------------------------------------------------------------------------
+
+    private var _pushTransition: Function;
+    public function get pushTransition(): Function {
+        return _pushTransition;
+    }
+    public function set pushTransition(value: Function): void {
+        _pushTransition = value;
+    }
+
+    private var _popTransition: Function;
+    public function get popTransition(): Function {
+        return _popTransition;
+    }
+    public function set popTransition(value: Function): void {
+        _popTransition = value;
     }
 }
 }

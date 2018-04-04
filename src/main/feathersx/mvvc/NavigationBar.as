@@ -9,7 +9,7 @@ import feathers.motion.Fade;
 
 import feathersx.core.feathers_mvvc;
 
-import feathersx.motion.Slide;
+import feathers.motion.Slide;
 import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 
 import flash.geom.Point;
@@ -81,27 +81,21 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    protected function getPushTransition(animated:Boolean): Function {
-        var onProgress:Function = function (progress:Number) {
-        };
-        var onComplete:Function = function () {
-        };
-
+    private var _defaultPushTransition: Function = Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT);
+    protected function getPushTransition(identifier: String, animated:Boolean): Function {
         if (animated) {
-            return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+            var item: NavigationBarStackScreenNavigatorItem = getScreen(identifier) as NavigationBarStackScreenNavigatorItem;
+            return item.pushTransition || this.pushTransition || _defaultPushTransition;
         } else {
             return null;
         }
     }
 
-    protected function getPopTransition(animated:Boolean): Function {
-        var onProgress:Function = function (progress:Number) {
-        };
-        var onComplete:Function = function () {
-        };
-
+    private var _defaultPopTransition: Function = Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT);
+    protected function getPopTransition(identifier: String, animated:Boolean): Function {
         if (animated) {
-            return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
+            var item: NavigationBarStackScreenNavigatorItem = getScreen(identifier) as NavigationBarStackScreenNavigatorItem;
+            return item.popTransition || popTransition || _defaultPopTransition;
         } else {
             return null;
         }
@@ -124,8 +118,7 @@ public class NavigationBar extends StackScreenNavigator {
     public function pushItem(item: NavigationItem, animated: Boolean): void {
 
         addScreenForNavigationItem(item, function(): void {
-            pushScreen(item.identifier, null, getPushTransition(animated));
-
+            pushScreen(item.identifier, null, getPushTransition(item.identifier, animated));
         });
 
         _items.push(item);
@@ -133,9 +126,9 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function popItem(animated: Boolean): NavigationItem {
-        popScreen(getPopTransition(animated));
         if (_items.length > 0) {
             var item:NavigationItem = _items.pop();
+            popScreen(getPopTransition(item.identifier, animated));
             releaseNavigationItems(new <NavigationItem>[item]);
             return item;
         } else {
@@ -249,7 +242,7 @@ public class NavigationBar extends StackScreenNavigator {
     protected function addScreenForNavigationItem(item: NavigationItem, completion: Function): void {
         new StackScreenNavigatorHolderHelper(this).addScreenWithId(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
             return createNavigationBarContentFor(item);
-        }), completion);
+        }, item.pushTransition, item.popTransition), completion);
     }
 
     protected function removeScreenOfNavigationItem(item: NavigationItem, completion: Function): void {
@@ -452,8 +445,10 @@ import starling.display.DisplayObject;
 
 class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
 
-    public function NavigationBarStackScreenNavigatorItem(screen:Object = null, pushEvents:Object = null, popEvent:String = null, properties:Object = null) {
+    public function NavigationBarStackScreenNavigatorItem(screen:Object = null, pushTransition: Function = null, popTransition: Function = null, pushEvents:Object = null, popEvent:String = null, properties:Object = null) {
         super(screen, pushEvents, popEvent, properties);
+        this.pushTransition = pushTransition;
+        this.popTransition  = popTransition;
     }
 
     private var _retained: Boolean = false;

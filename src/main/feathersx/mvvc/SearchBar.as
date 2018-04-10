@@ -172,7 +172,10 @@ public class SearchBar extends LayoutGroup {
             layout.verticalAlign = VerticalAlign.MIDDLE;
             layout.horizontalAlign = HorizontalAlign.LEFT;
             layout.useVirtualLayout = false;
-            layout.paddingLeft = layout.paddingRight = NavigationBar.PADDING;
+            layout.paddingTop = NavigationBar.appearance.paddingTop;
+            layout.paddingLeft = NavigationBar.appearance.paddingLeft;
+            layout.paddingRight = NavigationBar.appearance.paddingRight;
+            layout.paddingBottom = NavigationBar.appearance.paddingBottom;
             this.layout = layout;
         }
 

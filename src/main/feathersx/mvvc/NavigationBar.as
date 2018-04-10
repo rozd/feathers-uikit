@@ -24,9 +24,7 @@ public class NavigationBar extends StackScreenNavigator {
     public static const LEFT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-left-item";
     public static const RIGHT_ITEM_STYLE_NAME:String = "feathers-mvvc-navigation-bar-right-item";
 
-    public static var PADDING:uint = 20;
-
-    public static const Height: uint = 60;
+    public static const appearance: NavigationBarAppearance = new NavigationBarAppearance();
 
     //--------------------------------------------------------------------------
     //
@@ -36,6 +34,7 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function NavigationBar() {
         super();
+        height = appearance.height;
     }
 
     //--------------------------------------------------------------------------
@@ -54,8 +53,7 @@ public class NavigationBar extends StackScreenNavigator {
 
     public var onBack:Function;
 
-    public function notifyBackCallbacks():void
-    {
+    public function notifyBackCallbacks():void {
         if (onBack != null) {
             onBack();
         }

@@ -13,6 +13,7 @@ import feathers.layout.Direction;
 
 import feathersx.mvvc.BarButtonItem;
 import feathersx.mvvc.NavigationBar;
+import feathersx.mvvc.NavigationBar;
 import feathersx.mvvc.NavigationItem;
 
 import flash.geom.Point;
@@ -154,15 +155,14 @@ internal class NavigationBarContent extends Screen {
     }
 
     protected function layoutChildren(): void {
-        var padding:uint = NavigationBar.PADDING;
         leftButtonGroup.validate();
         rightButtonGroup.validate();
 
-        leftButtonGroup.x = padding;
-        leftButtonGroup.y = (actualHeight - leftButtonGroup.height) / 2;
+        leftButtonGroup.x = NavigationBar.appearance.paddingLeft;
+        leftButtonGroup.y = NavigationBar.appearance.paddingTop + (actualHeight - leftButtonGroup.height - NavigationBar.appearance.paddingTop - NavigationBar.appearance.paddingBottom) / 2;
 
-        rightButtonGroup.x = actualWidth - rightButtonGroup.width - padding;
-        rightButtonGroup.y = (actualHeight - rightButtonGroup.height) / 2;
+        rightButtonGroup.x = actualWidth - rightButtonGroup.width - NavigationBar.appearance.paddingRight;
+        rightButtonGroup.y = NavigationBar.appearance.paddingTop + (actualHeight - rightButtonGroup.height - NavigationBar.appearance.paddingTop - NavigationBar.appearance.paddingBottom) / 2;
 
         layoutTitle();
     }
@@ -171,7 +171,7 @@ internal class NavigationBarContent extends Screen {
         titleView.maxWidth = rightButtonGroup.x - (leftButtonGroup.x + leftButtonGroup.width);
         titleView.validate();
         titleView.x = (actualWidth - titleView.width) / 2;
-        titleView.y = (actualHeight - titleView.height) / 2;
+        titleView.y = NavigationBar.appearance.paddingTop + (actualHeight - titleView.height - NavigationBar.appearance.paddingTop - NavigationBar.appearance.paddingBottom) / 2;
     }
 
     //-------------------------------------

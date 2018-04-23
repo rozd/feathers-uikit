@@ -124,14 +124,35 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function popItem(animated: Boolean): NavigationItem {
-        if (_items.length > 0) {
-            var item:NavigationItem = _items.pop();
-            popScreen(getPopTransition(item.identifier, animated));
-            releaseNavigationItems(new <NavigationItem>[item]);
-            return item;
-        } else {
+        if (_items.length == 0) {
             return null;
         }
+
+        if (_items.length == 1) {
+            return _items[0];
+        }
+
+        var item: NavigationItem = _items.pop();
+        popScreen(getPopTransition(item.identifier, animated));
+        releaseNavigationItems(new <NavigationItem>[item]);
+
+        return _items[_items.length - 1];
+    }
+
+    public function popToRootItem(animated: Boolean): NavigationItem {
+        if (_items.length == 0) {
+            return null;
+        }
+
+        if (_items.length == 1) {
+            return _items[0];
+        }
+
+        var item: NavigationItem = _items[_items.length - 1];
+        popToRootScreen(getPopTransition(item.identifier, animated));
+        releaseNavigationItems(_items.slice(1, _items.length - 1));
+
+        return _items[_items.length - 1];
     }
 
     public function replaceWithNavigationItem(item: NavigationItem, animated: Boolean, completion: Function = null): void {

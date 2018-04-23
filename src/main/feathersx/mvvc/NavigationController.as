@@ -18,6 +18,7 @@ import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 import skein.core.WeakReference;
 
 import starling.animation.Transitions;
+import starling.display.DisplayObject;
 
 import starling.display.DisplayObject;
 import starling.display.Quad;
@@ -138,27 +139,51 @@ public class NavigationController extends ViewController {
 
     // Pop
 
-    public function popViewController(animated:Boolean):ViewController {
+    public function popViewController(animated: Boolean): ViewController {
+        if (_viewControllers.length == 0) {
+            return null;
+        }
 
-        var navigator:StackScreenNavigator = _navigator as StackScreenNavigator;
-        var transition:Function = getPopTransition(animated);
-        var view:DisplayObject = navigator.popScreen(transition);
+        if (_viewControllers.length == 1) {
+            return _viewControllers[0];
+        }
+
+        var navigator: StackScreenNavigator = _navigator as StackScreenNavigator;
+        var transition: Function = getPopTransition(animated);
+        var view: DisplayObject = navigator.popScreen(transition);
+
+        releaseViewControllers(new <ViewController>[_viewControllers.pop()]);
 
         _navigationBar.popItem(animated);
 
-        var vc: ViewController = _viewControllers.pop();
-        releaseViewControllers(new <ViewController>[vc]);
-
         _toolbar.setItems(topViewController.toolbarItems, true);
 
-        return vc;
+        return _viewControllers[_viewControllers.length - 1];
     }
 
-    public function popToRootViewController(animated:Boolean):Vector.<ViewController> {
+    public function popToRootViewController(animated: Boolean): ViewController {
+        if (_viewControllers.length == 0) {
+            return null;
+        }
+
+        if (_viewControllers.length == 1) {
+            return _viewControllers[0];
+        }
+
+        var navigator: StackScreenNavigator = _navigator as StackScreenNavigator;
+        var transition: Function = getPopTransition(animated);
+        var view: DisplayObject = navigator.popToRootScreen(transition);
+
+        releaseViewControllers(_viewControllers.splice(1, _viewControllers.length - 1));
+
+        _navigationBar.popToRootItem(animated);
+
+        _toolbar.setItems(topViewController.toolbarItems, animated);
+
         return null;
     }
 
-    public function popToViewController(viewController:ViewController, animated:Boolean):Vector.<ViewController> {
+    public function popToViewController(viewController:ViewController, animated:Boolean): ViewController {
         return null;
     }
 

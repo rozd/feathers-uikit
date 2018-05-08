@@ -1,0 +1,46 @@
+<project name="feathers-uikit build script" default="swc">
+
+    <!--=====================================================================-->
+    <!--                         Build SWC Library                           -->
+    <!--=====================================================================-->
+
+    <property file="sdk.properties" />
+
+    <property file="build.properties" />
+
+    <!--=====================================================================-->
+    <!--                         Build SWC Library                           -->
+    <!--=====================================================================-->
+
+    <target name="swc" description="Build swc library">
+
+        <!-- Create temporary directory -->
+        <mkdir dir="temp/swc/build/"/>
+
+        <!-- Gather classes for the library -->
+        <fileset dir="${src.dir.main}" casesensitive="yes" id="classFiles">
+            <include name="**/*.as"/>
+        </fileset>
+        <pathconvert property="classList" refid="classFiles" pathsep=" " dirsep=".">
+            <regexpmapper from=".*src.(.*)\.as" to="\1"/>
+        </pathconvert>
+
+        <echo>${classList}</echo>
+
+        <echo message="Building feathers-uikit.swc"/>
+
+        <java jar="${compc}" dir="${basedir}" fork="true" failonerror="true">
+            <arg value="-load-config=${flashplayer.config}"/>
+            <arg value="-swf-version=${swf.version}"/>
+            <arg value="-source-path+=${src.dir.main}"/>
+            <arg value="-include-sources+=${src.dir.main}"/>
+            <arg value="-external-library-path+=${lib.dir}"/>
+            <arg value='-library-path+=${lib.dir}/skein-core.swc' />
+            <arg value='-library-path+=${lib.dir}/skein-utils.swc' />
+            <arg value='-library-path+=${lib.dir}/skein-logger.swc' />
+            <arg value="-output=${dst.dir}/feathers-uikit.swc"/>
+        </java>
+
+    </target>
+
+</project>

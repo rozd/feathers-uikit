@@ -22,4 +22,4 @@ before_script:
   - cp flexunit/* third-party/flexunit/
 
 script:
-  - ant full -Dflashsdk.root="$AIR_HOME"
+  - ant -buildfile build/build.xml -Dflashsdk.root="$AIR_HOME"

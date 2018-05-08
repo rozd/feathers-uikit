@@ -14,19 +14,6 @@
 
     <target name="swc" description="Build swc library">
 
-        <!-- Create temporary directory -->
-        <mkdir dir="temp/swc/build/"/>
-
-        <!-- Gather classes for the library -->
-        <fileset dir="${src.dir.main}" casesensitive="yes" id="classFiles">
-            <include name="**/*.as"/>
-        </fileset>
-        <pathconvert property="classList" refid="classFiles" pathsep=" " dirsep=".">
-            <regexpmapper from=".*src.(.*)\.as" to="\1"/>
-        </pathconvert>
-
-        <echo>${classList}</echo>
-
         <echo message="Building feathers-uikit.swc"/>
 
         <java jar="${compc}" dir="${basedir}" fork="true" failonerror="true">

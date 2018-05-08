@@ -289,7 +289,7 @@ public class NavigationBar extends StackScreenNavigator {
     //  isTranslucent
     //------------------------------------
 
-    private var _isTranslucent: Boolean;
+    private var _isTranslucent: Boolean = false;
     public function get isTranslucent(): Boolean {
         return _isTranslucent;
     }
@@ -301,7 +301,7 @@ public class NavigationBar extends StackScreenNavigator {
     //  isTransparent
     //------------------------------------
 
-    private var _isTransparent:Boolean;
+    private var _isTransparent:Boolean = false;
     public function get isTransparent(): Boolean {
         return _isTransparent;
     }
@@ -398,9 +398,6 @@ public class NavigationBar extends StackScreenNavigator {
     //------------------------------------
 
     public function resetAppearanceToDefault():void {
-        barTintColor = 0xFFFFFF;
-        isTranslucent = false;
-        isTransparent = false;
         titleStyleName = TITLE_STYLE_NAME;
         leftItemStyleName = LEFT_ITEM_STYLE_NAME;
         rightItemStyleName = RIGHT_ITEM_STYLE_NAME;

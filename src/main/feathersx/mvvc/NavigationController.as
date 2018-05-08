@@ -251,7 +251,7 @@ public class NavigationController extends ViewController {
     public function setViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean): void {
         if (isViewLoaded) {
 
-            _navigationBar.resetAppearanceToDefault();
+            resetNavigationBar();
 
             if (viewControllers.length > 0) {
                 if (navigator.activeScreenID == null) {

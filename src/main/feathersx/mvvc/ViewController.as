@@ -47,13 +47,13 @@ public class ViewController {
                 return findTopmostViewControllerRecursively(NavigationController(vc).topViewController);
             } else if (vc is DrawersController) {
                 var drawersController: DrawersController = vc as DrawersController;
-                if (drawersController.isTopViewControllerShown()) {
+                if (drawersController.isTopViewControllerShown) {
                     return findTopmostViewControllerRecursively(drawersController.topViewController);
-                } else if (drawersController.isLeftViewControllerShown()) {
+                } else if (drawersController.isLeftViewControllerShown) {
                     return findTopmostViewControllerRecursively(drawersController.leftViewController);
-                } else if (drawersController.isBottomViewControllerShown()) {
+                } else if (drawersController.isBottomViewControllerShown) {
                     return findTopmostViewControllerRecursively(drawersController.bottomViewController);
-                } else if (drawersController.isRightViewControllerShown()) {
+                } else if (drawersController.isRightViewControllerShown) {
                     return findTopmostViewControllerRecursively(drawersController.rightViewController);
                 } else {
                     return findTopmostViewControllerRecursively(drawersController.rootViewController);

@@ -166,52 +166,6 @@ public class DrawersController extends ViewController {
     override protected function loadView(): DisplayObject {
         return new Drawers();
     }
-//
-//    protected function loadViewIfRequired(): void {
-//        if (_view == null) {
-//            viewWillLoad();
-//            _view = loadView();
-//            if (_view is View) {
-//                View(_view).topGuide = navigationController ? navigationController.getTopGuide() : 0;
-//                View(_view).bottomGuide = navigationController ? navigationController.getBottomGuide() : 0;
-//            }
-//            _rootViewController.setDrawersController(this);
-//            drawers.content = _rootViewController.view as IFeathersControl;
-//            if (_leftViewController) {
-//                _leftViewController.setDrawersController(this);
-//                drawers.leftDrawer = _leftViewController.view as IFeathersControl;
-//            }
-//            if (_bottomViewController) {
-//                _bottomViewController.setDrawersController(this);
-//                drawers.bottomDrawer = _bottomViewController.view as IFeathersControl;
-//            }
-//            viewDidLoad();
-//            _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
-//                _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
-//            });
-//            _view.addEventListener(FeathersEventType.BEGIN_INTERACTION, function (event:Event):void {
-//                if (_leftViewController) {
-//                    _leftViewController.view.dispatchEventWith(FeathersEventType.TRANSITION_IN_START);
-//                }
-//                if (_bottomViewController) {
-//                    _bottomViewController.view.dispatchEventWith(FeathersEventType.TRANSITION_IN_START);
-//                }
-//                viewWillAppear();
-//            });
-//            _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
-////                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
-//                viewDidAppear();
-//            });
-//            _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function (event:Event):void {
-////                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
-//                viewWillDisappear();
-//            });
-//            _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
-////                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
-//                viewDidDisappear();
-//            });
-//        }
-//    }
 
     //--------------------------------------------------------------------------
     //
@@ -246,90 +200,154 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    public function isTopViewControllerShown(): Boolean {
+    // Top drawer
+
+    public function get isTopViewControllerShown(): Boolean {
         return drawers.isTopDrawerOpen;
     }
-    public function showTopViewController(animated: Boolean): void {
-        if (!drawers.isTopDrawerOpen) {
-            if (animated) {
-                drawers.toggleTopDrawer();
-            } else {
-                drawers.isTopDrawerOpen = true;
+    public function showTopViewController(animated: Boolean, completion: Function = null): void {
+        if (!drawers.isTopDrawerOpen && animated) {
+            drawers.addEventListener(Event.OPEN, function(event: Event): void {
+                drawers.removeEventListener(Event.OPEN, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleTopDrawer();
+        } else {
+            drawers.isTopDrawerOpen = true;
+            if (completion != null) {
+                completion();
             }
         }
     }
-    public function hideTopViewController(animated: Boolean): void {
-        if (drawers.isTopDrawerOpen) {
-            if (animated) {
-                drawers.toggleTopDrawer()
-            } else {
-                drawers.isTopDrawerOpen = false;
+    public function hideTopViewController(animated: Boolean, completion: Function = null): void {
+        if (drawers.isTopDrawerOpen && animated) {
+            drawers.addEventListener(Event.CLOSE, function(event: Event): void {
+                drawers.removeEventListener(Event.CLOSE, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleTopDrawer();
+        } else {
+            drawers.isTopDrawerOpen = false;
+            if (completion != null) {
+                completion();
             }
         }
     }
 
-    public function isLeftViewControllerShown(): Boolean {
+    // Left drawer
+
+    public function get isLeftViewControllerShown(): Boolean {
         return drawers.isLeftDrawerOpen;
     }
-    public function showLeftViewController(animated: Boolean): void {
-        if (!drawers.isLeftDrawerOpen) {
-            if (animated) {
-                drawers.toggleLeftDrawer();
-            } else {
-                drawers.isLeftDrawerOpen = true;
+    public function showLeftViewController(animated: Boolean, completion: Function = null): void {
+        if (!drawers.isLeftDrawerOpen && animated) {
+            drawers.addEventListener(Event.OPEN, function(event: Event): void {
+                drawers.removeEventListener(Event.OPEN, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleLeftDrawer();
+        } else {
+            drawers.isLeftDrawerOpen = true;
+            if (completion != null) {
+                completion();
             }
         }
     }
-    public function hideLeftViewController(animated: Boolean): void {
-        if (drawers.isLeftDrawerOpen) {
-            if (animated) {
-                drawers.toggleLeftDrawer()
-            } else {
-                drawers.isLeftDrawerOpen = false;
+    public function hideLeftViewController(animated: Boolean, completion: Function = null): void {
+        if (drawers.isLeftDrawerOpen && animated) {
+            drawers.addEventListener(Event.CLOSE, function(event: Event): void {
+                drawers.removeEventListener(Event.CLOSE, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleLeftDrawer();
+        } else {
+            drawers.isLeftDrawerOpen = false;
+            if (completion != null) {
+                completion();
             }
         }
     }
 
-    public function isBottomViewControllerShown(): Boolean {
+    // Bottom drawer
+
+    public function get isBottomViewControllerShown(): Boolean {
         return drawers.isBottomDrawerOpen;
     }
-    public function showBottomViewController(animated: Boolean): void {
-        if (!drawers.isBottomDrawerOpen) {
-            if (animated) {
-                drawers.toggleBottomDrawer()
-            } else {
-                drawers.isBottomDrawerOpen = true;
+    public function showBottomViewController(animated: Boolean, completion: Function = null): void {
+        if (!drawers.isBottomDrawerOpen && animated) {
+            drawers.addEventListener(Event.OPEN, function(event: Event): void {
+                drawers.removeEventListener(Event.OPEN, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleBottomDrawer();
+        } else {
+            drawers.isBottomDrawerOpen = true;
+            if (completion != null) {
+                completion();
             }
         }
     }
-    public function hideBottomViewController(animated: Boolean): void {
-        if (drawers.isBottomDrawerOpen) {
-            if (animated) {
-                drawers.toggleBottomDrawer()
-            } else {
-                drawers.isBottomDrawerOpen = false;
+    public function hideBottomViewController(animated: Boolean, completion: Function = null): void {
+        if (drawers.isBottomDrawerOpen && animated) {
+            drawers.addEventListener(Event.CLOSE, function(event: Event): void {
+                drawers.removeEventListener(Event.CLOSE, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleBottomDrawer();
+        } else {
+            drawers.isBottomDrawerOpen = false;
+            if (completion != null) {
+                completion();
             }
         }
     }
 
-    public function isRightViewControllerShown(): Boolean {
-        return drawers.isRightDrawerDocked;
+    // Right drawer
+
+    public function get isRightViewControllerShown(): Boolean {
+        return drawers.isRightDrawerOpen;
     }
-    public function showRightViewController(animated: Boolean): void {
-        if (!drawers.isRightDrawerOpen) {
-            if (animated) {
-                drawers.toggleRightDrawer()
-            } else {
-                drawers.isRightDrawerOpen = true;
+    public function showRightViewController(animated: Boolean, completion: Function = null): void {
+        if (!drawers.isRightDrawerOpen && animated) {
+            drawers.addEventListener(Event.OPEN, function(event: Event): void {
+                drawers.removeEventListener(Event.OPEN, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleRightDrawer();
+        } else {
+            drawers.isRightDrawerOpen = true;
+            if (completion != null) {
+                completion();
             }
         }
     }
-    public function hideRightViewController(animated: Boolean): void {
-        if (drawers.isRightDrawerOpen) {
-            if (animated) {
-                drawers.toggleRightDrawer()
-            } else {
-                drawers.isRightDrawerOpen = false;
+    public function hideRightViewController(animated: Boolean, completion: Function = null): void {
+        if (drawers.isRightDrawerOpen && animated) {
+            drawers.addEventListener(Event.CLOSE, function(event: Event): void {
+                drawers.removeEventListener(Event.CLOSE, arguments.callee);
+                if (completion != null) {
+                    completion();
+                }
+            });
+            drawers.toggleRightDrawer();
+        } else {
+            drawers.isRightDrawerOpen = false;
+            if (completion != null) {
+                completion();
             }
         }
     }

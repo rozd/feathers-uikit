@@ -10,10 +10,14 @@ import feathers.core.PopUpManager;
 import feathers.events.FeathersEventType;
 import feathers.motion.Cover;
 import feathers.motion.Reveal;
+import feathers.utils.display.getDisplayObjectDepthFromStage;
 
 import feathersx.data.EdgeInsets;
 
+import flash.events.KeyboardEvent;
+
 import flash.geom.Rectangle;
+import flash.ui.Keyboard;
 
 import skein.logger.Log;
 
@@ -229,7 +233,7 @@ public class ViewController {
             var rightGuide: Number  = safeArea.right  + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.right  : 0);
             if (_view is View) {
                 View(_view).topGuide = topGuide;
-                View(_view).bottomGuide = rightGuide;
+                View(_view).bottomGuide = bottomGuide;
             } else if (_view is Scroller && _automaticallyAdjustsScrollerInsets) {
                 Scroller(_view).paddingTop    = topGuide;
                 Scroller(_view).paddingLeft   = leftGuide;
@@ -255,9 +259,11 @@ public class ViewController {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
             });
             _view.addEventListener(Event.ADDED_TO_STAGE, function (event: Event):void {
+                installHardKeysSupport(_view);
                 viewWillAppear();
             });
             _view.addEventListener(Event.REMOVED_FROM_STAGE, function (event: Event): void {
+                removeHardKeysSupport(_view);
                 viewDidDisappear();
             });
         }
@@ -458,6 +464,57 @@ public class ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Work with hard buttons
+    //
+    //--------------------------------------------------------------------------
+
+    protected function backButtonDidTapped(): Boolean {
+        if (navigationController && !navigationItem.hidesBackButton) {
+            return navigationController.navigationBar.notifyBackCallbacks();
+        }
+        return false;
+    }
+
+    protected function menuButtonDidTapped(): Boolean {
+        return false;
+    }
+
+    protected function searchButtonDidTapped(): Boolean {
+        return false;
+    }
+
+    private function installHardKeysSupport(view: DisplayObject): void {
+        var priority:int = -getDisplayObjectDepthFromStage(view);
+        view.stage.starling.nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, nativeStage_keyDownHandler, false, priority, true);
+    }
+
+    private function removeHardKeysSupport(view: DisplayObject): void {
+        view.stage.starling.nativeStage.removeEventListener(KeyboardEvent.KEY_DOWN, nativeStage_keyDownHandler);
+    }
+
+    private function nativeStage_keyDownHandler(event: KeyboardEvent): void {
+        if (event.isDefaultPrevented()) {
+            //someone else already handled this one
+            return;
+        }
+
+        switch (event.keyCode) {
+            case Keyboard.BACK:
+                if (backButtonDidTapped()) {
+                    event.preventDefault();
+                }
+                break;
+            case Keyboard.MENU:
+                menuButtonDidTapped();
+                break;
+            case Keyboard.SEARCH:
+                searchButtonDidTapped();
+                break;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Work with Child view controllers
     //
     //--------------------------------------------------------------------------
@@ -584,9 +641,18 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
+    //-------------------------------------
+    //  Event handlers: stage
+    //-------------------------------------
+
     private function stage_resizeHandler(event: Event): void {
         layoutPresentedViewController();
     }
+
+    //-------------------------------------
+    //  Event handlers: view
+    //-------------------------------------
+
 }
 }
 

@@ -53,10 +53,14 @@ public class NavigationBar extends StackScreenNavigator {
 
     public var onBack:Function;
 
-    public function notifyBackCallbacks():void {
-        if (onBack != null) {
-            onBack();
+    public function notifyBackCallbacks(): Boolean {
+        if (onBack == null) {
+            return false;
         }
+
+        onBack();
+
+        return true;
     }
 
     //--------------------------------------------------------------------------

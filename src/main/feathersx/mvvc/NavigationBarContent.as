@@ -258,7 +258,7 @@ internal class NavigationBarContent extends Screen {
             backButtonItem.label = "Back";
         }
 
-        backButtonItem.triggered = function () {
+        backButtonItem.triggered = function(): void {
             navigationBar.notifyBackCallbacks();
         };
 

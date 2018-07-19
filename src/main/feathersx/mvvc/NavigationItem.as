@@ -5,6 +5,9 @@ package feathersx.mvvc {
 import feathers.core.FeathersControl;
 import feathers.data.IListCollection;
 
+import skein.utils.ArrayUtil;
+import skein.utils.VectorUtil;
+
 public class NavigationItem {
 
     //--------------------------------------------------------------------------
@@ -44,9 +47,9 @@ public class NavigationItem {
         _callback = callback;
     }
 
-    protected function notifyChange(titleChangeAnimated: Boolean): void {
+    protected function notifyChange(animated: Boolean): void {
         if (_callback != null) {
-            _callback(titleChangeAnimated);
+            _callback(animated);
         }
     }
 
@@ -133,9 +136,10 @@ public class NavigationItem {
     public function set leftItems(value: Vector.<BarButtonItem>): void {
         setLeftItems(value, false);
     }
-
     public function setLeftItems(items: Vector.<BarButtonItem>, animated: Boolean): void {
+        if (VectorUtil.equals(items, _leftItems)) return;
         _leftItems = items;
+        notifyChange(animated);
     }
 
     //--------------------------------------------------------------------------
@@ -149,7 +153,12 @@ public class NavigationItem {
         return _rightItems;
     }
     public function set rightItems(value: Vector.<BarButtonItem>): void {
-        _rightItems = value;
+        setRightItems(value, false);
+    }
+    public function setRightItems(items: Vector.<BarButtonItem>, animated: Boolean): void {
+        if (VectorUtil.equals(items, _rightItems)) return;
+        _rightItems = items;
+        notifyChange(animated);
     }
 
     //--------------------------------------------------------------------------

@@ -35,8 +35,8 @@ internal class NavigationBarContent extends Screen {
     public function NavigationBarContent(navigationItem: NavigationItem): void {
         super();
         _navigationItem = navigationItem;
-        _navigationItem.setChangeCallback(function (titleChangeAnimated: Boolean): void {
-            _titleChangeAnimated = titleChangeAnimated;
+        _navigationItem.setChangeCallback(function (animated: Boolean): void {
+            _titleChangeAnimated = animated;
             invalidate(INVALIDATION_FLAG_DATA);
         });
     }

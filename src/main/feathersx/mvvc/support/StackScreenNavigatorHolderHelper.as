@@ -2,6 +2,7 @@
  * Created by max.rozdobudko@gmail.com on 2/24/18.
  */
 package feathersx.mvvc.support {
+import feathers.controls.ScreenNavigatorItem;
 import feathers.controls.StackScreenNavigator;
 import feathers.controls.StackScreenNavigatorItem;
 import feathers.controls.supportClasses.IScreenNavigatorItem;
@@ -22,7 +23,7 @@ public class StackScreenNavigatorHolderHelper {
 
     private var _navigator: StackScreenNavigator;
 
-    // Methods
+    // Add
 
     public function addScreenWithId(id: String, screen: StackScreenNavigatorItem, completion: Function): void {
 
@@ -35,29 +36,44 @@ public class StackScreenNavigatorHolderHelper {
         });
     }
 
+    // Remove
+
     public function removeScreenWithId(id: String, completion: Function): void {
+        removeScreenWithIds(new <String>[id], completion);
+    }
 
-        function removeScreen(id: String): void {
-            _navigator.removeScreen(id);
+    public function removeScreenWithIds(ids: Vector.<String>, completion: Function): void {
+        var hasScreen: Boolean = ids.some(function(id: String, ...rest): Boolean {
+            return _navigator.hasScreen(id);
+        });
 
+        if (!hasScreen) {
             if (completion != null) {
                 completion();
             }
+            return;
         }
 
-        if (_navigator.hasScreen(id)) {
-            if (_navigator.isTransitionActive) {
-                _navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function(event: Event): void {
-                    _navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
-                    removeScreen(id);
-                })
-            } else {
-                removeScreen(id);
-            }
-        } else if (completion != null) {
-            completion();
+        if (_navigator.isTransitionActive) {
+            _navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function(event: Event): void {
+                _navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
+                doRemoveScreenWithIds(ids, completion);
+            });
         }
+
+        doRemoveScreenWithIds(ids, completion);
     }
 
+    protected function doRemoveScreenWithIds(ids: Vector.<String>, completion: Function): Vector.<StackScreenNavigatorItem> {
+        var result: Vector.<StackScreenNavigatorItem> = new Vector.<StackScreenNavigatorItem>();
+        for (var i: int = 0; i < ids.length; i++) {
+            var id: String = ids[i];
+            result[i] = _navigator.hasScreen(id) ? _navigator.removeScreen(id) : null;
+        }
+        if (completion != null) {
+            completion();
+        }
+        return result;
+    }
 }
 }

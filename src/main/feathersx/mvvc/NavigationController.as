@@ -22,6 +22,7 @@ import skein.core.WeakReference;
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
 import starling.display.DisplayObject;
+import starling.display.DisplayObject;
 
 import starling.display.DisplayObject;
 import starling.display.Quad;
@@ -131,7 +132,6 @@ public class NavigationController extends ViewController {
         prepareScreenForViewController(vc, function (): void {
             pushScreenOfViewController(vc, animated, null);
         });
-
         _viewControllers.push(vc);
 
         _navigationBar.pushItem(vc.navigationItem, animated);
@@ -151,7 +151,6 @@ public class NavigationController extends ViewController {
         }
 
         var popped: ViewController = _viewControllers.pop();
-
         popScreenOfViewController(popped, animated, function(): void {
             disposeScreenOfViewController(popped, null);
         });
@@ -163,26 +162,25 @@ public class NavigationController extends ViewController {
         return _viewControllers[_viewControllers.length - 1];
     }
 
-    public function popToRootViewController(animated: Boolean): ViewController {
+    public function popToRootViewController(animated: Boolean): Vector.<ViewController> {
         if (_viewControllers.length == 0) {
             return null;
         }
 
         if (_viewControllers.length == 1) {
-            return _viewControllers[0];
+            return null;
         }
 
-        var navigator: StackScreenNavigator = _navigator as StackScreenNavigator;
-        var transition: Function = getPopTransition(animated);
-        var view: DisplayObject = navigator.popToRootScreen(transition);
-
-        releaseViewControllers(_viewControllers.splice(1, _viewControllers.length - 1));
+        var popped: Vector.<ViewController> = _viewControllers.splice(1, _viewControllers.length - 1);
+        popToRootScreenOfViewControllers(popped, animated, function (): void {
+            disposeScreensOfViewControllers(popped, null);
+        });
 
         _navigationBar.popToRootItem(animated);
 
         _toolbar.setItems(topViewController.toolbarItems, animated);
 
-        return null;
+        return popped;
     }
 
     public function popToViewController(viewController:ViewController, animated:Boolean): ViewController {
@@ -192,28 +190,28 @@ public class NavigationController extends ViewController {
     protected function setRootViewController(vc:ViewController, completion: Function = null):void {
 
         prepareScreenForViewController(vc, function(): void {
-            trackTransitionStart(function (): void {
+            trackScreenTransitionStart(function (): void {
                 _toolbar.setItems(vc.toolbarItems, true);
             });
             navigator.rootScreenID = vc.identifier;
         });
 
-        trackTransitionComplete(completion);
+        trackScreenTransitionComplete(completion);
     }
 
     protected function replaceTopViewController(vc: ViewController, animated: Boolean, completion: Function): void {
 
         prepareScreenForViewController(vc, function(): void {
-            trackTransitionStart(function (): void {
+            trackScreenTransitionStart(function (): void {
                 _toolbar.setItems(vc.toolbarItems, true);
             });
             navigator.replaceScreen(vc.identifier, getReplaceTransition(animated));
         });
 
-        trackTransitionComplete(completion);
+        trackScreenTransitionComplete(completion);
     }
 
-    private function trackTransitionStart(handler: Function): void {
+    private function trackScreenTransitionStart(handler: Function): void {
         navigator.addEventListener(FeathersEventType.TRANSITION_START, function(event: Event): void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_START, arguments.callee);
             if (handler != null) {
@@ -222,7 +220,7 @@ public class NavigationController extends ViewController {
         });
     }
 
-    private function trackTransitionComplete(handler: Function): void {
+    private function trackScreenTransitionComplete(handler: Function): void {
         navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function(event: Event): void {
             navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
             if (handler != null) {
@@ -313,7 +311,7 @@ public class NavigationController extends ViewController {
         }
     }
 
-    // StackScreenNavigator utils
+    // MARK: StackScreenNavigator utils
 
     protected function prepareScreenForViewController(vc: ViewController, completion: Function): void {
 
@@ -331,13 +329,26 @@ public class NavigationController extends ViewController {
     }
 
     protected function disposeScreenOfViewController(vc: ViewController, completion: Function): void {
+        disposeScreensOfViewControllers(new <ViewController>[vc], completion);
+    }
 
-        var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
-        item.release();
+    protected function disposeScreensOfViewControllers(viewControllers: Vector.<ViewController>, completion: Function): void {
+
+        var ids: Vector.<String> = new <String>[];
+        viewControllers.forEach(function (vc: ViewController, ...rest): void {
+            ids.push(vc.identifier);
+        });
+
+        for (var i: int = 0; i < ids.length; i++) {
+            var item: ViewControllerNavigatorItem = navigator.getScreen(ids[i]) as ViewControllerNavigatorItem;
+            item.release();
+        }
 
         new StackScreenNavigatorHolderHelper(navigator)
-            .removeScreenWithId(vc.identifier, function(): void {
-                vc.setNavigationController(null);
+            .removeScreenWithIds(ids, function (): void {
+                viewControllers.forEach(function (vc: ViewController, ...rest): void {
+                    vc.setNavigationController(null);
+                });
                 if (completion != null) {
                     completion();
                 }
@@ -345,25 +356,18 @@ public class NavigationController extends ViewController {
     }
 
     protected function pushScreenOfViewController(vc: ViewController, animated: Boolean, completion: Function): DisplayObject {
-        var view: DisplayObject = navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
-        navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function(event: Event): void {
-            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
-            if (completion != null) {
-                completion();
-            }
-        });
-        return view;
+        trackScreenTransitionComplete(completion);
+        return navigator.pushScreen(vc.identifier, null, getPushTransition(animated));
     }
 
-    private function popScreenOfViewController(vc: ViewController, animated: Boolean, completion: Function): DisplayObject {
-        var view: DisplayObject = navigator.popScreen(getPopTransition(animated));
-        navigator.addEventListener(FeathersEventType.TRANSITION_COMPLETE, function(event: Event): void {
-            navigator.removeEventListener(FeathersEventType.TRANSITION_COMPLETE, arguments.callee);
-            if (completion != null) {
-                completion();
-            }
-        });
-        return view;
+    protected function popScreenOfViewController(vc: ViewController, animated: Boolean, completion: Function): DisplayObject {
+        trackScreenTransitionComplete(completion);
+        return navigator.popScreen(getPopTransition(animated));
+    }
+
+    protected function popToRootScreenOfViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean, completion: Function): DisplayObject {
+        trackScreenTransitionComplete(completion);
+        return navigator.popToRootScreen(getPopTransition(animated));
     }
 
     //--------------------------------------------------------------------------

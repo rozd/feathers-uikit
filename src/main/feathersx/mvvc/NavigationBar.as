@@ -136,11 +136,13 @@ public class NavigationBar extends StackScreenNavigator {
             return _items[0];
         }
 
-        var item: NavigationItem = _items.pop();
-        popScreen(getPopTransition(item.identifier, animated));
-        releaseNavigationItems(new <NavigationItem>[item]);
+        var popped: NavigationItem = _items.pop();
+        releaseNavigationItems(new <NavigationItem>[popped]);
 
-        return _items[_items.length - 1];
+        var transition: Function = getPopTransition(popped.identifier, animated);
+        var view: DisplayObject = this.popScreen(transition);
+
+        return popped;
     }
 
     public function popToRootItem(animated: Boolean): NavigationItem {
@@ -263,24 +265,12 @@ public class NavigationBar extends StackScreenNavigator {
     //--------------------------------------------------------------------------
 
     protected function addScreenForNavigationItem(item: NavigationItem, completion: Function): void {
-        new StackScreenNavigatorHolderHelper(this).addScreenWithId(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
-            return createNavigationBarContentFor(item);
-        }, item.pushTransition, item.popTransition), completion);
+        trace("uikit", "addScreenForNavigationItem");
+        new StackScreenNavigatorHolderHelper(this).addScreenWithId(item.identifier, new NavigationBarStackScreenNavigatorItem(item), completion);
     }
 
     protected function removeScreenOfNavigationItem(item: NavigationItem, completion: Function): void {
         new StackScreenNavigatorHolderHelper(this).removeScreenWithId(item.identifier, completion);
-    }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Work with Content
-    //
-    //--------------------------------------------------------------------------
-
-    private function createNavigationBarContentFor(item:NavigationItem): NavigationBarContent {
-        var content:NavigationBarContent = new NavigationBarContent(item);
-        return content;
     }
 
     //--------------------------------------------------------------------------
@@ -455,6 +445,10 @@ public class NavigationBar extends StackScreenNavigator {
 
 import feathers.controls.StackScreenNavigatorItem;
 
+import feathersx.mvvc.NavigationItem;
+import feathersx.mvvc.NavigationBarContent;
+import feathersx.mvvc.debug.DummyNavigationBarContent;
+
 import starling.display.DisplayObject;
 
 //--------------------------------------------------------------------------
@@ -465,23 +459,19 @@ import starling.display.DisplayObject;
 
 class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
 
-    public function NavigationBarStackScreenNavigatorItem(screen:Object = null, pushTransition: Function = null, popTransition: Function = null, pushEvents:Object = null, popEvent:String = null, properties:Object = null) {
-        super(screen, pushEvents, popEvent, properties);
-        this.pushTransition = pushTransition;
-        this.popTransition  = popTransition;
+    public function NavigationBarStackScreenNavigatorItem(navigationItem: NavigationItem) {
+        super(null, navigationItem.pushTransition, navigationItem.popTransition);
     }
 
     private var _retained: Boolean = false;
-
     override public function get canDispose(): Boolean {
         return !_retained;
     }
 
     private var _navigationBarContent: DisplayObject;
-
     override public function getScreen():DisplayObject {
         if (_navigationBarContent == null) {
-            _navigationBarContent = super.getScreen();
+            _navigationBarContent = new DummyNavigationBarContent();
         }
         return _navigationBarContent;
     }

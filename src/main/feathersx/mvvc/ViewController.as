@@ -385,10 +385,6 @@ public class ViewController {
         layoutPresentedViewController();
     }
 
-    public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
-
-    }
-
     public function dismiss(animated: Boolean, completion: Function = null): void {
 
         if (presentedViewController == null) {

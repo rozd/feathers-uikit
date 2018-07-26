@@ -24,7 +24,7 @@ import starling.display.DisplayObject;
 import starling.display.Quad;
 import starling.filters.DropShadowFilter;
 
-internal class NavigationBarContent extends Screen {
+public class NavigationBarContent extends Screen {
 
     //--------------------------------------------------------------------------
     //

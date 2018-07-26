@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<mxml:Screen xmlns:fx="http://ns.adobe.com/mxml/2009"
+             xmlns:mxml="library://ns.feathersui.com/mxml"
+             xmlns:controls="feathersx.controls.*">
+
+    <fx:Script><![CDATA[
+
+        [Bindable]
+        public var source: File = new File('app:/checkmark');
+
+        ]]></fx:Script>
+
+    <mxml:layout><mxml:AnchorLayout/></mxml:layout>
+
+    <controls:MovieLoader source="{source}">
+        <controls:layoutData><mxml:AnchorLayoutData verticalCenter="0" horizontalCenter="0"/></controls:layoutData>
+    </controls:MovieLoader>
+
+    <mxml:Button label="Back" triggered="dispatchEventWith('back')">
+        <mxml:layoutData><mxml:AnchorLayoutData left="20" top="20" /></mxml:layoutData>
+    </mxml:Button>
+
+</mxml:Screen>

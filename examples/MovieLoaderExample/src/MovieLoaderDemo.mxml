@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<f:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:f="library://ns.feathersui.com/mxml"
+               theme="feathers.themes.MetalWorksMobileTheme" showStats="true">
+
+
+    <fx:Script>
+        <![CDATA[
+        import view.LandingPageView;
+        import view.MovieLoaderView;
+        import view.TestView;
+        ]]>
+    </fx:Script>
+
+    <f:layout>
+        <f:AnchorLayout />
+    </f:layout>
+
+    <f:StackScreenNavigator rootScreenID="landingPage">
+        <f:layoutData><f:AnchorLayoutData percentWidth="100" percentHeight="100" /></f:layoutData>
+        <f:StackScreenNavigatorItem id="landingPage" screen="{LandingPageView}">
+            <f:pushEvents>
+                <fx:Object showMovieLoader="movieLoader" showTest="test" />
+            </f:pushEvents>
+        </f:StackScreenNavigatorItem>
+        <f:StackScreenNavigatorItem id="movieLoader" screen="{MovieLoaderView}">
+            <f:popEvents>
+                <fx:Vector type="String">
+                    <fx:String>back</fx:String>
+                </fx:Vector>
+            </f:popEvents>
+        </f:StackScreenNavigatorItem>
+        <f:StackScreenNavigatorItem id="test" screen="{TestView}">
+            <f:popEvents>
+                <fx:Vector type="String">
+                    <fx:String>back</fx:String>
+                </fx:Vector>
+            </f:popEvents>
+        </f:StackScreenNavigatorItem>
+    </f:StackScreenNavigator>
+
+</f:Application>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="feathers-uikit-movie-loader-example">
+    <configurations>
+      <configuration name="feathers-uikit-movie-loader-example" target-platform="Mobile" main-class="MovieLoaderDemo" output-file="MovieLoaderDemo.swf" output-folder="$MODULE_DIR$/bin">
+        <dependencies target-player="29.0">
+          <entries>
+            <entry library-id="354b2b62-8a0c-4799-b9bc-f6c2ba75b18d">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="68c1a347-fe88-479c-8530-627173f30c30">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="0c0eb61c-f1d0-445b-92e9-f6201a73cc07">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-utils" build-configuration-name="skein-utils">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-core" build-configuration-name="skein-core">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="3.4.x" />
+        </dependencies>
+        <compiler-options>
+          <option name="additionalOptions" value="-preloader= -advanced-telemetry=true" />
+        </compiler-options>
+        <packaging-air-desktop />
+        <packaging-android use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/MovieLoaderDemo-app.xml" package-file-name="MovieLoaderDemo" />
+        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/MovieLoaderDemo-app.xml" package-file-name="MovieLoaderDemo">
+          <files-to-package>
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/assets" path-in-package="." />
+          </files-to-package>
+          <AirSigningOptions adt-options="-sampler" keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
+        </packaging-ios>
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="3.4.x" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="354b2b62-8a0c-4799-b9bc-f6c2ba75b18d" />
+        <CLASSES>
+          <root url="file://$USER_HOME$/sdks/feathers/3.4.1/frameworks/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.4.1/frameworks/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="68c1a347-fe88-479c-8530-627173f30c30" />
+        <CLASSES>
+          <root url="file://$USER_HOME$/sdks/feathers/3.4.1/frameworks/themes/MetalWorksMobileTheme" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.4.1/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="0c0eb61c-f1d0-445b-92e9-f6201a73cc07" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../bin/feathers-uikit.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="skein-utils" exported="" />
+    <orderEntry type="module" module-name="skein-core" exported="" />
+  </component>
+</module>

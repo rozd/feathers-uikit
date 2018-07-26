@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<f:Screen xmlns:fx="http://ns.adobe.com/mxml/2009"
+             xmlns:f="library://ns.feathersui.com/mxml">
+
+    <fx:Script>
+        <![CDATA[
+        import skein.utils.VersionUtil;
+
+        private function testVersionUtil(): void {
+            var version100: String = "1.0.0";
+            var version11: String = "1.1";
+
+            trace('VersionUtil.isVersionString("v.1")', VersionUtil.isVersionString("v.1"));
+            trace('VersionUtil.compare("1.0.0", "1.0.1")', VersionUtil.compare("1.0.0", "1.0.1"));
+            trace('VersionUtil.isGreaterThan("1.0.0", "1.0.1")', VersionUtil.isGreaterThan("1.0.0", "1.0.1"));
+            trace('VersionUtil.isLessThan("1.0.0", "1.0.1")', VersionUtil.isLessThan("1.0.0", "1.0.1"));
+            trace('VersionUtil.isEqualThan("1.0.0", "1.0.1")', VersionUtil.isEqual("1.0.0", "1.0.1"));
+            trace('VersionUtil.isEqualThan("1.0.0", "1.0.0")', VersionUtil.isEqual("1.0.0", "1.0.0"));
+            trace('VersionUtil.isEqualThan("1.0.0", "1.0.0.0")', VersionUtil.isEqual("1.0.0", "1.0.0.0"));
+        }
+        ]]>
+    </fx:Script>
+
+    <f:layout>
+        <f:VerticalLayout horizontalAlign="center" verticalAlign="middle" gap="20" />
+    </f:layout>
+
+    <f:Button label="Show" triggered="dispatchEventWith('showMovieLoader')" />
+
+    <f:Button label="Test" triggered="dispatchEventWith('showTest')" />
+
+    <f:Button label="Test Version Util" triggered="testVersionUtil()" />
+
+</f:Screen>

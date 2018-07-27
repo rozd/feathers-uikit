@@ -6,6 +6,7 @@ import avmplus.getQualifiedClassName;
 
 import feathers.controls.ScreenNavigator;
 import feathers.controls.Scroller;
+import feathers.core.IFeathersControl;
 import feathers.core.PopUpManager;
 import feathers.events.FeathersEventType;
 import feathers.motion.Cover;
@@ -240,7 +241,6 @@ public class ViewController {
                 Scroller(_view).paddingBottom = bottomGuide;
                 Scroller(_view).paddingRight  = rightGuide;
             }
-            viewDidLoad();
             _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
             });
@@ -266,6 +266,10 @@ public class ViewController {
                 removeHardKeysSupport(_view);
                 viewDidDisappear();
             });
+            if (_view is IFeathersControl) {
+                IFeathersControl(_view).initializeNow();
+            }
+            viewDidLoad();
         }
     }
 

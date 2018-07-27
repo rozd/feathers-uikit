@@ -71,30 +71,20 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    protected function getPushTransition(animated:Boolean): Function {
-        var onProgress:Function = function (progress:Number): void {
-//            trace("onProgress: " + progress);
-        };
-        var onComplete:Function = function (): void {
-//            trace("onComplete");
-        };
-
+    protected function getPushTransition(animated: Boolean): Function {
         if (animated) {
+            var onProgress:Function = function (progress:Number): void {};
+            var onComplete:Function = function (): void {};
             return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
         } else {
             return null;
         }
     }
 
-    protected function getPopTransition(animated:Boolean): Function {
-        var onProgress:Function = function (progress:Number) {
-//            trace("onProgress: " + progress);
-        };
-        var onComplete:Function = function () {
-//            trace("onComplete");
-        };
-
+    protected function getPopTransition(animated: Boolean): Function {
         if (animated) {
+            var onProgress:Function = function(progress:Number): void {};
+            var onComplete:Function = function(): void {};
             return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
         } else {
             return null;
@@ -254,8 +244,8 @@ public class NavigationController extends ViewController {
             if (viewControllers.indexOf(oldViewController) != -1) {
                 continue;
             }
-            var oldItem: ViewControllerNavigatorItem = navigator.getScreen(oldViewController.identifier) as ViewControllerNavigatorItem;
-            oldItem.release();
+            var oldScreen: ViewControllerNavigatorItem = navigator.getScreen(oldViewController.identifier) as ViewControllerNavigatorItem;
+            oldScreen.release();
             helper.removeScreenWithId(oldViewController.identifier, function(): void {
                 clearNavigationControllerForViewControllers(new <ViewController>[oldViewController]);
             });
@@ -265,10 +255,10 @@ public class NavigationController extends ViewController {
             if (navigator.hasScreen(newViewController.identifier)) {
                 continue;
             }
-            var newItem: ViewControllerNavigatorItem = navigator.getScreen(newViewController.identifier) as ViewControllerNavigatorItem;
-            newItem.retain();
+            var newScreen: ViewControllerNavigatorItem = navigator.getScreen(newViewController.identifier) as ViewControllerNavigatorItem;
+            newScreen.retain();
             setupNavigationControllerForViewControllers(new <ViewController>[newViewController]);
-            helper.addScreenWithId(newViewController.identifier, newItem, null);
+            helper.addScreenWithId(newViewController.identifier, newScreen, null);
         }
 
         _viewControllers = viewControllers;

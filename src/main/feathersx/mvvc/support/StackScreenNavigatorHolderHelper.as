@@ -91,7 +91,7 @@ public class StackScreenNavigatorHolderHelper {
 
     public function pushScreenWithId(id: String, screen: StackScreenNavigatorItem, transition: Function, completion: Function): void {
         addScreenWithId(id, screen, function(): void {
-            _navigator.pushScreen(id, screen, transition);
+            _navigator.pushScreen(id, screen, getPushTransition(id, transition));
             if (completion != null) {
                 completion();
             }
@@ -105,7 +105,7 @@ public class StackScreenNavigatorHolderHelper {
             trackScreenTransitionComplete(function(): void {
                 removeScreenWithId(id, completion);
             });
-            _navigator.popScreen(transition);
+            _navigator.popScreen(getPopTransition(id, transition));
         });
     }
 
@@ -114,7 +114,7 @@ public class StackScreenNavigatorHolderHelper {
             trackScreenTransitionComplete(function(): void {
                 removeScreenWithIds(ids, completion);
             });
-            _navigator.popToRootScreen(transition);
+            _navigator.popToRootScreen(getPopToRootTransition(transition));
         });
     }
 
@@ -134,6 +134,28 @@ public class StackScreenNavigatorHolderHelper {
             trackScreenTransitionComplete(completion);
             _navigator.replaceScreen(id, transition);
         });
+    }
+
+    // MARK: Transitions
+
+    protected function getPushTransition(id: String, transition: Function): Function {
+        if (transition == null) {
+            return null;
+        }
+        var screen: StackScreenNavigatorItem = _navigator.getScreen(id);
+        return screen.pushTransition || transition;
+    }
+
+    protected function getPopTransition(id: String, transition: Function): Function {
+        if (transition == null) {
+            return null;
+        }
+        var screen: StackScreenNavigatorItem = _navigator.getScreen(id);
+        return screen.popTransition || transition;
+    }
+
+    private function getPopToRootTransition(transition: Function): Function {
+        return getPopTransition(_navigator.rootScreenID, transition);
     }
 
     // MARK: Utils

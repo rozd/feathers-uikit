@@ -14,7 +14,7 @@ public class Slide extends feathers.motion.Slide {
         var externalOnComplete: Function = onComplete;
 
         return function (oldScreen: DisplayObject, newScreen: DisplayObject, internalOnComplete: Function): void {
-            function onComplete() {
+            function onComplete(): void {
                 internalOnComplete();
                 externalOnComplete();
             }
@@ -44,7 +44,7 @@ public class Slide extends feathers.motion.Slide {
         var externalOnComplete: Function = onComplete;
 
         return function (oldScreen: DisplayObject, newScreen: DisplayObject, internalOnComplete: Function): void {
-            function onComplete() {
+            function onComplete(): void {
                 internalOnComplete();
                 externalOnComplete();
             }

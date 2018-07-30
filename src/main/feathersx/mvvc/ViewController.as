@@ -102,7 +102,7 @@ public class ViewController {
         }
         return null;
     }
-    protected function setPresentingViewController(vc: ViewController) {
+    protected function setPresentingViewController(vc: ViewController): void {
         _presentingViewController = vc;
     }
 
@@ -573,7 +573,7 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
-    public function performSegue() {
+    public function performSegue(): void {
 
     }
 

@@ -4,19 +4,16 @@
 package feathersx.mvvc {
 import feathers.controls.Button;
 import feathers.controls.StackScreenNavigator;
-import feathers.events.FeathersEventType;
 import feathers.motion.Fade;
 
 import feathersx.core.feathers_mvvc;
-
-import feathers.motion.Slide;
+import feathersx.motion.Slide;
 import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 
+import flash.debugger.enterDebugger;
 import flash.geom.Point;
 
 import starling.animation.Transitions;
-import starling.display.DisplayObject;
-import starling.events.Event;
 
 public class NavigationBar extends StackScreenNavigator {
 
@@ -83,28 +80,36 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    private var _defaultPushTransition: Function = Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT);
-    protected function getPushTransition(identifier: String, animated:Boolean): Function {
+    protected function getPushTransition(animated:Boolean): Function {
         if (animated) {
-            var item: NavigationBarStackScreenNavigatorItem = getScreen(identifier) as NavigationBarStackScreenNavigatorItem;
-            return item.pushTransition || this.pushTransition || _defaultPushTransition;
+            var onProgress:Function = function(progress:Number): void {};
+            var onComplete:Function = function(): void {};
+            return Slide.createSlideLeftTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
         } else {
             return null;
         }
     }
 
-    private var _defaultPopTransition: Function = Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT);
-    protected function getPopTransition(identifier: String, animated:Boolean): Function {
+    protected function getPopTransition(animated:Boolean): Function {
         if (animated) {
-            var item: NavigationBarStackScreenNavigatorItem = getScreen(identifier) as NavigationBarStackScreenNavigatorItem;
-            return item.popTransition || popTransition || _defaultPopTransition;
+            var onProgress:Function = function(progress:Number): void {};
+            var onComplete:Function = function(): void {};
+            return Slide.createSlideRightTransition(0.5, Transitions.EASE_OUT, null, onProgress, onComplete);
         } else {
             return null;
         }
+    }
+
+    protected function getPopToRootTransition(animated: Boolean): Function {
+        return getPopTransition(animated);
     }
 
     private function getReplaceTransition(animated: Boolean): Function {
-        return Fade.createFadeInTransition();
+        if (animated) {
+            return Fade.createFadeInTransition();
+        } else {
+            return null;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -119,12 +124,9 @@ public class NavigationBar extends StackScreenNavigator {
 
     public function pushItem(item: NavigationItem, animated: Boolean): void {
 
-        addScreenForNavigationItem(item, function(): void {
-            pushScreen(item.identifier, null, getPushTransition(item.identifier, animated));
-        });
-
         _items.push(item);
-        retainNavigationItems(new <NavigationItem>[item]);
+
+        doPushNavigationItem(item, animated, null);
     }
 
     public function popItem(animated: Boolean): NavigationItem {
@@ -136,67 +138,26 @@ public class NavigationBar extends StackScreenNavigator {
             return _items[0];
         }
 
-        var item: NavigationItem = _items.pop();
-        popScreen(getPopTransition(item.identifier, animated));
-        releaseNavigationItems(new <NavigationItem>[item]);
+        var popped: NavigationItem = _items.pop();
 
-        return _items[_items.length - 1];
+        doPopNavigationItem(popped, animated, null);
+
+        return popped;
     }
 
-    public function popToRootItem(animated: Boolean): NavigationItem {
+    public function popToRootItem(animated: Boolean): Vector.<NavigationItem> {
         if (_items.length == 0) {
             return null;
         }
 
         if (_items.length == 1) {
-            return _items[0];
+            return null;
         }
 
-        var item: NavigationItem = _items[_items.length - 1];
-        popToRootScreen(getPopTransition(item.identifier, animated));
-        releaseNavigationItems(_items.slice(1, _items.length - 1));
+        var popped: Vector.<NavigationItem> = _items.slice(1, _items.length - 1);
+        doPopToRootNavigationItem(popped, animated, null);
 
-        return _items[_items.length - 1];
-    }
-
-    public function replaceWithNavigationItem(item: NavigationItem, animated: Boolean, completion: Function = null): void {
-
-        addScreenForNavigationItem(item, function(): void {
-            addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-            replaceScreen(item.identifier, getReplaceTransition(animated));
-        });
-
-        function transitionStartHandler(event: Event): void {
-            removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-            addEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
-        }
-
-        function transitionCompleteHandler(event: Event): void {
-            removeEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
-            if (completion != null) {
-                completion();
-            }
-        }
-    }
-
-    protected function setRootNavigationItem(item: NavigationItem, completion: Function = null): void {
-
-        addScreenForNavigationItem(item, function(): void {
-            addEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-            rootScreenID = item.identifier;
-        });
-
-        function transitionStartHandler(event: Event): void {
-            removeEventListener(FeathersEventType.TRANSITION_START, transitionStartHandler);
-            addEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
-        }
-
-        function transitionCompleteHandler(event: Event): void {
-            removeEventListener(FeathersEventType.TRANSITION_COMPLETE, transitionCompleteHandler);
-            if (completion != null) {
-                completion();
-            }
-        }
+        return popped;
     }
 
     public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {
@@ -206,10 +167,10 @@ public class NavigationBar extends StackScreenNavigator {
         if (items.length > 0) {
             if (activeScreenID == null) {
                 var newRootItem: NavigationItem = items[0];
-                setRootNavigationItem(newRootItem);
+                setRootNavigationItem(newRootItem, null);
             } else {
                 var newTopItem: NavigationItem = items[items.length - 1];
-                replaceWithNavigationItem(newTopItem, animated, function ():void {
+                replaceTopNavigationItem(newTopItem, animated, function ():void {
                     setItemsInternal(items);
                 });
                 delaySettingItems = true;
@@ -222,38 +183,32 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     private function setItemsInternal(items: Vector.<NavigationItem>): void {
-        releaseNavigationItems(_items);
+        if (items == _items) {
+            enterDebugger();
+            return;
+        }
+
+        var helper: StackScreenNavigatorHolderHelper = new StackScreenNavigatorHolderHelper(navigator);
 
         for each (var oldItem: NavigationItem in _items) {
             if (items.indexOf(oldItem) != -1) {
                 continue;
             }
-            removeScreenOfNavigationItem(oldItem, null);
+            var oldScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(oldItem.identifier) as NavigationBarStackScreenNavigatorItem;
+            oldScreen.release();
+            helper.removeScreenWithId(oldItem.identifier, null);
         }
+
         for each (var newItem: NavigationItem in items) {
             if (hasScreen(newItem.identifier)) {
                 continue;
             }
-            addScreenForNavigationItem(newItem, null);
+            var newScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(newItem.identifier) as NavigationBarStackScreenNavigatorItem;
+            newScreen.retain();
+            helper.addScreenWithId(newItem.identifier, newScreen, null);
         }
 
         _items = items;
-
-        retainNavigationItems(_items);
-    }
-
-    private function retainNavigationItems(navigationItems: Vector.<NavigationItem>):void {
-        for each (var navigationItem:NavigationItem in navigationItems) {
-            var item: NavigationBarStackScreenNavigatorItem = getScreen(navigationItem.identifier) as NavigationBarStackScreenNavigatorItem;
-            item.retain();
-        }
-    }
-
-    private function releaseNavigationItems(navigationItems: Vector.<NavigationItem>):void {
-        for each (var vc:NavigationItem in navigationItems) {
-            var item: NavigationBarStackScreenNavigatorItem = getScreen(vc.identifier) as NavigationBarStackScreenNavigatorItem;
-            item.release();
-        }
     }
 
     //--------------------------------------------------------------------------
@@ -262,25 +217,60 @@ public class NavigationBar extends StackScreenNavigator {
     //
     //--------------------------------------------------------------------------
 
-    protected function addScreenForNavigationItem(item: NavigationItem, completion: Function): void {
-        new StackScreenNavigatorHolderHelper(this).addScreenWithId(item.identifier, new NavigationBarStackScreenNavigatorItem(function(): DisplayObject {
-            return createNavigationBarContentFor(item);
-        }, item.pushTransition, item.popTransition), completion);
+    public function get navigator(): StackScreenNavigator {
+        return this;
     }
 
-    protected function removeScreenOfNavigationItem(item: NavigationItem, completion: Function): void {
-        new StackScreenNavigatorHolderHelper(this).removeScreenWithId(item.identifier, completion);
+    // MARK: StackScreenNavigator utils
+
+    protected function doPushNavigationItem(item: NavigationItem, animated: Boolean, completion: Function): void {
+        var screen: NavigationBarStackScreenNavigatorItem = new NavigationBarStackScreenNavigatorItem(item);
+        screen.retain();
+
+        var transition: Function = getPushTransition(animated);
+
+        new StackScreenNavigatorHolderHelper(navigator).pushScreenWithId(item.identifier, screen, transition, completion);
     }
 
-    //--------------------------------------------------------------------------
-    //
-    //  Work with Content
-    //
-    //--------------------------------------------------------------------------
+    protected function doPopNavigationItem(item: NavigationItem, animated: Boolean, completion: Function): void {
+        var screen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(item.identifier) as NavigationBarStackScreenNavigatorItem;
+        screen.release();
 
-    private function createNavigationBarContentFor(item:NavigationItem): NavigationBarContent {
-        var content:NavigationBarContent = new NavigationBarContent(item);
-        return content;
+        var transition: Function = getPopTransition(animated);
+
+        new StackScreenNavigatorHolderHelper(navigator).popScreenWithId(item.identifier, transition, completion);
+    }
+
+    protected function doPopToRootNavigationItem(items: Vector.<NavigationItem>, animated: Boolean, completion: Function): void {
+        var ids: Vector.<String> = new <String>[];
+        items.forEach(function (vc: NavigationItem, ...rest): void {
+            ids.push(vc.identifier);
+        });
+
+        for (var i: int = 0; i < ids.length; i++) {
+            var screen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(ids[i]) as NavigationBarStackScreenNavigatorItem;
+            screen.release();
+        }
+
+        var transition: Function = getPopToRootTransition(animated);
+
+        new StackScreenNavigatorHolderHelper(navigator).popToRootScreenWithIds(ids, transition, completion);
+    }
+
+    protected function setRootNavigationItem(item: NavigationItem, completion: Function): void {
+        var screen: NavigationBarStackScreenNavigatorItem = new NavigationBarStackScreenNavigatorItem(item);
+        screen.retain();
+
+        new StackScreenNavigatorHolderHelper(navigator).setRootScreenWithId(item.identifier, screen, completion);
+    }
+
+    protected function replaceTopNavigationItem(item: NavigationItem, animated: Boolean, completion: Function): void {
+        var screen: NavigationBarStackScreenNavigatorItem = new NavigationBarStackScreenNavigatorItem(item);
+        screen.retain();
+
+        var transition: Function = getReplaceTransition(animated);
+
+        new StackScreenNavigatorHolderHelper(navigator).replaceScreenWithId(item.identifier, screen, transition, completion);
     }
 
     //--------------------------------------------------------------------------
@@ -455,6 +445,10 @@ public class NavigationBar extends StackScreenNavigator {
 
 import feathers.controls.StackScreenNavigatorItem;
 
+import feathersx.mvvc.NavigationBarContent;
+import feathersx.mvvc.NavigationItem;
+import feathersx.mvvc.NavigatorItem;
+
 import starling.display.DisplayObject;
 
 //--------------------------------------------------------------------------
@@ -463,36 +457,45 @@ import starling.display.DisplayObject;
 //
 //--------------------------------------------------------------------------
 
-class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
+class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem implements NavigatorItem {
 
-    public function NavigationBarStackScreenNavigatorItem(screen:Object = null, pushTransition: Function = null, popTransition: Function = null, pushEvents:Object = null, popEvent:String = null, properties:Object = null) {
-        super(screen, pushEvents, popEvent, properties);
-        this.pushTransition = pushTransition;
-        this.popTransition  = popTransition;
+    public function NavigationBarStackScreenNavigatorItem(item: NavigationItem) {
+        super(null, item.pushTransition, item.popTransition);
+        _item = item;
     }
 
-    private var _retained: Boolean = false;
+    private var _item: NavigationItem;
 
+    private var _retained: Boolean = false;
     override public function get canDispose(): Boolean {
         return !_retained;
     }
 
     private var _navigationBarContent: DisplayObject;
-
     override public function getScreen():DisplayObject {
         if (_navigationBarContent == null) {
-            _navigationBarContent = super.getScreen();
+            _navigationBarContent = new NavigationBarContent(_item);
         }
         return _navigationBarContent;
     }
 
+    public function disposeIfNeeded(): void {
+        if (_navigationBarContent == null) {
+            return;
+        }
+
+        _navigationBarContent.dispose();
+        _navigationBarContent = null;
+    }
+
     public function retain():void {
+        trace("retain", _item.identifier);
         _retained = true;
     }
 
     public function release():void {
+        trace("release", _item.identifier);
         _retained = false;
-        _navigationBarContent = null;
     }
 }
 

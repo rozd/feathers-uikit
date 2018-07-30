@@ -2,6 +2,10 @@
  * Created by max.rozdobudko@gmail.com on 7/26/17.
  */
 package feathersx.mvvc.examples.helloWorld {
+import feathersx.mvvc.AlertAction;
+import feathersx.mvvc.AlertActionStyle;
+import feathersx.mvvc.AlertController;
+import feathersx.mvvc.AlertControllerStyle;
 import feathersx.mvvc.ViewController;
 import feathersx.mvvc.examples.helloWorld.view.B1View;
 import feathersx.mvvc.examples.helloWorld.view.B2View;
@@ -25,6 +29,7 @@ public class B1ViewController extends ViewController {
         view.popToScreenAButton.addEventListener(Event.TRIGGERED, popToScreenA);
         view.pushScreenCButton.addEventListener(Event.TRIGGERED, pushScreenC);
         view.replaceWithScreenB2Button.addEventListener(Event.TRIGGERED, replaceWithScreenB2);
+        view.showAlertButton.addEventListener(Event.TRIGGERED, showAlert);
     }
 
     override protected function viewWillLoad():void {
@@ -62,9 +67,20 @@ public class B1ViewController extends ViewController {
         }
     }
 
+    public function showAlert(): void {
+        var alert: AlertController = new AlertController("Title", "Hello World", AlertControllerStyle.alert);
+        alert.isModalInPopover = true;
+        alert.addAction(new AlertAction("OK", AlertActionStyle.normal, function (): void {
+            trace("OK");
+        }));
+        alert.addAction(new AlertAction("Cancel", AlertActionStyle.normal, function (): void {
+            trace("Cancel");
+        }));
+        present(alert, true);
+    }
+
     public function replaceWithScreenB2(): void {
-        var b2:B2ViewController = new B2ViewController();
-        this.replaceWithViewController(b2, true);
+        // unsupported
     }
 }
 }

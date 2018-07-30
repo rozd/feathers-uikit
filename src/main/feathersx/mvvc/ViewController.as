@@ -4,8 +4,11 @@
 package feathersx.mvvc {
 import avmplus.getQualifiedClassName;
 
+import feathers.controls.LayoutGroup;
+
 import feathers.controls.ScreenNavigator;
 import feathers.controls.Scroller;
+import feathers.core.IFeathersControl;
 import feathers.core.PopUpManager;
 import feathers.events.FeathersEventType;
 import feathers.motion.Cover;
@@ -202,7 +205,7 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
-    protected var _view:DisplayObject;
+    protected var _view: DisplayObject;
     public function get view(): DisplayObject {
         loadViewIfRequired();
         return _view;
@@ -219,8 +222,9 @@ public class ViewController {
         return _view != null;
     }
 
-    protected function loadView():DisplayObject {
-        return null;
+    protected function loadView(): DisplayObject {
+        var view: DisplayObject = new LayoutGroup();
+        return view;
     }
 
     protected function loadViewIfRequired(): void {
@@ -240,7 +244,6 @@ public class ViewController {
                 Scroller(_view).paddingBottom = bottomGuide;
                 Scroller(_view).paddingRight  = rightGuide;
             }
-            viewDidLoad();
             _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
             });
@@ -266,6 +269,10 @@ public class ViewController {
                 removeHardKeysSupport(_view);
                 viewDidDisappear();
             });
+            if (_view is IFeathersControl) {
+                IFeathersControl(_view).initializeNow();
+            }
+            viewDidLoad();
         }
     }
 
@@ -362,7 +369,10 @@ public class ViewController {
         }
 
         vc.setPresentingViewController(this);
+        this.setPresentedViewController(vc);
+
         PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+
         if (vc is AlertController) {
             AlertController(vc).showAlertFromViewController(this);
         } else {
@@ -381,12 +391,8 @@ public class ViewController {
                 }
             }
         }
-        this.setPresentedViewController(vc);
+
         layoutPresentedViewController();
-    }
-
-    public function replaceWithViewController(vc: ViewController, animated: Boolean, completion: Function = null): void {
-
     }
 
     public function dismiss(animated: Boolean, completion: Function = null): void {
@@ -401,18 +407,18 @@ public class ViewController {
             return;
         }
 
-        presentedViewController.setPresentingViewController(null);
+        PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
 
         if (presentedViewController is AlertController) {
             AlertController(presentedViewController).hideAlertFromViewController(this);
         } else if (PopUpManager.isPopUp(presentedViewController.view)) {
-            PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
             PopUpManager.removePopUp(presentedViewController.view);
             presentedViewController.view.dispose();
         } else {
             navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
         }
 
+        presentedViewController.setPresentingViewController(null);
         this.setPresentedViewController(null);
     }
 

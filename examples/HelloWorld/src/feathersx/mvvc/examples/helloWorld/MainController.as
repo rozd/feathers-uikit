@@ -6,6 +6,7 @@ import feathersx.mvvc.NavigationController;
 import feathersx.mvvc.ViewController;
 
 public class MainController extends NavigationController {
+
     public function MainController() {
         super(new AViewController());
     }

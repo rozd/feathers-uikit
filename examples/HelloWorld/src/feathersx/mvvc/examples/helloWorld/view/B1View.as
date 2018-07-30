@@ -9,31 +9,32 @@ import feathers.layout.VerticalLayout;
 public class B1View extends LayoutGroup {
     public function B1View() {
         super();
-        this.layout = new VerticalLayout();
+        layout = new VerticalLayout();
     }
 
     public var popToScreenAButton:Button;
     public var pushScreenCButton:Button;
     public var replaceWithScreenB2Button:Button;
-
+    public var showAlertButton: Button;
 
     override protected function initialize(): void {
         super.initialize();
 
-        this.popToScreenAButton = new Button();
-        this.popToScreenAButton.label = "Pop to Sreen A";
-        this.addChild(this.popToScreenAButton);
-        this.popToScreenAButton.validate();
+        popToScreenAButton = new Button();
+        popToScreenAButton.label = "Pop to Sreen A";
+        addChild(popToScreenAButton);
 
-        this.pushScreenCButton = new Button();
-        this.pushScreenCButton.label = "Push Screen C";
-        this.addChild(this.pushScreenCButton);
-        this.pushScreenCButton.validate();
+        pushScreenCButton = new Button();
+        pushScreenCButton.label = "Push Screen C";
+        addChild(pushScreenCButton);
 
-        this.replaceWithScreenB2Button = new Button();
-        this.replaceWithScreenB2Button.label = "Repalce with Screen B2";
-        this.addChild(this.replaceWithScreenB2Button);
-        this.replaceWithScreenB2Button.validate();
+        replaceWithScreenB2Button = new Button();
+        replaceWithScreenB2Button.label = "Replace with Screen B2";
+        addChild(replaceWithScreenB2Button);
+
+        showAlertButton = new Button();
+        showAlertButton.label = "Show Alert";
+        addChild(showAlertButton);
     }
 }
 }

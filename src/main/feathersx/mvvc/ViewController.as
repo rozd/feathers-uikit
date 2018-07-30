@@ -4,6 +4,8 @@
 package feathersx.mvvc {
 import avmplus.getQualifiedClassName;
 
+import feathers.controls.LayoutGroup;
+
 import feathers.controls.ScreenNavigator;
 import feathers.controls.Scroller;
 import feathers.core.IFeathersControl;
@@ -203,7 +205,7 @@ public class ViewController {
     //
     //--------------------------------------------------------------------------
 
-    protected var _view:DisplayObject;
+    protected var _view: DisplayObject;
     public function get view(): DisplayObject {
         loadViewIfRequired();
         return _view;
@@ -220,8 +222,9 @@ public class ViewController {
         return _view != null;
     }
 
-    protected function loadView():DisplayObject {
-        return null;
+    protected function loadView(): DisplayObject {
+        var view: DisplayObject = new LayoutGroup();
+        return view;
     }
 
     protected function loadViewIfRequired(): void {
@@ -366,7 +369,10 @@ public class ViewController {
         }
 
         vc.setPresentingViewController(this);
+        this.setPresentedViewController(vc);
+
         PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+
         if (vc is AlertController) {
             AlertController(vc).showAlertFromViewController(this);
         } else {
@@ -385,7 +391,7 @@ public class ViewController {
                 }
             }
         }
-        this.setPresentedViewController(vc);
+
         layoutPresentedViewController();
     }
 
@@ -401,18 +407,18 @@ public class ViewController {
             return;
         }
 
-        presentedViewController.setPresentingViewController(null);
+        PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
 
         if (presentedViewController is AlertController) {
             AlertController(presentedViewController).hideAlertFromViewController(this);
         } else if (PopUpManager.isPopUp(presentedViewController.view)) {
-            PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
             PopUpManager.removePopUp(presentedViewController.view);
             presentedViewController.view.dispose();
         } else {
             navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
         }
 
+        presentedViewController.setPresentingViewController(null);
         this.setPresentedViewController(null);
     }
 

@@ -243,7 +243,7 @@ public class NavigationBar extends StackScreenNavigator {
 
     protected function doPopToRootNavigationItem(items: Vector.<NavigationItem>, animated: Boolean, completion: Function): void {
         var ids: Vector.<String> = new <String>[];
-        items.forEach(function (vc: ViewController, ...rest): void {
+        items.forEach(function (vc: NavigationItem, ...rest): void {
             ids.push(vc.identifier);
         });
 

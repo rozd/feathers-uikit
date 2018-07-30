@@ -26,7 +26,7 @@ public class DummyViewController extends ViewController {
 
         // navigationItem
 
-        navigationItem.hidesBackButton = true;
+        navigationItem.hidesBackButton = false;
 
         // view
 

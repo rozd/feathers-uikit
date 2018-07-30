@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="HelloWorld">
     <configurations>
-      <configuration name="HelloWorld" target-platform="Mobile" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/../../../../potbotics/cannidose/out/production/HelloWorld">
+      <configuration name="HelloWorld" target-platform="Mobile" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/bin-debug">
         <dependencies>
           <entries>
             <entry library-id="906977b8-c660-4d51-9a2f-39a570bac3aa">
@@ -14,14 +14,20 @@
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="d346c702-efa9-4c67-921e-a6251ce72a2b">
+            <entry library-id="4a352fe3-d86d-4e2b-83fa-18430d78edb1">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-core" build-configuration-name="skein-core">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-utils" build-configuration-name="skein-utils">
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="3.3.x" />
+          <sdk name="3.4.x" />
         </dependencies>
         <compiler-options>
-          <option name="additionalOptions" value="-preloader=" />
+          <option name="additionalOptions" value="-preloader= -advanced-telemetry=true" />
         </compiler-options>
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld" />
@@ -37,7 +43,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="3.3.x" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="3.4.x" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
@@ -64,13 +70,16 @@
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="d346c702-efa9-4c67-921e-a6251ce72a2b" />
+        <properties id="4a352fe3-d86d-4e2b-83fa-18430d78edb1" />
         <CLASSES>
-          <root url="jar://$USER_HOME$/sdks/feathers/3.3.1/frameworks/themes/MetalWorksMobileTheme/MetalWorksMobileTheme.swc!/" />
+          <root url="file://$USER_HOME$/sdks/feathers/3.5.0-starling2.4/frameworks/themes/MetalWorksMobileTheme" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.5.0-starling2.4/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="skein-core" exported="" />
+    <orderEntry type="module" module-name="skein-utils" exported="" />
   </component>
 </module>

@@ -6,7 +6,9 @@ import feathers.controls.Button;
 import feathers.controls.LayoutGroup;
 import feathers.layout.VerticalLayout;
 
-public class B1View extends LayoutGroup {
+import feathersx.mvvc.View;
+
+public class B1View extends LayoutGroup implements View {
     public function B1View() {
         super();
         layout = new VerticalLayout();
@@ -35,6 +37,28 @@ public class B1View extends LayoutGroup {
         showAlertButton = new Button();
         showAlertButton.label = "Show Alert";
         addChild(showAlertButton);
+    }
+
+    override public function dispose(): void {
+        super.dispose();
+    }
+
+    private var _topGuide: Number;
+    public function get topGuide(): Number {
+        return _topGuide;
+    }
+    public function set topGuide(value: Number): void {
+        _topGuide = value;
+        VerticalLayout(layout).paddingTop = value;
+    }
+
+    private var _bottomGuide: Number;
+    public function get bottomGuide(): Number {
+        return _bottomGuide;
+    }
+    public function set bottomGuide(value: Number): void {
+        _bottomGuide = value;
+        VerticalLayout(layout).paddingBottom = value;
     }
 }
 }

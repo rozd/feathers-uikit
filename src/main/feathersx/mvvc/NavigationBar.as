@@ -447,6 +447,7 @@ import feathers.controls.StackScreenNavigatorItem;
 
 import feathersx.mvvc.NavigationBarContent;
 import feathersx.mvvc.NavigationItem;
+import feathersx.mvvc.NavigatorItem;
 
 import starling.display.DisplayObject;
 
@@ -456,7 +457,7 @@ import starling.display.DisplayObject;
 //
 //--------------------------------------------------------------------------
 
-class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
+class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem implements NavigatorItem {
 
     public function NavigationBarStackScreenNavigatorItem(item: NavigationItem) {
         super(null, item.pushTransition, item.popTransition);
@@ -478,6 +479,15 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
         return _navigationBarContent;
     }
 
+    public function disposeIfNeeded(): void {
+        if (_navigationBarContent == null) {
+            return;
+        }
+
+        _navigationBarContent.dispose();
+        _navigationBarContent = null;
+    }
+
     public function retain():void {
         trace("retain", _item.identifier);
         _retained = true;
@@ -486,7 +496,6 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
     public function release():void {
         trace("release", _item.identifier);
         _retained = false;
-        _navigationBarContent = null;
     }
 }
 

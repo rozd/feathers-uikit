@@ -479,11 +479,13 @@ public class NavigationController extends ViewController {
 
 import feathers.controls.StackScreenNavigatorItem;
 
+import feathersx.mvvc.NavigatorItem;
+
 import feathersx.mvvc.ViewController;
 
 import starling.display.DisplayObject;
 
-class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
+class ViewControllerNavigatorItem extends StackScreenNavigatorItem implements NavigatorItem {
     public function ViewControllerNavigatorItem(vc: ViewController): void {
         super();
         _viewController = vc;
@@ -498,6 +500,16 @@ class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
 
     override public function getScreen(): DisplayObject {
         return _viewController.view;
+    }
+
+    public function disposeIfNeeded(): void {
+        if (_viewController == null) {
+            return;
+        }
+
+        if (_viewController.viewIfLoaded != null) {
+            _viewController.viewIfLoaded.dispose();
+        }
     }
 
     public function retain():void {

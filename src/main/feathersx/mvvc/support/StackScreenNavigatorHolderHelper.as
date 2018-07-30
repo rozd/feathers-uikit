@@ -10,6 +10,8 @@ import feathers.controls.StackScreenNavigatorItem;
 import feathers.controls.supportClasses.IScreenNavigatorItem;
 import feathers.events.FeathersEventType;
 
+import feathersx.mvvc.NavigatorItem;
+
 import starling.events.Event;
 
 public class StackScreenNavigatorHolderHelper {
@@ -75,11 +77,19 @@ public class StackScreenNavigatorHolderHelper {
         });
     }
 
-    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function): Vector.<StackScreenNavigatorItem> {
+    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean = false): Vector.<StackScreenNavigatorItem> {
         var result: Vector.<StackScreenNavigatorItem> = new Vector.<StackScreenNavigatorItem>();
         for (var i: int = 0; i < ids.length; i++) {
             var id: String = ids[i];
-            result[i] = _navigator.hasScreen(id) ? _navigator.removeScreen(id) : null;
+            if (!_navigator.hasScreen(id)) {
+                result[i] = null;
+                continue;
+            }
+            var screen: StackScreenNavigatorItem = _navigator.getScreen(id);
+            if (dispose && screen is NavigatorItem) {
+                NavigatorItem(screen).disposeIfNeeded();
+            }
+            result[i] = _navigator.removeScreen(id);
         }
         if (completion != null) {
             completion();
@@ -112,7 +122,7 @@ public class StackScreenNavigatorHolderHelper {
     public function popToRootScreenWithIds(ids: Vector.<String>, transition: Function, completion: Function): void {
         waitForTransitionCompleteIfNeeded(function(): void {
             trackScreenTransitionComplete(function(): void {
-                removeScreenWithIds(ids, completion);
+                doRemoveScreensWithIds(ids, completion, true);
             });
             _navigator.popToRootScreen(getPopToRootTransition(transition));
         });

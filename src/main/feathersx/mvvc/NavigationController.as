@@ -18,6 +18,7 @@ import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 import flash.debugger.enterDebugger;
 
 import skein.core.WeakReference;
+import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
@@ -261,7 +262,7 @@ public class NavigationController extends ViewController {
             helper.addScreenWithId(newViewController.identifier, newScreen, null);
         }
 
-        _viewControllers = viewControllers;
+        VectorUtil.copy(viewControllers, _viewControllers);
     }
 
     // MARK: StackScreenNavigator utils

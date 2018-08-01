@@ -132,8 +132,10 @@ public class StackScreenNavigatorHolderHelper {
 
     public function setRootScreenWithId(id: String, screen: StackScreenNavigatorItem, completion: Function): void {
         addScreenWithId(id, screen, function(): void {
-            trackScreenTransitionComplete(completion);
             _navigator.rootScreenID = id;
+            if (completion != null) {
+                completion();
+            }
         });
     }
 

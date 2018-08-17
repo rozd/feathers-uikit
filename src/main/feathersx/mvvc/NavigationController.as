@@ -347,12 +347,13 @@ public class NavigationController extends ViewController {
 
         _navigationBar = new NavigationBar();
         _navigationBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
+        _navigationBar.height += safeArea.top;
         _navigationBar.onBack = navigationBarOnBack;
         view.addChild(_navigationBar);
 
         _toolbar = new Toolbar();
         _toolbar.layoutData = new AnchorLayoutData(NaN, 0, 0, 0);
-        _toolbar.height = 64;
+        _toolbar.height += safeArea.bottom;
         _toolbar.visible = _toolbar.includeInLayout = !_isToolbarHidden;
         view.addChild(_toolbar);
 

@@ -16,6 +16,7 @@ import feathers.motion.Reveal;
 import feathers.utils.display.getDisplayObjectDepthFromStage;
 
 import feathersx.data.EdgeInsets;
+import feathersx.mvvc.integration.Integration;
 
 import flash.events.KeyboardEvent;
 
@@ -81,7 +82,6 @@ public class ViewController {
 
     public function ViewController() {
         super();
-        trace(this);
     }
 
     //--------------------------------------------------------------------------
@@ -186,9 +186,12 @@ public class ViewController {
     //--------------------------------------------------------------------------
 
     public function get safeArea(): EdgeInsets {
-        var top: int = navigationController ? navigationController.getTopGuide() : 0;
-        var bottom: int = navigationController ? navigationController.getBottomGuide() : 0;
-        return new EdgeInsets(top, 0, bottom, 0);
+        var insets: EdgeInsets = Integration.safeArea;
+        if (navigationController) {
+            insets.top = insets.top + navigationController.getTopGuide();
+            insets.bottom = insets.bottom + navigationController.getBottomGuide();
+        }
+        return insets;
     }
 
     private var _additionalSafeAreaInsets: EdgeInsets;

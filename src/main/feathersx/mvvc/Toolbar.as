@@ -17,6 +17,8 @@ public class Toolbar extends FeathersControl {
 
     public static const ITEM_STYLE_NAME: String = "feathers-mvvc-toolbar-item";
 
+    public static const appearance: ToolbarAppearance = new ToolbarAppearance();
+
     //--------------------------------------------------------------------------
     //
     //  Constructor
@@ -25,6 +27,7 @@ public class Toolbar extends FeathersControl {
 
     public function Toolbar() {
         super();
+        height = appearance.height;
     }
 
     //--------------------------------------------------------------------------

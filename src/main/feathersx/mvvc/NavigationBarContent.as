@@ -97,6 +97,19 @@ public class NavigationBarContent extends Screen {
         }
     }
 
+    override protected function refreshBackgroundLayout(): void {
+        super.refreshBackgroundLayout();
+
+        if (currentBackgroundSkin == null) {
+            return;
+        }
+
+        currentBackgroundSkin.x = 0;
+        currentBackgroundSkin.y = - owner.y;
+        currentBackgroundSkin.width = actualWidth;
+        currentBackgroundSkin.height = actualHeight + owner.y;
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Methods

@@ -346,8 +346,7 @@ public class NavigationController extends ViewController {
         view.addChild(_navigator);
 
         _navigationBar = new NavigationBar();
-        _navigationBar.layoutData = new AnchorLayoutData(0, 0, NaN, 0);
-        _navigationBar.height += safeArea.top;
+        _navigationBar.layoutData = new AnchorLayoutData(safeArea.top, 0, NaN, 0);
         _navigationBar.onBack = navigationBarOnBack;
         view.addChild(_navigationBar);
 

@@ -186,6 +186,9 @@ public class ViewController {
     //--------------------------------------------------------------------------
 
     public function get safeArea(): EdgeInsets {
+        if (parent != null) {
+            return additionalSafeAreaInsets;
+        }
         var insets: EdgeInsets = Integration.safeArea;
         if (navigationController) {
             insets.top = insets.top + navigationController.getTopGuide();
@@ -194,7 +197,7 @@ public class ViewController {
         return insets;
     }
 
-    private var _additionalSafeAreaInsets: EdgeInsets;
+    private var _additionalSafeAreaInsets: EdgeInsets = new EdgeInsets(0, 0, 0, 0);
     public function get additionalSafeAreaInsets(): EdgeInsets {
         return _additionalSafeAreaInsets;
     }

@@ -4,12 +4,9 @@
 package feathersx.mvvc.examples.helloWorld.view {
 import feathers.controls.Button;
 import feathers.controls.LayoutGroup;
-import feathers.controls.TextCallout;
 import feathers.layout.HorizontalAlign;
 import feathers.layout.VerticalAlign;
 import feathers.layout.VerticalLayout;
-
-import starling.events.Event;
 
 public class AView extends LayoutGroup {
     public function AView() {
@@ -25,6 +22,10 @@ public class AView extends LayoutGroup {
         pushScreenB1Button.label = "Push Screen B1";
         addChild(pushScreenB1Button);
 
+        pushScreenSButton = new Button();
+        pushScreenSButton.label = "Push Screen S";
+        addChild(pushScreenSButton);
+
         presentScreenDButton = new Button();
         presentScreenDButton.label = "Present Screen D (Modal)";
         addChild(presentScreenDButton);
@@ -35,23 +36,15 @@ public class AView extends LayoutGroup {
     }
 
     public var pushScreenB1Button:Button;
-
+    public var pushScreenSButton:Button;
     public var presentScreenDButton:Button;
-
     public var showAlertButton: Button;
 
     override protected function initialize(): void {
         super.initialize();
         pushScreenB1Button.validate();
+        pushScreenSButton.validate();
         presentScreenDButton.validate();
-    }
-
-    /**
-     * Listener for the Button's Event.TRIGGERED event.
-     */
-    protected function button_triggeredHandler(event:Event):void
-    {
-        TextCallout.show("Hi, I'm Feathers!\nHave a nice day.", pushScreenB1Button);
     }
 }
 }

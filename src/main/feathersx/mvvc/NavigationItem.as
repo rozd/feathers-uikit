@@ -163,6 +163,22 @@ public class NavigationItem {
 
     //--------------------------------------------------------------------------
     //
+    //  Search Controller
+    //
+    //--------------------------------------------------------------------------
+
+    private var _searchController: SearchController;
+    public function get searchController(): SearchController {
+        return _searchController;
+    }
+    public function set searchController(value: SearchController): void {
+        if (value == _searchController) return;
+        _searchController = value;
+        notifyChange(false);
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Transitions
     //
     //--------------------------------------------------------------------------

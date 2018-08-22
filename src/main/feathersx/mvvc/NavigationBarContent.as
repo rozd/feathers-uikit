@@ -123,7 +123,7 @@ public class NavigationBarContent extends Screen {
 
     private var isTitleFadeOutAnimating: Boolean = false;
     private var isTitleFadeInAnimating: Boolean = false;
-    protected function updateTitle(animated: Boolean) {
+    protected function updateTitle(animated: Boolean): void {
         var titleLabel: Label = titleView as Label;
 
         if (titleLabel == null) {

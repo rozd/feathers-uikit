@@ -10,6 +10,8 @@ import feathers.layout.HorizontalLayout;
 import feathers.layout.HorizontalLayoutData;
 import feathers.layout.VerticalAlign;
 
+import feathersx.core.feathers_mvvc;
+
 import flash.utils.Dictionary;
 
 import skein.core.WeakReference;
@@ -17,6 +19,8 @@ import skein.core.WeakReference;
 import starling.display.DisplayObject;
 import starling.display.Quad;
 import starling.events.Event;
+
+use namespace feathers_mvvc;
 
 public class SearchBar extends LayoutGroup {
 
@@ -45,9 +49,9 @@ public class SearchBar extends LayoutGroup {
     //
     //--------------------------------------------------------------------------
 
-    protected var textField: TextInput;
+    feathers_mvvc var textField: TextInput;
 
-    protected var cancelButton: Button;
+    feathers_mvvc var cancelButton: Button;
 
     protected var _iconToStateToImage: Dictionary = new Dictionary();
 
@@ -136,7 +140,9 @@ public class SearchBar extends LayoutGroup {
         return _defaultSearchIcon;
     }
     public function set defaultSearchIcon(value: DisplayObject): void {
+        if (value == _defaultSearchIcon) return;
         _defaultSearchIcon = value;
+        invalidate(INVALIDATION_FLAG_DATA);
     }
 
     //-------------------------------------
@@ -182,6 +188,12 @@ public class SearchBar extends LayoutGroup {
         if (backgroundSkin == null) {
             backgroundSkin = new Quad(1, 1, _backgroundColor);
         }
+
+        createTextFieldIfNeeded();
+
+        if (showsCancelButton) {
+            createCancelButtonIfNeeded();
+        }
     }
 
     override protected function draw(): void {
@@ -222,14 +234,18 @@ public class SearchBar extends LayoutGroup {
         if (cancelButton) {
             cancelButton.label = _cancelLabel;
         }
+
+        if (textField) {
+            textField.defaultIcon = defaultSearchIcon;
+        }
     }
 
     protected function rearrangeChildren(): void {
-        createTextFieldIfRequired();
+        createTextFieldIfNeeded();
         setChildIndex(textField, 0);
 
         if (showsCancelButton) {
-            createCancelButtonIfRequired();
+            createCancelButtonIfNeeded();
             setChildIndex(cancelButton, 1);
         } else {
             removeCancelButtonIfExists();
@@ -258,34 +274,36 @@ public class SearchBar extends LayoutGroup {
     //  Methods: Text Field
     //------------------------------------
 
-    protected function createTextFieldIfRequired():void {
-        if (textField == null) {
-            textField = new TextInput();
-            textField.addEventListener(Event.CHANGE, textField_changeHandler);
-            textField.styleName = SEARCH_BAR_INPUT_STYLE_NAME;
-            textField.layoutData = new HorizontalLayoutData(100);
-            textField.defaultIcon = _defaultSearchIcon;
-            if (SearchBarIcon.Search in _iconToStateToImage) {
-                var stateToIcon: Object = _iconToStateToImage[SearchBarIcon.Search];
-                for (var state: String in stateToIcon) {
-                    textField.setIconForState(state, stateToIcon[state]);
-                }
-            }
-            addChild(textField);
+    protected function createTextFieldIfNeeded(): void {
+        if (textField != null) {
+            return;
         }
+        textField = new TextInput();
+        textField.addEventListener(Event.CHANGE, textField_changeHandler);
+        textField.styleName = SEARCH_BAR_INPUT_STYLE_NAME;
+        textField.layoutData = new HorizontalLayoutData(100);
+        textField.defaultIcon = defaultSearchIcon;
+        if (SearchBarIcon.Search in _iconToStateToImage) {
+            var stateToIcon: Object = _iconToStateToImage[SearchBarIcon.Search];
+            for (var state: String in stateToIcon) {
+                textField.setIconForState(state, stateToIcon[state]);
+            }
+        }
+        addChild(textField);
     }
 
     //------------------------------------
     //  Methods: Cancel Button
     //------------------------------------
 
-    protected function createCancelButtonIfRequired(): void {
-        if (cancelButton == null && showsCancelButton) {
-            cancelButton = new Button();
-            cancelButton.addEventListener(Event.TRIGGERED, cancelButton_triggeredHandler);
-            cancelButton.styleName = SEARCH_BAR_CANCEL_BUTTON_STYLE_NAME;
-            addChild(cancelButton);
+    private function createCancelButtonIfNeeded(): void {
+        if (cancelButton != null) {
+            return;
         }
+        cancelButton = new Button();
+        cancelButton.addEventListener(Event.TRIGGERED, cancelButton_triggeredHandler);
+        cancelButton.styleName = SEARCH_BAR_CANCEL_BUTTON_STYLE_NAME;
+        addChild(cancelButton);
     }
 
     protected function removeCancelButtonIfExists(): void {

@@ -5,21 +5,14 @@ package feathersx.mvvc {
 import feathers.controls.ButtonGroup;
 import feathers.controls.Label;
 import feathers.controls.Screen;
-import feathers.controls.StackScreenNavigatorItem;
 import feathers.core.FeathersControl;
 import feathers.data.IListCollection;
 import feathers.data.ListCollection;
 import feathers.layout.Direction;
 
-import feathersx.mvvc.BarButtonItem;
-import feathersx.mvvc.NavigationBar;
-import feathersx.mvvc.NavigationBar;
-import feathersx.mvvc.NavigationItem;
-
 import flash.geom.Point;
 
 import starling.core.Starling;
-
 import starling.display.DisplayObject;
 import starling.display.Quad;
 import starling.filters.DropShadowFilter;
@@ -36,7 +29,7 @@ public class NavigationBarContent extends Screen {
         super();
         _navigationItem = navigationItem;
         _navigationItem.setChangeCallback(function (animated: Boolean): void {
-            _titleChangeAnimated = animated;
+            isChangeAnimated = animated;
             invalidate(INVALIDATION_FLAG_DATA);
         });
     }
@@ -53,7 +46,7 @@ public class NavigationBarContent extends Screen {
     public var titleView: FeathersControl;
     public var rightButtonGroup: ButtonGroup;
 
-    protected var _titleChangeAnimated: Boolean = false;
+    protected var isChangeAnimated: Boolean = false;
 
     //--------------------------------------------------------------------------
     //
@@ -120,10 +113,17 @@ public class NavigationBarContent extends Screen {
         leftButtonGroup.dataProvider = composeLeftItems();
         rightButtonGroup.dataProvider = composeRightItems();
 
-        updateTitle();
+        updateTitle(isChangeAnimated);
+        updateSearchController(isChangeAnimated);
     }
 
-    private function updateTitle(): void {
+    //------------------------------------
+    //  Update Title
+    //------------------------------------
+
+    private var isTitleFadeOutAnimating: Boolean = false;
+    private var isTitleFadeInAnimating: Boolean = false;
+    protected function updateTitle(animated: Boolean): void {
         var titleLabel: Label = titleView as Label;
 
         if (titleLabel == null) {
@@ -134,17 +134,11 @@ public class NavigationBarContent extends Screen {
             return;
         }
 
-        if (!_titleChangeAnimated || !titleLabel.text) {
+        if (!animated || titleLabel.text == null) {
             titleLabel.text = _navigationItem.title;
             return;
         }
 
-        updateTitleAnimated(titleLabel);
-    }
-
-    private var isTitleFadeOutAnimating: Boolean = false;
-    private var isTitleFadeInAnimating: Boolean = false;
-    private function updateTitleAnimated(titleLabel: Label): void {
         if (isTitleFadeOutAnimating) {
             return;
         }
@@ -167,6 +161,48 @@ public class NavigationBarContent extends Screen {
         }, 0.3);
     }
 
+    //------------------------------------
+    //  Update Search Controller
+    //------------------------------------
+
+    private function updateSearchController(animated: Boolean): void {
+        if (_navigationItem.searchController) {
+            showSearchBar(animated);
+        } else {
+            hideSearchBar(animated);
+        }
+    }
+
+    protected function showSearchBar(animated: Boolean): void {
+        var existedSearchBar: SearchBar = findSearchBar();
+        if (existedSearchBar != null) {
+            return;
+        }
+        addChild(_navigationItem.searchController.searchBar);
+    }
+
+    protected function hideSearchBar(animated: Boolean): void {
+        var existedSearchBar: SearchBar = findSearchBar();
+        if (existedSearchBar == null) {
+            return;
+        }
+        removeChild(existedSearchBar);
+    }
+
+    protected function findSearchBar(): SearchBar {
+        for (var i: int = 0, n: int = numChildren; i < n; i++) {
+            var child: DisplayObject = getChildAt(i);
+            if (child is SearchBar) {
+                return child as SearchBar;
+            }
+        }
+        return null;
+    }
+
+    //------------------------------------
+    //  Layout
+    //------------------------------------
+
     protected function layoutChildren(): void {
         leftButtonGroup.validate();
         rightButtonGroup.validate();
@@ -178,6 +214,7 @@ public class NavigationBarContent extends Screen {
         rightButtonGroup.y = NavigationBar.appearance.paddingTop + (actualHeight - rightButtonGroup.height - NavigationBar.appearance.paddingTop - NavigationBar.appearance.paddingBottom) / 2;
 
         layoutTitle();
+        layoutSearchBar();
     }
 
     private function layoutTitle(): void {
@@ -185,6 +222,19 @@ public class NavigationBarContent extends Screen {
         titleView.validate();
         titleView.x = (actualWidth - titleView.width) / 2;
         titleView.y = NavigationBar.appearance.paddingTop + (actualHeight - titleView.height - NavigationBar.appearance.paddingTop - NavigationBar.appearance.paddingBottom) / 2;
+    }
+
+    private function layoutSearchBar(): void {
+        var existedSearchBar: SearchBar = findSearchBar();
+        if (existedSearchBar == null) {
+            return;
+        }
+        if (_navigationItem.searchController.hidesNavigationBarDuringPresentation) {
+            existedSearchBar.x = 0;
+            existedSearchBar.y = 0;
+            existedSearchBar.width = actualWidth;
+            existedSearchBar.height = actualHeight;
+        }
     }
 
     //-------------------------------------

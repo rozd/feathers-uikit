@@ -140,7 +140,9 @@ public class SearchBar extends LayoutGroup {
         return _defaultSearchIcon;
     }
     public function set defaultSearchIcon(value: DisplayObject): void {
+        if (value == _defaultSearchIcon) return;
         _defaultSearchIcon = value;
+        invalidate(INVALIDATION_FLAG_DATA);
     }
 
     //-------------------------------------
@@ -232,6 +234,10 @@ public class SearchBar extends LayoutGroup {
         if (cancelButton) {
             cancelButton.label = _cancelLabel;
         }
+
+        if (textField) {
+            textField.defaultIcon = defaultSearchIcon;
+        }
     }
 
     protected function rearrangeChildren(): void {
@@ -276,7 +282,7 @@ public class SearchBar extends LayoutGroup {
         textField.addEventListener(Event.CHANGE, textField_changeHandler);
         textField.styleName = SEARCH_BAR_INPUT_STYLE_NAME;
         textField.layoutData = new HorizontalLayoutData(100);
-        textField.defaultIcon = _defaultSearchIcon;
+        textField.defaultIcon = defaultSearchIcon;
         if (SearchBarIcon.Search in _iconToStateToImage) {
             var stateToIcon: Object = _iconToStateToImage[SearchBarIcon.Search];
             for (var state: String in stateToIcon) {

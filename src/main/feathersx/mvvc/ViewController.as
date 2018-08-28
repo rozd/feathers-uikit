@@ -5,7 +5,6 @@ package feathersx.mvvc {
 import avmplus.getQualifiedClassName;
 
 import feathers.controls.LayoutGroup;
-
 import feathers.controls.ScreenNavigator;
 import feathers.controls.Scroller;
 import feathers.core.IFeathersControl;
@@ -15,25 +14,24 @@ import feathers.motion.Cover;
 import feathers.motion.Reveal;
 import feathers.utils.display.getDisplayObjectDepthFromStage;
 
+import feathersx.core.feathers_mvvc;
 import feathersx.data.EdgeInsets;
 import feathersx.mvvc.integration.Integration;
 
 import flash.events.KeyboardEvent;
-
-import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import skein.logger.Log;
-
 import skein.utils.StringUtil;
 
 import starling.core.Starling;
-
 import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 import starling.display.Stage;
 import starling.events.Event;
 import starling.events.ResizeEvent;
+
+use namespace feathers_mvvc;
 
 public class ViewController {
 
@@ -258,22 +256,22 @@ public class ViewController {
             });
             _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
-                viewDidAppear();
+                notifyViewDidAppear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
-                viewWillDisappear();
+                notifyViewWillDisappear();
             });
             _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
             });
             _view.addEventListener(Event.ADDED_TO_STAGE, function (event: Event):void {
                 installHardKeysSupport(_view);
-                viewWillAppear();
+                notifyViewWillAppear();
             });
             _view.addEventListener(Event.REMOVED_FROM_STAGE, function (event: Event): void {
                 removeHardKeysSupport(_view);
-                viewDidDisappear();
+                notifyViewDidDisappear();
             });
             if (_view is IFeathersControl) {
                 IFeathersControl(_view).initializeNow();
@@ -294,18 +292,30 @@ public class ViewController {
 
     }
 
+    internal function notifyViewWillAppear(): void {
+        viewWillAppear();
+    }
     protected function viewWillAppear():void {
 
     }
 
+    internal function notifyViewDidAppear(): void {
+        viewDidAppear();
+    }
     protected function viewDidAppear():void {
 
     }
 
+    internal function notifyViewWillDisappear(): void {
+        viewWillDisappear();
+    }
     protected function viewWillDisappear():void {
 
     }
 
+    internal function notifyViewDidDisappear(): void {
+        viewDidDisappear();
+    }
     protected function viewDidDisappear():void {
 
     }

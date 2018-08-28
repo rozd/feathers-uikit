@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<core:DrawersApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  xmlns:core="feathers.core.*" theme="feathers.themes.MetalWorksMobileTheme">
+<core:DrawersApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+                         xmlns:core="feathers.core.*"
+                         xmlns:mvvc="feathersx.mvvc.*"
+                         theme="feathers.themes.MetalWorksMobileTheme">
 
 
     <fx:Script>
         <![CDATA[
-        import feathersx.mvvc.examples.drawers.ContentViewController;
         import feathersx.mvvc.examples.drawers.MainController;
-
-        private var rootViewController: MainController;
 
         override protected function initialize(): void {
             super.initialize();
-            rootViewController = new MainController();
-            rootViewController.setAsRootViewController(this);
+            window.rootViewController = new MainController();
         }
         ]]>
     </fx:Script>
 
+    <fx:Declarations>
+        <mvvc:WindowDecorator id="window" target="{this}" />
+    </fx:Declarations>
 
 </core:DrawersApplication>

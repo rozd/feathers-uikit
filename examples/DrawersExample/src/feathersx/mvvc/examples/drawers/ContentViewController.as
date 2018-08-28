@@ -17,10 +17,29 @@ public class ContentViewController extends ViewController {
         return new ContentView();
     }
 
-
     override protected function viewDidLoad(): void {
         var view:ContentView = this.view as ContentView;
         view.menuButton.addEventListener(Event.TRIGGERED, menuHandler)
+    }
+
+    override protected function viewWillDisappear(): void {
+        super.viewWillDisappear();
+        trace("ContentViewController.viewWillDisappear");
+    }
+
+    override protected function viewWillAppear(): void {
+        super.viewWillAppear();
+        trace("ContentViewController.viewWillAppear");
+    }
+
+    override protected function viewDidAppear(): void {
+        super.viewDidAppear();
+        trace("ContentViewController.viewDidAppear");
+    }
+
+    override protected function viewDidDisappear(): void {
+        super.viewDidDisappear();
+        trace("ContentViewController.viewDidDisappear");
     }
 
     private function menuHandler(): void {

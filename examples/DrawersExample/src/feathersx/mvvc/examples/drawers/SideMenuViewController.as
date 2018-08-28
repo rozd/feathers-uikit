@@ -17,5 +17,25 @@ public class SideMenuViewController extends ViewController {
         menu.width = 200;
         return menu;
     }
+
+    override protected function viewWillDisappear(): void {
+        super.viewWillDisappear();
+        trace("SideMenuViewController.viewWillDisappear");
+    }
+
+    override protected function viewWillAppear(): void {
+        super.viewWillAppear();
+        trace("SideMenuViewController.viewWillAppear");
+    }
+
+    override protected function viewDidAppear(): void {
+        super.viewDidAppear();
+        trace("SideMenuViewController.viewDidAppear");
+    }
+
+    override protected function viewDidDisappear(): void {
+        super.viewDidDisappear();
+        trace("SideMenuViewController.viewDidDisappear");
+    }
 }
 }

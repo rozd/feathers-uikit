@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="FlexBuildConfigurationManager" active="fmvvc-drawers-example">
+  <component name="FlexBuildConfigurationManager" active="feathers-uikit-Drawers">
     <configurations>
-      <configuration name="fmvvc-drawers-example" target-platform="Mobile" main-class="DrawersExample" output-file="DrawersExample.swf" output-folder="$MODULE_DIR$/../../../../potbotics/cannidose/out/production/DrawersExample">
+      <configuration name="feathers-uikit-Drawers" target-platform="Mobile" main-class="DrawersExample" output-file="DrawersExample.swf" output-folder="$MODULE_DIR$/../../../../potbotics/cannidose/out/production/DrawersExample">
         <dependencies target-player="26.0">
           <entries>
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
@@ -12,6 +12,12 @@
               <dependency linkage="Merged" />
             </entry>
             <entry library-id="f514d8c8-597f-4d5e-90c3-8b980bf6e0d7">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-utils" build-configuration-name="skein-utils">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="skein-core" build-configuration-name="skein-core">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -59,5 +65,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="skein-utils" exported="" />
+    <orderEntry type="module" module-name="skein-core" exported="" />
   </component>
 </module>

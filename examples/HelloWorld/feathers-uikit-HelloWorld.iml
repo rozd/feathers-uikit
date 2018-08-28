@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="FlexBuildConfigurationManager" active="HelloWorld">
+  <component name="FlexBuildConfigurationManager" active="feathers-uikit-HelloWorld">
     <configurations>
-      <configuration name="HelloWorld" target-platform="Mobile" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/bin-debug">
+      <configuration name="feathers-uikit-HelloWorld" target-platform="Mobile" main-class="HelloWorld" output-file="HelloWorld.swf" output-folder="$MODULE_DIR$/bin-debug">
         <dependencies>
           <entries>
             <entry library-id="906977b8-c660-4d51-9a2f-39a570bac3aa">

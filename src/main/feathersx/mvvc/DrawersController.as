@@ -4,7 +4,6 @@
 package feathersx.mvvc {
 import feathers.controls.Drawers;
 import feathers.core.IFeathersControl;
-import feathers.core.IFeathersEventDispatcher;
 import feathers.events.FeathersEventType;
 
 import starling.display.DisplayObject;
@@ -18,7 +17,7 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    public function DrawersController(rootViewController:ViewController) {
+    public function DrawersController(rootViewController: ViewController) {
         super();
         this.rootViewController = rootViewController;
     }
@@ -124,47 +123,43 @@ public class DrawersController extends ViewController {
         var wasViewLoaded: Boolean = isViewLoaded;
         super.loadViewIfRequired();
         if (!wasViewLoaded) {
-            _rootViewController.setDrawersController(this);
-            drawers.content = _rootViewController.view as IFeathersControl;
-            IFeathersEventDispatcher(_rootViewController.view).dispatchEventWith(FeathersEventType.TRANSITION_IN_START);
-            IFeathersEventDispatcher(_rootViewController.view).dispatchEventWith(FeathersEventType.TRANSITION_IN_COMPLETE);
-
-            if (_leftViewController) {
-                _leftViewController.setDrawersController(this);
-                drawers.leftDrawer = _leftViewController.view as IFeathersControl;
-            }
-
-            if (_bottomViewController) {
-                _bottomViewController.setDrawersController(this);
-                drawers.bottomDrawer = _bottomViewController.view as IFeathersControl;
-            }
-
-            drawers.addEventListener(FeathersEventType.BEGIN_INTERACTION, function (event:Event):void {
-                // TODO: add view appear
-            });
-
-            drawers.addEventListener(FeathersEventType.END_INTERACTION, function (event:Event):void {
-                // TODO: add view disappear
-            });
-
-            drawers.addEventListener(Event.OPEN, function (event:Event):void {
-                if (event.data is IFeathersEventDispatcher) {
-                    IFeathersEventDispatcher(event.data).dispatchEventWith(FeathersEventType.TRANSITION_IN_START);
-                    IFeathersEventDispatcher(event.data).dispatchEventWith(FeathersEventType.TRANSITION_IN_COMPLETE);
-                }
-            });
-
-            drawers.addEventListener(Event.CLOSE, function (event:Event):void {
-                if (event.data is IFeathersEventDispatcher) {
-                    IFeathersEventDispatcher(event.data).dispatchEventWith(FeathersEventType.TRANSITION_OUT_START);
-                    IFeathersEventDispatcher(event.data).dispatchEventWith(FeathersEventType.TRANSITION_OUT_COMPLETE);
-                }
-            });
+            setupDrawers();
         }
     }
 
     override protected function loadView(): DisplayObject {
         return new Drawers();
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Work with View Controllers
+    //
+    //--------------------------------------------------------------------------
+
+    protected function viewToViewController(view: DisplayObject): ViewController {
+
+        if (_rootViewController != null && _rootViewController.view == view) {
+            return _rootViewController;
+        }
+
+        if (_topViewController != null && _topViewController.view == view) {
+            return _topViewController;
+        }
+
+        if (_leftViewController != null && _leftViewController.view == view) {
+            return _leftViewController;
+        }
+
+        if (_rightViewController != null && _rightViewController.view == view) {
+            return _rightViewController;
+        }
+
+        if (_bottomViewController != null && _bottomViewController.view == view) {
+            return _bottomViewController;
+        }
+
+        return null;
     }
 
     //--------------------------------------------------------------------------
@@ -189,9 +184,58 @@ public class DrawersController extends ViewController {
         }
         if (_root is Drawers) {
             _view = _root;
+            setupDrawers();
         } else {
             _root.addChild(this.view);
         }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Setup Drawers
+    //
+    //--------------------------------------------------------------------------
+
+    protected function setupDrawers(): void {
+        drawers.addEventListener(Event.REMOVED, drawers_removedHandler);
+
+        _rootViewController.setDrawersController(this);
+        drawers.content = _rootViewController.view as IFeathersControl;
+        _rootViewController.notifyViewDidAppear();
+
+        if (_topViewController) {
+            _topViewController.setDrawersController(this);
+            drawers.topDrawer = _topViewController.view as IFeathersControl;
+        }
+
+        if (_leftViewController) {
+            _leftViewController.setDrawersController(this);
+            drawers.leftDrawer = _leftViewController.view as IFeathersControl;
+        }
+
+        if (_rightViewController) {
+            _rightViewController.setDrawersController(this);
+            drawers.rightDrawer = _rightViewController.view as IFeathersControl;
+        }
+
+        if (_bottomViewController) {
+            _bottomViewController.setDrawersController(this);
+            drawers.bottomDrawer = _bottomViewController.view as IFeathersControl;
+        }
+
+        drawers.addEventListener(Event.OPEN, function (event:Event):void {
+            var vc: ViewController = viewToViewController(event.data as DisplayObject);
+            if (vc != null) {
+                vc.notifyViewDidAppear();
+            }
+        });
+
+        drawers.addEventListener(Event.CLOSE, function (event:Event):void {
+            var vc: ViewController = viewToViewController(event.data as DisplayObject);
+            if (vc != null) {
+                vc.notifyViewWillDisappear();
+            }
+        });
     }
 
     //--------------------------------------------------------------------------
@@ -349,6 +393,34 @@ public class DrawersController extends ViewController {
             if (completion != null) {
                 completion();
             }
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Event handlers
+    //
+    //--------------------------------------------------------------------------
+
+    private function drawers_removedHandler(event: Event): void {
+        if (_rootViewController) {
+            _rootViewController.notifyViewWillDisappear();
+        }
+
+        if (_topViewController) {
+            _topViewController.notifyViewWillDisappear();
+        }
+
+        if (_leftViewController) {
+            _leftViewController.notifyViewWillDisappear();
+        }
+
+        if (_rightViewController) {
+            _rightViewController.notifyViewWillDisappear();
+        }
+
+        if (_bottomViewController) {
+            _bottomViewController.notifyViewWillDisappear();
         }
     }
 }

@@ -5,11 +5,8 @@ package feathersx.mvvc {
 import feathers.controls.AutoSizeMode;
 import feathers.controls.LayoutGroup;
 import feathers.controls.StackScreenNavigator;
-import feathers.events.FeathersEventType;
 import feathers.layout.AnchorLayout;
 import feathers.layout.AnchorLayoutData;
-import feathers.layout.VerticalLayout;
-import feathers.layout.VerticalLayoutData;
 import feathers.motion.Fade;
 
 import feathersx.motion.Slide;
@@ -22,12 +19,6 @@ import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
-import starling.display.DisplayObject;
-import starling.display.DisplayObject;
-
-import starling.display.DisplayObject;
-import starling.display.Quad;
-import starling.events.Event;
 
 public class NavigationController extends ViewController {
 
@@ -309,12 +300,15 @@ public class NavigationController extends ViewController {
     }
 
     protected function replaceTopViewController(vc: ViewController, animated: Boolean, completion: Function): void {
-        var item: ViewControllerNavigatorItem = new ViewControllerNavigatorItem(vc);
-        item.retain();
+        var oldItem: ViewControllerNavigatorItem = navigator.getScreen(navigator.activeScreenID) as ViewControllerNavigatorItem;
+        oldItem.release();
+
+        var newItem: ViewControllerNavigatorItem = new ViewControllerNavigatorItem(vc);
+        newItem.retain();
 
         var transition: Function = getReplaceTransition(animated);
 
-        new StackScreenNavigatorHolderHelper(navigator).replaceScreenWithId(vc.identifier, item, transition, completion);
+        new StackScreenNavigatorHolderHelper(navigator).replaceScreenWithId(vc.identifier, newItem, transition, completion);
     }
 
     private function setupNavigationControllerForViewControllers(viewControllers: Vector.<ViewController>): void {
@@ -393,9 +387,9 @@ public class NavigationController extends ViewController {
         popViewController(true);
     }
 
-    private function navigationItemsFromViewControllers(veiwControllers: Vector.<ViewController>): Vector.<NavigationItem> {
+    private function navigationItemsFromViewControllers(viewControllers: Vector.<ViewController>): Vector.<NavigationItem> {
         var items: Vector.<NavigationItem> = new <NavigationItem>[];
-        veiwControllers.forEach(function (vc: ViewController, index: int, vector:*):void {
+        viewControllers.forEach(function (vc: ViewController, index: int, vector:*):void {
             items[items.length] = vc.navigationItem;
         });
         return items;
@@ -481,7 +475,6 @@ public class NavigationController extends ViewController {
 import feathers.controls.StackScreenNavigatorItem;
 
 import feathersx.mvvc.NavigatorItem;
-
 import feathersx.mvvc.ViewController;
 
 import starling.display.DisplayObject;

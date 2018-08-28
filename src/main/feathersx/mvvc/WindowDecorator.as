@@ -12,18 +12,10 @@ public class WindowDecorator implements Window {
     //
     //--------------------------------------------------------------------------
 
-    public function WindowDecorator(target: DisplayObjectContainer) {
+    public function WindowDecorator(target: DisplayObjectContainer = null) {
         super();
         _target = target;
     }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Variables
-    //
-    //--------------------------------------------------------------------------
-
-    protected var _target: DisplayObjectContainer;
 
     //--------------------------------------------------------------------------
     //
@@ -31,14 +23,27 @@ public class WindowDecorator implements Window {
     //
     //--------------------------------------------------------------------------
 
-    //  rootViewController
+    // target
+
+    private var _target: DisplayObjectContainer;
+    public function get target(): DisplayObjectContainer {
+        return _target;
+    }
+    public function set target(value: DisplayObjectContainer): void {
+        if (value == _target) return;
+        _target = value;
+    }
+
+    // rootViewController
 
     private var _rootViewController: ViewController;
     public function get rootViewController(): ViewController {
         return _rootViewController;
     }
     public function set rootViewController(vc: ViewController): void {
-        if (vc == _rootViewController) return;
+        if (vc == _rootViewController) {
+            return;
+        }
         if (_rootViewController) {
             _rootViewController.setAsRootViewController(null);
         }
@@ -47,5 +52,6 @@ public class WindowDecorator implements Window {
             _rootViewController.setAsRootViewController(_target);
         }
     }
+
 }
 }

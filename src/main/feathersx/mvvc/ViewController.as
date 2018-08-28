@@ -248,28 +248,28 @@ public class ViewController {
                 Scroller(_view).paddingBottom = bottomGuide;
                 Scroller(_view).paddingRight  = rightGuide;
             }
-            _view.addEventListener(FeathersEventType.INITIALIZE, function (event:Event):void {
+            _view.addEventListener(FeathersEventType.INITIALIZE, function(event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
             });
-            _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function (event:Event):void {
+            _view.addEventListener(FeathersEventType.TRANSITION_IN_START, function(event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_IN_START, arguments.callee);
             });
-            _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function (event:Event):void {
+            _view.addEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, function(event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_IN_COMPLETE, arguments.callee);
                 notifyViewDidAppear();
             });
-            _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function (event:Event):void {
+            _view.addEventListener(FeathersEventType.TRANSITION_OUT_START, function(event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_START, arguments.callee);
                 notifyViewWillDisappear();
             });
-            _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function (event:Event):void {
+            _view.addEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, function(event:Event):void {
 //                _view.removeEventListener(FeathersEventType.TRANSITION_OUT_COMPLETE, arguments.callee);
             });
-            _view.addEventListener(Event.ADDED_TO_STAGE, function (event: Event):void {
+            _view.addEventListener(Event.ADDED_TO_STAGE, function(event: Event): void {
                 installHardKeysSupport(_view);
                 notifyViewWillAppear();
             });
-            _view.addEventListener(Event.REMOVED_FROM_STAGE, function (event: Event): void {
+            _view.addEventListener(Event.REMOVED_FROM_STAGE, function(event: Event): void {
                 removeHardKeysSupport(_view);
                 notifyViewDidDisappear();
             });

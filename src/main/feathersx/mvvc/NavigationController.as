@@ -19,6 +19,7 @@ import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
+import starling.events.Event;
 
 public class NavigationController extends ViewController {
 
@@ -462,6 +463,27 @@ public class NavigationController extends ViewController {
             throw new Error("[mvvc] root must be set.");
         }
         _root.addChild(this.view);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Dispose
+    //
+    //--------------------------------------------------------------------------
+
+    override public function dispose(): void {
+        var ids: Vector.<String> = new <String>[];
+        viewControllers.forEach(function (vc: ViewController, ...rest): void {
+            ids.push(vc.identifier);
+            vc.dispose();
+        });
+
+        for (var i: int = 0; i < ids.length; i++) {
+            var item: ViewControllerNavigatorItem = navigator.getScreen(ids[i]) as ViewControllerNavigatorItem;
+            item.release();
+        }
+        navigator.removeAllScreens();
+        super.dispose();
     }
 }
 }

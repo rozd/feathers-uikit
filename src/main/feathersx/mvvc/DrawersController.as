@@ -4,7 +4,6 @@
 package feathersx.mvvc {
 import feathers.controls.Drawers;
 import feathers.core.IFeathersControl;
-import feathers.events.FeathersEventType;
 
 import starling.display.DisplayObject;
 import starling.events.Event;
@@ -196,8 +195,8 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    protected function setupDrawers(): void {
-        drawers.addEventListener(Event.REMOVED, drawers_removedHandler);
+    private function setupDrawers(): void {
+        drawers.addEventListener(Event.REMOVED_FROM_STAGE, drawers_removedFromStageHandler);
 
         _rootViewController.setDrawersController(this);
         drawers.content = _rootViewController.view as IFeathersControl;
@@ -398,11 +397,41 @@ public class DrawersController extends ViewController {
 
     //--------------------------------------------------------------------------
     //
+    //  Dispose
+    //
+    //--------------------------------------------------------------------------
+
+    override public function dispose(): void {
+        if (_rootViewController) {
+            _rootViewController.dispose();
+        }
+
+        if (_topViewController) {
+            _topViewController.dispose();
+        }
+
+        if (_leftViewController) {
+            _leftViewController.dispose();
+        }
+
+        if (_rightViewController) {
+            _rightViewController.dispose();
+        }
+
+        if (_bottomViewController) {
+            _bottomViewController.dispose();
+        }
+
+        super.dispose();
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Event handlers
     //
     //--------------------------------------------------------------------------
 
-    private function drawers_removedHandler(event: Event): void {
+    private function drawers_removedFromStageHandler(event: Event): void {
         if (_rootViewController) {
             _rootViewController.notifyViewWillDisappear();
         }

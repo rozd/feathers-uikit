@@ -60,7 +60,7 @@ public class StackScreenNavigatorHolderHelper {
         removeScreenWithIds(new <String>[id], completion);
     }
 
-    public function removeScreenWithIds(ids: Vector.<String>, completion: Function): void {
+    public function removeScreenWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean = false): void {
         var hasScreen: Boolean = ids.some(function(id: String, ...rest): Boolean {
             return _navigator.hasScreen(id);
         });
@@ -73,11 +73,11 @@ public class StackScreenNavigatorHolderHelper {
         }
 
         waitForTransitionCompleteIfNeeded(function (): void {
-            doRemoveScreensWithIds(ids, completion);
+            doRemoveScreensWithIds(ids, completion, dispose);
         });
     }
 
-    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean = false): Vector.<StackScreenNavigatorItem> {
+    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean): Vector.<StackScreenNavigatorItem> {
         var result: Vector.<StackScreenNavigatorItem> = new Vector.<StackScreenNavigatorItem>();
         for (var i: int = 0; i < ids.length; i++) {
             var id: String = ids[i];

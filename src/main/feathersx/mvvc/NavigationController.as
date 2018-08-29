@@ -19,7 +19,6 @@ import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
 import starling.display.DisplayObject;
-import starling.events.Event;
 
 public class NavigationController extends ViewController {
 
@@ -32,6 +31,22 @@ public class NavigationController extends ViewController {
     public function NavigationController(rootViewController: ViewController) {
         super();
         setViewControllers(new <ViewController>[rootViewController], false);
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Dispose
+    //
+    //--------------------------------------------------------------------------
+
+    override public function dispose(): void {
+        viewControllers.forEach(function (vc: ViewController, ...rest): void {
+            vc.dispose();
+        });
+
+        setViewControllersInternal(new <ViewController>[], true);
+
+        super.dispose();
     }
 
     //--------------------------------------------------------------------------
@@ -225,7 +240,7 @@ public class NavigationController extends ViewController {
         _navigationBar.setItems(navigationItemsFromViewControllers(viewControllers), animated);
     }
 
-    private function setViewControllersInternal(viewControllers: Vector.<ViewController>): void {
+    private function setViewControllersInternal(viewControllers: Vector.<ViewController>, dispose: Boolean = false): void {
         if (viewControllers == _viewControllers) {
             enterDebugger();
             return;
@@ -233,26 +248,34 @@ public class NavigationController extends ViewController {
 
         var helper: StackScreenNavigatorHolderHelper = new StackScreenNavigatorHolderHelper(navigator);
 
-        for each (var oldViewController: ViewController in _viewControllers) {
-            if (viewControllers.indexOf(oldViewController) != -1) {
-                continue;
-            }
+        // oldViewControllers
+
+        var oldViewControllers: Vector.<ViewController> = _viewControllers.filter(function(oldViewController: ViewController, ...rest): Boolean {
+            return viewControllers.indexOf(oldViewController) == -1;
+        });
+
+        oldViewControllers.forEach(function (oldViewController: ViewController, ...rest): void {
             var oldScreen: ViewControllerNavigatorItem = navigator.getScreen(oldViewController.identifier) as ViewControllerNavigatorItem;
             oldScreen.release();
-            helper.removeScreenWithId(oldViewController.identifier, function(): void {
-                clearNavigationControllerForViewControllers(new <ViewController>[oldViewController]);
-            });
-        }
+        });
 
-        for each (var newViewController: ViewController in viewControllers) {
-            if (navigator.hasScreen(newViewController.identifier)) {
-                continue;
-            }
+        helper.removeScreenWithIds(idsForViewControllers(oldViewControllers), function(): void {
+            clearNavigationControllerForViewControllers(oldViewControllers);
+        }, dispose);
+
+        // newViewControllers
+
+        var newViewControllers: Vector.<ViewController> = viewControllers.filter(function(newViewController: ViewController, ...rest): Boolean {
+            return !navigator.hasScreen(newViewController.identifier);
+        });
+
+        setupNavigationControllerForViewControllers(newViewControllers);
+
+        newViewControllers.forEach(function (newViewController: ViewController, ...rest): void {
             var newScreen: ViewControllerNavigatorItem = navigator.getScreen(newViewController.identifier) as ViewControllerNavigatorItem;
             newScreen.retain();
-            setupNavigationControllerForViewControllers(new <ViewController>[newViewController]);
             helper.addScreenWithId(newViewController.identifier, newScreen, null);
-        }
+        });
 
         VectorUtil.copy(viewControllers, _viewControllers);
     }
@@ -278,15 +301,11 @@ public class NavigationController extends ViewController {
     }
 
     protected function doPopToRootScreenOfViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean, completion: Function): void {
-        var ids: Vector.<String> = new <String>[];
-        viewControllers.forEach(function (vc: ViewController, ...rest): void {
-            ids.push(vc.identifier);
-        });
-
-        for (var i: int = 0; i < ids.length; i++) {
-            var item: ViewControllerNavigatorItem = navigator.getScreen(ids[i]) as ViewControllerNavigatorItem;
+        var ids: Vector.<String> = idsForViewControllers(viewControllers);
+        ids.forEach(function(id: String, ...rest): void {
+            var item: ViewControllerNavigatorItem = navigator.getScreen(id) as ViewControllerNavigatorItem;
             item.release();
-        }
+        });
 
         var transition: Function = getPopTransition(animated);
 
@@ -467,23 +486,16 @@ public class NavigationController extends ViewController {
 
     //--------------------------------------------------------------------------
     //
-    //  Dispose
+    //  Utils
     //
     //--------------------------------------------------------------------------
 
-    override public function dispose(): void {
+    protected function idsForViewControllers(viewControllers: Vector.<ViewController>): Vector.<String> {
         var ids: Vector.<String> = new <String>[];
         viewControllers.forEach(function (vc: ViewController, ...rest): void {
             ids.push(vc.identifier);
-            vc.dispose();
         });
-
-        for (var i: int = 0; i < ids.length; i++) {
-            var item: ViewControllerNavigatorItem = navigator.getScreen(ids[i]) as ViewControllerNavigatorItem;
-            item.release();
-        }
-        navigator.removeAllScreens();
-        super.dispose();
+        return ids;
     }
 }
 }

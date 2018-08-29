@@ -649,6 +649,7 @@ public class ViewController {
     }
 
     public function dispose(): void {
+        trace("dispose", identifier);
         if (isViewLoaded) {
             this.view.dispose();
         }

@@ -198,5 +198,15 @@ public class NavigationItem {
     public function set popTransition(value: Function): void {
         _popTransition = value;
     }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Description
+    //
+    //--------------------------------------------------------------------------
+
+    public function toString(): String {
+        return "[NavigationItem("+identifier+")]";
+    }
 }
 }

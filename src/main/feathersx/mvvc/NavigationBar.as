@@ -36,6 +36,19 @@ public class NavigationBar extends StackScreenNavigator {
 
     //--------------------------------------------------------------------------
     //
+    //  Dispose
+    //
+    //--------------------------------------------------------------------------
+
+    override public function dispose(): void {
+
+        setItemsInternal(new <NavigationItem>[], true);
+
+        super.dispose();
+    }
+
+    //--------------------------------------------------------------------------
+    //
     //  Variables
     //
     //--------------------------------------------------------------------------
@@ -182,7 +195,7 @@ public class NavigationBar extends StackScreenNavigator {
         }
     }
 
-    private function setItemsInternal(items: Vector.<NavigationItem>): void {
+    private function setItemsInternal(items: Vector.<NavigationItem>, dispose: Boolean = false): void {
         if (items == _items) {
             enterDebugger();
             return;
@@ -190,23 +203,30 @@ public class NavigationBar extends StackScreenNavigator {
 
         var helper: StackScreenNavigatorHolderHelper = new StackScreenNavigatorHolderHelper(navigator);
 
-        for each (var oldItem: NavigationItem in _items) {
-            if (items.indexOf(oldItem) != -1) {
-                continue;
-            }
+        // oldItems
+
+        var oldItems: Vector.<NavigationItem> = _items.filter(function (oldItem: NavigationItem, ...rest): Boolean {
+            return items.indexOf(oldItem) == -1;
+        });
+
+        oldItems.forEach(function (oldItem: NavigationItem, ...rest): void {
             var oldScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(oldItem.identifier) as NavigationBarStackScreenNavigatorItem;
             oldScreen.release();
-            helper.removeScreenWithId(oldItem.identifier, null);
-        }
+        });
 
-        for each (var newItem: NavigationItem in items) {
-            if (hasScreen(newItem.identifier)) {
-                continue;
-            }
+        helper.removeScreenWithIds(idsForNavigationItems(oldItems), null, dispose);
+
+        // newItems
+
+        var newItems: Vector.<NavigationItem> = items.filter(function (newItem: NavigationItem, ...rest): Boolean {
+            return !navigator.hasScreen(newItem.identifier);
+        });
+
+        newItems.forEach(function(newItem: NavigationItem, ...rest): void {
             var newScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(newItem.identifier) as NavigationBarStackScreenNavigatorItem;
             newScreen.retain();
             helper.addScreenWithId(newItem.identifier, newScreen, null);
-        }
+        });
 
         _items = items;
     }
@@ -242,15 +262,11 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     protected function doPopToRootNavigationItem(items: Vector.<NavigationItem>, animated: Boolean, completion: Function): void {
-        var ids: Vector.<String> = new <String>[];
-        items.forEach(function (vc: NavigationItem, ...rest): void {
-            ids.push(vc.identifier);
-        });
-
-        for (var i: int = 0; i < ids.length; i++) {
-            var screen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(ids[i]) as NavigationBarStackScreenNavigatorItem;
+        var ids: Vector.<String> = idsForNavigationItems(items);
+        ids.forEach(function (id: String, ...rest): void {
+            var screen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(id) as NavigationBarStackScreenNavigatorItem;
             screen.release();
-        }
+        });
 
         var transition: Function = getPopToRootTransition(animated);
 
@@ -439,6 +455,14 @@ public class NavigationBar extends StackScreenNavigator {
         }
 
         return content.leftButtonGroup.getChildAt(index) as Button;
+    }
+
+    protected function idsForNavigationItems(items: Vector.<NavigationItem>): Vector.<String> {
+        var ids: Vector.<String> = new <String>[];
+        items.forEach(function (item: NavigationItem, ...rest): void {
+            ids.push(item.identifier);
+        });
+        return ids;
     }
 }
 }

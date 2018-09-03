@@ -219,6 +219,8 @@ public class NavigationController extends ViewController {
 
         resetNavigationBar();
 
+        // TODO: handle empty viewControllers list
+
         if (viewControllers.length > 0) {
             if (navigator.activeScreenID == null) {
                 var newRootViewController: ViewController = viewControllers[0];

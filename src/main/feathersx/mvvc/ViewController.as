@@ -621,7 +621,7 @@ public class ViewController {
         return _root;
     }
 
-    public function setAsRootViewController(root: DisplayObjectContainer):void {
+    public function setAsRootViewController(root: DisplayObjectContainer): void {
         if (_root != null) {
             cleanRootView();
         }

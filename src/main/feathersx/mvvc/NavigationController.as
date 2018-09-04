@@ -242,7 +242,7 @@ public class NavigationController extends ViewController {
         _navigationBar.setItems(navigationItemsFromViewControllers(viewControllers), animated);
     }
 
-    private function setViewControllersInternal(viewControllers: Vector.<ViewController>, dispose: Boolean = false): void {
+    protected function setViewControllersInternal(viewControllers: Vector.<ViewController>, dispose: Boolean = false): void {
         if (viewControllers == _viewControllers) {
             enterDebugger();
             return;

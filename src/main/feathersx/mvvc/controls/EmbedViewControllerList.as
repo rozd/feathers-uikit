@@ -4,22 +4,34 @@
 package feathersx.mvvc.controls {
 import feathers.controls.List;
 import feathers.data.IListCollection;
+import feathers.events.FeathersEventType;
 
 import feathersx.mvvc.ViewController;
 
 import skein.core.WeakReference;
 
 import starling.display.DisplayObject;
+import starling.events.Event;
 
-public class EmbedViewControllerList extends feathers.controls.List {
+public class EmbedViewControllerList extends List {
 
-    // Constructor
+    //--------------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //--------------------------------------------------------------------------
 
     public function EmbedViewControllerList() {
         super();
+        addEventListener(FeathersEventType.RENDERER_ADD, renderAddHandler);
+        addEventListener(FeathersEventType.RENDERER_REMOVE, renderRemoveHandler);
     }
 
-    // Delegate
+    //--------------------------------------------------------------------------
+    //
+    //  Delegate
+    //
+    //--------------------------------------------------------------------------
 
     private var _delegate: WeakReference;
     public function get delegate(): EmbedViewControllerListDelegate {
@@ -29,7 +41,11 @@ public class EmbedViewControllerList extends feathers.controls.List {
         _delegate = new WeakReference(value);
     }
 
-    // Overridden properties
+    //--------------------------------------------------------------------------
+    //
+    //  Overridden properties
+    //
+    //--------------------------------------------------------------------------
 
     override public function set dataProvider(value: IListCollection): void {
         if (dataProvider == value) {
@@ -60,5 +76,76 @@ public class EmbedViewControllerList extends feathers.controls.List {
             };
         }
     }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //--------------------------------------------------------------------------
+
+    //-------------------------------------
+    //  parentViewController
+    //-------------------------------------
+
+    private var _parentViewController: ViewController;
+    public function get parentViewController(): ViewController {
+        return _parentViewController;
+    }
+    public function set parentViewController(value: ViewController): void {
+        if (value == _parentViewController) return;
+        _parentViewController = value;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //--------------------------------------------------------------------------
+
+    protected function prepareEmbeddedViewControllerToBePresented(vc: ViewController): void {
+        if (parentViewController) {
+            parentViewController.addChildViewController(vc);
+        }
+    }
+
+    protected function prepareEmbeddedViewControllerToBeDismissed(vc: ViewController): void {
+        if (vc.parent) {
+            vc.removeFromParentViewController();
+        }
+    }
+
+    protected function viewToViewController(view: DisplayObject): ViewController {
+        for (var i: int = 0, n: int = dataProvider ? dataProvider.length : 0; i < n; i++) {
+            var vc: ViewController = dataProvider.getItemAt(i) as ViewController;
+            if (!vc.isViewLoaded) {
+                continue;
+            }
+            if (vc.view == view) {
+                return vc;
+            }
+        }
+        return null;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Event handlers
+    //
+    //--------------------------------------------------------------------------
+
+    private function renderAddHandler(event: Event): void {
+        var vc: ViewController = viewToViewController(event.data as DisplayObject);
+        if (vc != null) {
+            prepareEmbeddedViewControllerToBePresented(vc);
+        }
+    }
+
+    private function renderRemoveHandler(event: Event): void {
+        var vc: ViewController = viewToViewController(event.data as DisplayObject);
+        if (vc != null) {
+            prepareEmbeddedViewControllerToBeDismissed(vc);
+        }
+    }
+
 }
 }

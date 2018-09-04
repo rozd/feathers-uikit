@@ -119,9 +119,9 @@ public class DrawersController extends ViewController {
     //--------------------------------------------------------------------------
 
     override protected function loadViewIfRequired(): void {
-        var wasViewLoaded: Boolean = isViewLoaded;
+        var hasViewLoadedBefore: Boolean = isViewLoaded;
         super.loadViewIfRequired();
-        if (!wasViewLoaded) {
+        if (!hasViewLoadedBefore) {
             setupDrawers();
         }
     }
@@ -195,7 +195,7 @@ public class DrawersController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    private function setupDrawers(): void {
+    protected function setupDrawers(): void {
         drawers.addEventListener(Event.REMOVED_FROM_STAGE, drawers_removedFromStageHandler);
 
         _rootViewController.setDrawersController(this);

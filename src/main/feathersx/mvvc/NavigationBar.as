@@ -13,6 +13,10 @@ import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 import flash.debugger.enterDebugger;
 import flash.geom.Point;
 
+import skein.logger.Log;
+import skein.utils.StringUtil;
+import skein.utils.VectorUtil;
+
 import starling.animation.Transitions;
 
 public class NavigationBar extends StackScreenNavigator {
@@ -205,30 +209,28 @@ public class NavigationBar extends StackScreenNavigator {
 
         // oldItems
 
-        var oldItems: Vector.<NavigationItem> = _items.filter(function (oldItem: NavigationItem, ...rest): Boolean {
-            return navigator.hasScreen(oldItem.identifier);
-        });
+        var oldItems: Vector.<NavigationItem> = _items.concat();
 
         oldItems.forEach(function (oldItem: NavigationItem, ...rest): void {
             var oldScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(oldItem.identifier) as NavigationBarStackScreenNavigatorItem;
+            if (oldScreen == null) {
+                Log.w("feathers-mvvm", StringUtil.substitute("Warning: attempt to remove NavigationItem {0} from navigator failed due to {1} is invalid navigator item.", oldItem, navigator.getScreen(oldItem.identifier)));
+                return;
+            }
             oldScreen.release();
         });
 
-        helper.removeScreenWithIds(idsForNavigationItems(oldItems), null, dispose);
+        helper.removeScreenWithIds(idsForNavigationItems(_items), null, dispose);
 
         // newItems
 
-        var newItems: Vector.<NavigationItem> = items.filter(function (newItem: NavigationItem, ...rest): Boolean {
-            return !navigator.hasScreen(newItem.identifier);
-        });
-
-        newItems.forEach(function(newItem: NavigationItem, ...rest): void {
+        items.forEach(function(newItem: NavigationItem, ...rest): void {
             var newScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(newItem.identifier) as NavigationBarStackScreenNavigatorItem;
             newScreen.retain();
             helper.addScreenWithId(newItem.identifier, newScreen, null);
         });
 
-        _items = items;
+        VectorUtil.copy(items, _items);
     }
 
     //--------------------------------------------------------------------------

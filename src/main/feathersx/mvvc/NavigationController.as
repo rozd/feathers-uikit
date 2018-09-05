@@ -15,6 +15,8 @@ import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
 import flash.debugger.enterDebugger;
 
 import skein.core.WeakReference;
+import skein.logger.Log;
+import skein.utils.StringUtil;
 import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
@@ -252,12 +254,14 @@ public class NavigationController extends ViewController {
 
         // oldViewControllers
 
-        var oldViewControllers: Vector.<ViewController> = _viewControllers.filter(function(oldViewController: ViewController, ...rest): Boolean {
-            return viewControllers.indexOf(oldViewController) == -1;
-        });
+        var oldViewControllers: Vector.<ViewController> = _viewControllers.concat();
 
         oldViewControllers.forEach(function (oldViewController: ViewController, ...rest): void {
             var oldScreen: ViewControllerNavigatorItem = navigator.getScreen(oldViewController.identifier) as ViewControllerNavigatorItem;
+            if (oldScreen == null) {
+                Log.w("feathers-mvvm", StringUtil.substitute("Warning: attempt to remove ViewController {0} from navigator failed due to {1} is invalid navigator item.", oldViewController, navigator.getScreen(oldViewController.identifier)));
+                return;
+            }
             oldScreen.release();
         });
 
@@ -267,13 +271,9 @@ public class NavigationController extends ViewController {
 
         // newViewControllers
 
-        var newViewControllers: Vector.<ViewController> = viewControllers.filter(function(newViewController: ViewController, ...rest): Boolean {
-            return !navigator.hasScreen(newViewController.identifier);
-        });
+        setupNavigationControllerForViewControllers(viewControllers);
 
-        setupNavigationControllerForViewControllers(newViewControllers);
-
-        newViewControllers.forEach(function (newViewController: ViewController, ...rest): void {
+        viewControllers.forEach(function (newViewController: ViewController, ...rest): void {
             var newScreen: ViewControllerNavigatorItem = navigator.getScreen(newViewController.identifier) as ViewControllerNavigatorItem;
             newScreen.retain();
             helper.addScreenWithId(newViewController.identifier, newScreen, null);

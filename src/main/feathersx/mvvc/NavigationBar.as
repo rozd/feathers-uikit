@@ -206,7 +206,7 @@ public class NavigationBar extends StackScreenNavigator {
         // oldItems
 
         var oldItems: Vector.<NavigationItem> = _items.filter(function (oldItem: NavigationItem, ...rest): Boolean {
-            return items.indexOf(oldItem) == -1;
+            return navigator.hasScreen(oldItem.identifier);
         });
 
         oldItems.forEach(function (oldItem: NavigationItem, ...rest): void {

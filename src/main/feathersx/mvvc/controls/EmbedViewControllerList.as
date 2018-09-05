@@ -3,6 +3,7 @@
  */
 package feathersx.mvvc.controls {
 import feathers.controls.List;
+import feathers.controls.renderers.IListItemRenderer;
 import feathers.data.IListCollection;
 import feathers.events.FeathersEventType;
 
@@ -114,19 +115,6 @@ public class EmbedViewControllerList extends List {
         }
     }
 
-    protected function viewToViewController(view: DisplayObject): ViewController {
-        for (var i: int = 0, n: int = dataProvider ? dataProvider.length : 0; i < n; i++) {
-            var vc: ViewController = dataProvider.getItemAt(i) as ViewController;
-            if (!vc.isViewLoaded) {
-                continue;
-            }
-            if (vc.view == view) {
-                return vc;
-            }
-        }
-        return null;
-    }
-
     //--------------------------------------------------------------------------
     //
     //  Event handlers
@@ -134,14 +122,16 @@ public class EmbedViewControllerList extends List {
     //--------------------------------------------------------------------------
 
     private function renderAddHandler(event: Event): void {
-        var vc: ViewController = viewToViewController(event.data as DisplayObject);
+        var renderer: IListItemRenderer = event.data as IListItemRenderer;
+        var vc: ViewController = renderer.data as ViewController;
         if (vc != null) {
             prepareEmbeddedViewControllerToBePresented(vc);
         }
     }
 
     private function renderRemoveHandler(event: Event): void {
-        var vc: ViewController = viewToViewController(event.data as DisplayObject);
+        var renderer: IListItemRenderer = event.data as IListItemRenderer;
+        var vc: ViewController = renderer.data as ViewController;
         if (vc != null) {
             prepareEmbeddedViewControllerToBeDismissed(vc);
         }

@@ -380,7 +380,7 @@ public class ViewController {
 
     public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
         if (presentedViewController != null) {
-            Log.w("feathers-mvvm", StringUtil.substitute("Warning: Attempt to present {0} on {1} which is already presenting {2}", vc, this, presentedViewController));
+            Log.w("feathers-uikit", StringUtil.substitute("Warning: Attempt to present {0} on {1} which is already presenting {2}", vc, this, presentedViewController));
             return;
         }
 

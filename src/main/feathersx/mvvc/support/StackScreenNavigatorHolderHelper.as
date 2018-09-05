@@ -27,6 +27,16 @@ public class StackScreenNavigatorHolderHelper {
 
     private var _navigator: StackScreenNavigator;
 
+    // MARK: Retrieve
+
+    public function getScreenWithId(id: String): StackScreenNavigatorItem {
+        return _navigator.getScreen(id);
+    }
+
+    public function hasScreenWithId(id: String): Boolean {
+        return _navigator.hasScreen(id);
+    }
+
     // MARK: Add
 
     public function addScreenWithId(id: String, screen: StackScreenNavigatorItem, completion: Function): void {

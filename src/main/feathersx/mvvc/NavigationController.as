@@ -5,6 +5,7 @@ package feathersx.mvvc {
 import feathers.controls.AutoSizeMode;
 import feathers.controls.LayoutGroup;
 import feathers.controls.StackScreenNavigator;
+import feathers.controls.StackScreenNavigatorItem;
 import feathers.layout.AnchorLayout;
 import feathers.layout.AnchorLayoutData;
 import feathers.motion.Fade;
@@ -221,6 +222,8 @@ public class NavigationController extends ViewController {
 
         resetNavigationBar();
 
+
+
         // TODO: handle empty viewControllers list
 
         if (viewControllers.length > 0) {
@@ -254,12 +257,14 @@ public class NavigationController extends ViewController {
 
         // oldViewControllers
 
-        var oldViewControllers: Vector.<ViewController> = _viewControllers.concat();
+        var oldViewControllers: Vector.<ViewController> = _viewControllers.filter(function(oldViewController: ViewController, ...rest): Boolean {
+            return viewControllers.indexOf(oldViewController) == -1;
+        });
 
         oldViewControllers.forEach(function (oldViewController: ViewController, ...rest): void {
-            var oldScreen: ViewControllerNavigatorItem = navigator.getScreen(oldViewController.identifier) as ViewControllerNavigatorItem;
+            var oldScreen: ViewControllerNavigatorItem = helper.getScreenWithId(oldViewController.identifier) as ViewControllerNavigatorItem;
             if (oldScreen == null) {
-                Log.w("feathers-mvvm", StringUtil.substitute("Warning: attempt to remove ViewController {0} from navigator failed due to {1} is invalid navigator item.", oldViewController, navigator.getScreen(oldViewController.identifier)));
+                Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to release view controller's navigator item for view controller {0} failed due to {1} is an invalid navigator item.", oldViewController, helper.getScreenWithId(oldViewController.identifier)));
                 return;
             }
             oldScreen.release();
@@ -271,13 +276,23 @@ public class NavigationController extends ViewController {
 
         // newViewControllers
 
-        setupNavigationControllerForViewControllers(viewControllers);
-
-        viewControllers.forEach(function (newViewController: ViewController, ...rest): void {
-            var newScreen: ViewControllerNavigatorItem = navigator.getScreen(newViewController.identifier) as ViewControllerNavigatorItem;
-            newScreen.retain();
-            helper.addScreenWithId(newViewController.identifier, newScreen, null);
+        var newViewControllers: Vector.<ViewController> = viewControllers.filter(function(newViewController: ViewController, ...rest): Boolean {
+            return !helper.hasScreenWithId(newViewController.identifier);
         });
+
+        helper.addScreensWithIds(idsForViewControllers(newViewControllers), screensForViewControllers(newViewControllers), function(): void {
+            setupNavigationControllerForViewControllers(newViewControllers);
+            newViewControllers.forEach(function (newViewController: ViewController, ...rest): void {
+                var newScreen: ViewControllerNavigatorItem = helper.getScreenWithId(newViewController.identifier) as ViewControllerNavigatorItem;
+                if (newScreen == null) {
+                    Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to retain view controllers navigator item for view controller {0} failed due to {1} is an invalid navigator item.", newViewController, helper.getScreenWithId(newViewController.identifier)));
+                    return;
+                }
+                newScreen.retain();
+            });
+        });
+
+        // copy view controllers
 
         VectorUtil.copy(viewControllers, _viewControllers);
     }
@@ -498,6 +513,14 @@ public class NavigationController extends ViewController {
             ids.push(vc.identifier);
         });
         return ids;
+    }
+
+    protected function screensForViewControllers(viewControllers: Vector.<ViewController>): Vector.<StackScreenNavigatorItem> {
+        var screens: Vector.<StackScreenNavigatorItem> = new <StackScreenNavigatorItem>[];
+        viewControllers.forEach(function (vc: ViewController, ...rest): void {
+            screens.push(new ViewControllerNavigatorItem(vc));
+        });
+        return screens;
     }
 }
 }

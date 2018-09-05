@@ -4,6 +4,7 @@
 package feathersx.mvvc {
 import feathers.controls.Button;
 import feathers.controls.StackScreenNavigator;
+import feathers.controls.StackScreenNavigatorItem;
 import feathers.motion.Fade;
 
 import feathersx.core.feathers_mvvc;
@@ -178,29 +179,23 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function setItems(items: Vector.<NavigationItem>, animated: Boolean): void {
-
-        var delaySettingItems: Boolean = false;
-
         if (items.length > 0) {
             if (activeScreenID == null) {
                 var newRootItem: NavigationItem = items[0];
-                setRootNavigationItem(newRootItem, null);
+                setRootNavigationItem(newRootItem, function (): void {
+                    setItemsInternal(items);
+                });
             } else {
                 var newTopItem: NavigationItem = items[items.length - 1];
                 replaceTopNavigationItem(newTopItem, animated, function ():void {
                     setItemsInternal(items);
                 });
-                delaySettingItems = true;
             }
-        }
-
-        if (!delaySettingItems) {
-            setItemsInternal(items);
         }
     }
 
-    private function setItemsInternal(items: Vector.<NavigationItem>, dispose: Boolean = false): void {
-        if (items == _items) {
+    private function setItemsInternal(navigationItems: Vector.<NavigationItem>, dispose: Boolean = false): void {
+        if (navigationItems == _items) {
             enterDebugger();
             return;
         }
@@ -209,12 +204,14 @@ public class NavigationBar extends StackScreenNavigator {
 
         // oldItems
 
-        var oldItems: Vector.<NavigationItem> = _items.concat();
+        var oldNavigationItems: Vector.<NavigationItem> = _items.filter(function(oldNavigationItem: NavigationItem, ...rest): Boolean {
+            return navigationItems.indexOf(oldNavigationItem) == -1;
+        });
 
-        oldItems.forEach(function (oldItem: NavigationItem, ...rest): void {
-            var oldScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(oldItem.identifier) as NavigationBarStackScreenNavigatorItem;
+        oldNavigationItems.forEach(function (oldItem: NavigationItem, ...rest): void {
+            var oldScreen: NavigationBarStackScreenNavigatorItem = helper.getScreenWithId(oldItem.identifier) as NavigationBarStackScreenNavigatorItem;
             if (oldScreen == null) {
-                Log.w("feathers-mvvm", StringUtil.substitute("Warning: attempt to remove NavigationItem {0} from navigator failed due to {1} is invalid navigator item.", oldItem, navigator.getScreen(oldItem.identifier)));
+                Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to release navigator item for NavigationItem {0} failed due to {1} is an invalid navigator item.", oldItem, helper.getScreenWithId(oldItem.identifier)));
                 return;
             }
             oldScreen.release();
@@ -224,13 +221,24 @@ public class NavigationBar extends StackScreenNavigator {
 
         // newItems
 
-        items.forEach(function(newItem: NavigationItem, ...rest): void {
-            var newScreen: NavigationBarStackScreenNavigatorItem = navigator.getScreen(newItem.identifier) as NavigationBarStackScreenNavigatorItem;
-            newScreen.retain();
-            helper.addScreenWithId(newItem.identifier, newScreen, null);
+        var newNavigationItems: Vector.<NavigationItem> = navigationItems.filter(function(newNavigationItem: NavigationItem, ...rest): Boolean {
+            return !helper.hasScreenWithId(newNavigationItem.identifier);
         });
 
-        VectorUtil.copy(items, _items);
+        helper.addScreensWithIds(idsForNavigationItems(newNavigationItems), screensForNavigationItems(newNavigationItems), function(): void {
+            newNavigationItems.forEach(function(newItem: NavigationItem, ...rest): void {
+                var newScreen: NavigationBarStackScreenNavigatorItem = helper.getScreenWithId(newItem.identifier) as NavigationBarStackScreenNavigatorItem;
+                if (newScreen == null) {
+                    Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to retain navigator item for NavigationItem {0} failed due to {1} is an invalid navigator item.", newItem, helper.getScreenWithId(newItem.identifier)));
+                    return;
+                }
+                newScreen.retain();
+            });
+        });
+
+        // copy navigation items
+
+        VectorUtil.copy(navigationItems, _items);
     }
 
     //--------------------------------------------------------------------------
@@ -459,12 +467,26 @@ public class NavigationBar extends StackScreenNavigator {
         return content.leftButtonGroup.getChildAt(index) as Button;
     }
 
+    //--------------------------------------------------------------------------
+    //
+    //  Utils
+    //
+    //--------------------------------------------------------------------------
+    
     protected function idsForNavigationItems(items: Vector.<NavigationItem>): Vector.<String> {
         var ids: Vector.<String> = new <String>[];
         items.forEach(function (item: NavigationItem, ...rest): void {
             ids.push(item.identifier);
         });
         return ids;
+    }
+
+    private function screensForNavigationItems(items: Vector.<NavigationItem>): Vector.<StackScreenNavigatorItem> {
+        var screens: Vector.<StackScreenNavigatorItem> = new <StackScreenNavigatorItem>[];
+        items.forEach(function (item: NavigationItem, ...rest): void {
+            screens.push(new NavigationBarStackScreenNavigatorItem(item));
+        });
+        return screens;
     }
 }
 }

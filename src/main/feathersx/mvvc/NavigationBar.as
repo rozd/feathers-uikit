@@ -46,8 +46,11 @@ public class NavigationBar extends StackScreenNavigator {
     //--------------------------------------------------------------------------
 
     override public function dispose(): void {
+        items.forEach(function(navigationItem: NavigationItem, ...rest): void {
+            navigationItem.dispose();
+        });
 
-        setItemsInternal(new <NavigationItem>[], true);
+        setItemsInternal(new <NavigationItem>[]);
 
         super.dispose();
     }
@@ -172,8 +175,12 @@ public class NavigationBar extends StackScreenNavigator {
             return null;
         }
 
-        var popped: Vector.<NavigationItem> = _items.slice(1, _items.length - 1);
-        doPopToRootNavigationItem(popped, animated, null);
+        var popped: Vector.<NavigationItem> = _items.splice(1, _items.length - 1);
+        doPopToRootNavigationItem(popped, animated, function(): void {
+            popped.forEach(function (item: NavigationItem, ...rest): void {
+                item.dispose();
+            });
+        });
 
         return popped;
     }
@@ -194,7 +201,7 @@ public class NavigationBar extends StackScreenNavigator {
         }
     }
 
-    private function setItemsInternal(navigationItems: Vector.<NavigationItem>, dispose: Boolean = false): void {
+    private function setItemsInternal(navigationItems: Vector.<NavigationItem>): void {
         if (navigationItems == _items) {
             enterDebugger();
             return;
@@ -217,7 +224,7 @@ public class NavigationBar extends StackScreenNavigator {
             oldScreen.release();
         });
 
-        helper.removeScreenWithIds(idsForNavigationItems(_items), null, dispose);
+        helper.removeScreenWithIds(idsForNavigationItems(oldNavigationItems), null);
 
         // newItems
 
@@ -493,9 +500,7 @@ public class NavigationBar extends StackScreenNavigator {
 
 import feathers.controls.StackScreenNavigatorItem;
 
-import feathersx.mvvc.NavigationBarContent;
 import feathersx.mvvc.NavigationItem;
-import feathersx.mvvc.NavigatorItem;
 
 import starling.display.DisplayObject;
 
@@ -505,11 +510,13 @@ import starling.display.DisplayObject;
 //
 //--------------------------------------------------------------------------
 
-class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem implements NavigatorItem {
+class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
 
     public function NavigationBarStackScreenNavigatorItem(item: NavigationItem) {
-        super(null, item.pushTransition, item.popTransition);
+        super(null);
         _item = item;
+        _pushTransition = item.pushTransition;
+        _popTransition  = item.popTransition;
     }
 
     private var _item: NavigationItem;
@@ -519,21 +526,8 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem imp
         return !_retained;
     }
 
-    private var _navigationBarContent: DisplayObject;
     override public function getScreen():DisplayObject {
-        if (_navigationBarContent == null) {
-            _navigationBarContent = new NavigationBarContent(_item);
-        }
-        return _navigationBarContent;
-    }
-
-    public function disposeIfNeeded(): void {
-        if (_navigationBarContent == null) {
-            return;
-        }
-
-        _navigationBarContent.dispose();
-        _navigationBarContent = null;
+       return _item.view;
     }
 
     public function retain():void {

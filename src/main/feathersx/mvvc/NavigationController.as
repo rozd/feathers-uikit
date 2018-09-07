@@ -47,7 +47,7 @@ public class NavigationController extends ViewController {
             vc.dispose();
         });
 
-        setViewControllersInternal(new <ViewController>[], true);
+        setViewControllersInternal(new <ViewController>[]);
 
         super.dispose();
     }
@@ -175,6 +175,9 @@ public class NavigationController extends ViewController {
         var popped: Vector.<ViewController> = _viewControllers.splice(1, _viewControllers.length - 1);
         doPopToRootScreenOfViewControllers(popped, animated, function (): void {
             clearNavigationControllerForViewControllers(popped);
+            popped.forEach(function(vc: ViewController, ...rest): void {
+                vc.dispose();
+            });
         });
 
         _navigationBar.popToRootItem(animated);
@@ -247,7 +250,7 @@ public class NavigationController extends ViewController {
         _navigationBar.setItems(navigationItemsFromViewControllers(viewControllers), animated);
     }
 
-    protected function setViewControllersInternal(viewControllers: Vector.<ViewController>, dispose: Boolean = false): void {
+    protected function setViewControllersInternal(viewControllers: Vector.<ViewController>): void {
         if (viewControllers == _viewControllers) {
             enterDebugger();
             return;
@@ -272,7 +275,7 @@ public class NavigationController extends ViewController {
 
         helper.removeScreenWithIds(idsForViewControllers(oldViewControllers), function(): void {
             clearNavigationControllerForViewControllers(oldViewControllers);
-        }, dispose);
+        });
 
         // newViewControllers
 
@@ -533,12 +536,12 @@ public class NavigationController extends ViewController {
 
 import feathers.controls.StackScreenNavigatorItem;
 
-import feathersx.mvvc.NavigatorItem;
 import feathersx.mvvc.ViewController;
 
 import starling.display.DisplayObject;
 
-class ViewControllerNavigatorItem extends StackScreenNavigatorItem implements NavigatorItem {
+class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
+
     public function ViewControllerNavigatorItem(vc: ViewController): void {
         super();
         _viewController = vc;
@@ -553,16 +556,6 @@ class ViewControllerNavigatorItem extends StackScreenNavigatorItem implements Na
 
     override public function getScreen(): DisplayObject {
         return _viewController.view;
-    }
-
-    public function disposeIfNeeded(): void {
-        if (_viewController == null) {
-            return;
-        }
-
-        if (_viewController.viewIfLoaded != null) {
-            _viewController.viewIfLoaded.dispose();
-        }
     }
 
     public function retain():void {

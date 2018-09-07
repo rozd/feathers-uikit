@@ -8,6 +8,8 @@ import feathers.data.IListCollection;
 import skein.utils.ArrayUtil;
 import skein.utils.VectorUtil;
 
+import starling.display.DisplayObject;
+
 public class NavigationItem {
 
     //--------------------------------------------------------------------------
@@ -19,6 +21,12 @@ public class NavigationItem {
     public function NavigationItem(identifier: String) {
         super();
         _identifier = identifier
+    }
+
+    public function dispose(): void {
+        if (isViewLoaded) {
+            this.view.removeFromParent(true);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -51,6 +59,28 @@ public class NavigationItem {
         if (_callback != null) {
             _callback(animated);
         }
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  View
+    //
+    //--------------------------------------------------------------------------
+
+    public function get isViewLoaded(): Boolean {
+        return _view != null;
+    }
+
+    public function get viewIfLoaded(): DisplayObject {
+        return _view;
+    }
+
+    private var _view: DisplayObject;
+    public function get view(): DisplayObject {
+        if (_view == null) {
+            _view = new NavigationBarContent(this);
+        }
+        return _view;
     }
 
     //--------------------------------------------------------------------------

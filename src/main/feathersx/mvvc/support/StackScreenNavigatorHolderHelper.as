@@ -70,7 +70,7 @@ public class StackScreenNavigatorHolderHelper {
         removeScreenWithIds(new <String>[id], completion);
     }
 
-    public function removeScreenWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean = false): void {
+    public function removeScreenWithIds(ids: Vector.<String>, completion: Function): void {
         var hasScreen: Boolean = ids.some(function(id: String, ...rest): Boolean {
             return _navigator.hasScreen(id);
         });
@@ -83,21 +83,17 @@ public class StackScreenNavigatorHolderHelper {
         }
 
         waitForTransitionCompleteIfNeeded(function (): void {
-            doRemoveScreensWithIds(ids, completion, dispose);
+            doRemoveScreensWithIds(ids, completion);
         });
     }
 
-    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function, dispose: Boolean): Vector.<StackScreenNavigatorItem> {
+    protected function doRemoveScreensWithIds(ids: Vector.<String>, completion: Function): Vector.<StackScreenNavigatorItem> {
         var result: Vector.<StackScreenNavigatorItem> = new Vector.<StackScreenNavigatorItem>();
         for (var i: int = 0; i < ids.length; i++) {
             var id: String = ids[i];
             if (!_navigator.hasScreen(id)) {
                 result[i] = null;
                 continue;
-            }
-            var screen: StackScreenNavigatorItem = _navigator.getScreen(id);
-            if (dispose && screen is NavigatorItem) {
-                NavigatorItem(screen).disposeIfNeeded();
             }
             result[i] = _navigator.removeScreen(id);
         }
@@ -132,7 +128,7 @@ public class StackScreenNavigatorHolderHelper {
     public function popToRootScreenWithIds(ids: Vector.<String>, transition: Function, completion: Function): void {
         waitForTransitionCompleteIfNeeded(function(): void {
             trackScreenTransitionComplete(function(): void {
-                doRemoveScreensWithIds(ids, completion, true);
+                doRemoveScreensWithIds(ids, completion);
             });
             _navigator.popToRootScreen(getPopToRootTransition(transition));
         });

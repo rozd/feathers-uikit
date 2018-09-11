@@ -24,7 +24,6 @@ public class EmbedViewControllerList extends List {
 
     public function EmbedViewControllerList() {
         super();
-        addEventListener(FeathersEventType.RENDERER_ADD, renderAddHandler);
         addEventListener(FeathersEventType.RENDERER_REMOVE, renderRemoveHandler);
     }
 
@@ -60,6 +59,7 @@ public class EmbedViewControllerList extends List {
 
         function createItemRendererFactory(vc: ViewController): Function {
             return function (): DisplayObject {
+                prepareEmbeddedViewControllerToBePresented(vc);
                 if (delegate) {
                     delegate.listViewControllerWillLoadView(vc);
                 }
@@ -120,14 +120,6 @@ public class EmbedViewControllerList extends List {
     //  Event handlers
     //
     //--------------------------------------------------------------------------
-
-    private function renderAddHandler(event: Event): void {
-        var renderer: IListItemRenderer = event.data as IListItemRenderer;
-        var vc: ViewController = renderer.data as ViewController;
-        if (vc != null) {
-            prepareEmbeddedViewControllerToBePresented(vc);
-        }
-    }
 
     private function renderRemoveHandler(event: Event): void {
         var renderer: IListItemRenderer = event.data as IListItemRenderer;

@@ -41,7 +41,7 @@ public class NavigationBarContent extends Screen {
     //--------------------------------------------------------------------------
 
     override public function dispose(): void {
-        trace("dispose", _navigationItem);
+        trace("dispose NavigationBarContent of", _navigationItem);
         super.dispose();
     }
 

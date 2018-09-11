@@ -452,5 +452,15 @@ public class DrawersController extends ViewController {
             _bottomViewController.notifyViewWillDisappear();
         }
     }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Description
+    //
+    //--------------------------------------------------------------------------
+
+    override public function toString(): String {
+        return "[DrawersController("+identifier+")]";
+    }
 }
 }

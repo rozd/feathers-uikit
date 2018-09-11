@@ -531,12 +531,12 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
     }
 
     public function retain():void {
-        trace("retain", _item.identifier);
+        trace("retain", _item);
         _retained = true;
     }
 
     public function release():void {
-        trace("release", _item.identifier);
+        trace("release", _item);
         _retained = false;
     }
 }

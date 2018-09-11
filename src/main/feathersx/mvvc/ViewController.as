@@ -280,6 +280,13 @@ public class ViewController {
         }
     }
 
+    protected function disposeViewIfLoaded(): void {
+        if (_view != null) {
+            _view.removeFromParent(true);
+            _view = null;
+        }
+    }
+
     //------------------------------------
     //  View Lifecycle
     //------------------------------------
@@ -412,14 +419,20 @@ public class ViewController {
     }
 
     public function dismiss(animated: Boolean, completion: Function = null): void {
+        doDismiss(animated, true, completion);
+    }
 
+    public function dismissWithoutDisposing(animated: Boolean, completion: Function = null): void {
+        doDismiss(animated, false, completion);
+    }
+
+    protected function doDismiss(animated: Boolean, shouldDispose: Boolean, completion: Function = null): void {
         if (presentedViewController == null) {
             if (presentingViewController != null) {
                 presentingViewController.dismiss(animated, completion);
             } else {
                 setAsRootViewController(null);
             }
-
             return;
         }
 
@@ -428,8 +441,10 @@ public class ViewController {
         if (presentedViewController is AlertController) {
             AlertController(presentedViewController).hideAlertFromViewController(this);
         } else if (PopUpManager.isPopUp(presentedViewController.view)) {
-            PopUpManager.removePopUp(presentedViewController.view);
-            presentedViewController.view.dispose();
+            PopUpManager.removePopUp(presentedViewController.view, shouldDispose);
+            if (shouldDispose) {
+                presentedViewController.dispose();
+            }
         } else {
             navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
         }
@@ -649,10 +664,8 @@ public class ViewController {
     }
 
     public function dispose(): void {
-        trace("dispose", identifier);
-        if (isViewLoaded) {
-            this.view.removeFromParent(true);
-        }
+        trace("dispose", this);
+        disposeViewIfLoaded();
         if (_navigator) {
             _navigator.dispose();
         }
@@ -676,6 +689,15 @@ public class ViewController {
     //  Event handlers: view
     //-------------------------------------
 
+    //--------------------------------------------------------------------------
+    //
+    //  Description
+    //
+    //--------------------------------------------------------------------------
+
+    public function toString(): String {
+        return "[ViewController("+identifier+")]";
+    }
 }
 }
 

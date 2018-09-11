@@ -1,68 +1,27 @@
 /**
- * Created by max.rozdobudko@gmail.com on 7/22/17.
+ * Created by max.rozdobudko@gmail.com on 7/29/17.
  */
 package feathersx.mvvc.examples.helloWorld {
-import feathers.controls.Button;
-import feathers.controls.TextCallout;
+import feathers.themes.MetalWorksMobileTheme;
+
+import feathersx.mvvc.WindowDecorator;
 
 import starling.display.Sprite;
 import starling.events.Event;
 
-public class Main extends Sprite
-{
-    /**
-     * Constructor.
-     */
-    public function Main()
-    {
+public class Main extends Sprite {
+
+    public function Main() {
+        super();
         this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
     }
 
-    protected var button:Button;
-
-    protected function addedToStageHandler(event:Event):void
-    {
+    protected function addedToStageHandler(event:Event):void {
         this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 
-        //create the theme. this class will automatically pass skins to any
-        //Feathers component that is added to the stage. components do not
-        //have default skins, so you must always use a theme or skin the
-        //components manually. you should always create a theme immediately
-        //when your app starts up to ensure that all components are
-        //properly skinned.
-        //see http://feathersui.com/help/themes.html
-//        new MetalWorksMobileTheme();
+        new MetalWorksMobileTheme();
 
-        //create a button and give it some text to display.
-        this.button = new Button();
-        this.button.label = "Click Me";
-
-        //an event that tells us when the user has tapped the button.
-        this.button.addEventListener(Event.TRIGGERED, button_triggeredHandler);
-
-        //add the button to the display list, just like you would with any
-        //other Starling display object. this is where the theme give some
-        //skins to the button.
-        this.addChild(this.button);
-
-        //the button won't have a width and height until it "validates". it
-        //will validate on its own before the next frame is rendered by
-        //Starling, but we want to access the dimension immediately, so tell
-        //it to validate right now.
-        this.button.validate();
-
-        //center the button
-        this.button.x = Math.round((this.stage.stageWidth - this.button.width) / 2);
-        this.button.y = Math.round((this.stage.stageHeight - this.button.height) / 2);
-    }
-
-    /**
-     * Listener for the Button's Event.TRIGGERED event.
-     */
-    protected function button_triggeredHandler(event:Event):void
-    {
-        TextCallout.show("Hi, I'm Feathers!\nHave a nice day.", this.button);
+        new WindowDecorator(this).rootViewController = new MainController();
     }
 }
 }
-

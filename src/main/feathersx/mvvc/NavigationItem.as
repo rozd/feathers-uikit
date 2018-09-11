@@ -24,6 +24,7 @@ public class NavigationItem {
     }
 
     public function dispose(): void {
+        trace("dispose", this);
         if (isViewLoaded) {
             this.view.removeFromParent(true);
         }

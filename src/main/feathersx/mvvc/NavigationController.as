@@ -525,6 +525,16 @@ public class NavigationController extends ViewController {
         });
         return screens;
     }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Description
+    //
+    //--------------------------------------------------------------------------
+
+    override public function toString(): String {
+        return "[NavigationController("+identifier+")]";
+    }
 }
 }
 
@@ -559,12 +569,12 @@ class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
     }
 
     public function retain():void {
-        trace("retain", _viewController.identifier);
+        trace("retain", _viewController);
         _retained = true;
     }
 
     public function release():void {
-        trace("release", _viewController.identifier);
+        trace("release", _viewController);
         _retained = false;
     }
 }

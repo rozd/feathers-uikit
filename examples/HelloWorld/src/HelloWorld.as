@@ -3,7 +3,6 @@ package
 import feathers.utils.ScreenDensityScaleFactorManager;
 
 import feathersx.mvvc.examples.helloWorld.Main;
-import feathersx.mvvc.examples.helloWorld.Main2;
 
 import flash.display.Loader;
 import flash.display.Sprite;
@@ -116,7 +115,7 @@ public class HelloWorld extends Sprite
     private function loaderInfo_completeHandler(event:Event):void
     {
         Starling.multitouchEnabled = true;
-        this._starling = new Starling(Main2, this.stage, null, null, Context3DRenderMode.AUTO, Context3DProfile.BASELINE);
+        this._starling = new Starling(Main, this.stage, null, null, Context3DRenderMode.AUTO, Context3DProfile.BASELINE);
         this._starling.supportHighResolutions = true;
         this._starling.skipUnchangedFrames = true;
         this._starling.start();

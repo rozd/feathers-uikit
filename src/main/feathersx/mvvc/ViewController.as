@@ -445,8 +445,6 @@ public class ViewController {
             if (shouldDispose) {
                 presentedViewController.dispose();
             }
-        } else {
-            navigator.showScreen(this.identifier, Reveal.createRevealDownTransition());
         }
 
         presentedViewController.setPresentingViewController(null);

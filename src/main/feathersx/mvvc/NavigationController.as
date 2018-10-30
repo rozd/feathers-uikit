@@ -217,15 +217,13 @@ public class NavigationController extends ViewController {
 
     // setViewControllers
 
-    public function setViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean): void {
+    public function setViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean, completion: Function = null): void {
         if (!isViewLoaded) {
             _proposedViewControllers = viewControllers;
             return;
         }
 
         resetNavigationBar();
-
-
 
         // TODO: handle empty viewControllers list
 
@@ -235,6 +233,9 @@ public class NavigationController extends ViewController {
                 setupNavigationControllerForViewControllers(new <ViewController>[newRootViewController]);
                 setRootViewController(newRootViewController, function(): void {
                     setViewControllersInternal(viewControllers);
+                    if (completion != null) {
+                        completion();
+                    }
                 });
                 _toolbar.setItems(newRootViewController.toolbarItems, animated);
             } else {
@@ -242,6 +243,9 @@ public class NavigationController extends ViewController {
                 setupNavigationControllerForViewControllers(new <ViewController>[newTopViewController]);
                 replaceTopViewController(newTopViewController, animated, function(): void {
                     setViewControllersInternal(viewControllers);
+                    if (completion != null) {
+                        completion();
+                    }
                 });
                 _toolbar.setItems(newTopViewController.toolbarItems, animated);
             }

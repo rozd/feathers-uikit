@@ -404,12 +404,7 @@ public class NavigationController extends ViewController {
 
     private var _navigator:StackScreenNavigator;
     public function get navigator(): StackScreenNavigator {
-        // TODO(dev) each nc has its own navigator
-        if (presentingViewController is NavigationController) {
-            return NavigationController(presentingViewController).navigator;
-        } else {
-            return _navigator;
-        }
+        return _navigator;
     }
 
     //--------------------------------------------------------------------------
@@ -420,11 +415,7 @@ public class NavigationController extends ViewController {
 
     private var _navigationBar:NavigationBar;
     public function get navigationBar(): NavigationBar {
-        if (presentingViewController is NavigationController) {
-            return NavigationController(presentingViewController).navigationBar;
-        } else {
-            return _navigationBar;
-        }
+        return _navigationBar;
     }
 
     private function navigationBarOnBack(): void {
@@ -459,11 +450,7 @@ public class NavigationController extends ViewController {
 
     private var _toolbar:Toolbar;
     public function get toolbar(): Toolbar {
-        if (presentingViewController is NavigationController) {
-            return NavigationController(presentingViewController).toolbar;
-        } else {
-            return _toolbar;
-        }
+        return _toolbar;
     }
 
     private var _isToolbarHidden: Boolean = true;

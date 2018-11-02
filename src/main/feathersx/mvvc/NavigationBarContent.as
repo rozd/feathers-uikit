@@ -260,7 +260,7 @@ public class NavigationBarContent extends Screen {
         if (navigationBar.isTransparent) {
             skin.visible = false;
         } else if (navigationBar.isTranslucent) {
-            // TODO implement
+            // TODO: implement
         } else {
             if (navigationBar.shadowColor != uint.MAX_VALUE) {
                 if (skin.filter) {

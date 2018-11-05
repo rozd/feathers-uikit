@@ -72,9 +72,10 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    override public function get isViewLoaded(): Boolean {
-        return _navigator != null; // TODO(dev) if (isViewLoaded) { after loadView signature is changed
-    }
+//    override public function get isViewLoaded(): Boolean {
+//        trace(_navigator, _view);
+//        return _navigator != null; // TODO(dev) if (isViewLoaded) { after loadView signature is changed
+//    }
 
     //--------------------------------------------------------------------------
     //
@@ -222,6 +223,10 @@ public class NavigationController extends ViewController {
             _proposedViewControllers = viewControllers;
             return;
         }
+        doSetViewControllers(viewControllers, animated, completion);
+    }
+
+    protected function doSetViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean, completion: Function = null): void {
 
         resetNavigationBar();
 
@@ -395,7 +400,7 @@ public class NavigationController extends ViewController {
         view.addChild(_toolbar);
 
         if (_proposedViewControllers) {
-            setViewControllers(_proposedViewControllers, false);
+            doSetViewControllers(_proposedViewControllers, false);
             _proposedViewControllers = null;
         }
 

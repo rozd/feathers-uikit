@@ -418,8 +418,9 @@ public class NavigationController extends ViewController {
     //
     //--------------------------------------------------------------------------
 
-    private var _navigationBar:NavigationBar;
+    private var _navigationBar: NavigationBar;
     public function get navigationBar(): NavigationBar {
+        loadViewIfRequired();
         return _navigationBar;
     }
 

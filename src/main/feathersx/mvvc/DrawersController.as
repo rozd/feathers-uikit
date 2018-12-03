@@ -200,7 +200,14 @@ public class DrawersController extends ViewController {
 
         _rootViewController.setDrawersController(this);
         drawers.content = _rootViewController.view as IFeathersControl;
-        _rootViewController.notifyViewDidAppear();
+        if (_rootViewController.view.stage) {
+            _rootViewController.notifyViewDidAppear();
+        } else {
+            _rootViewController.view.addEventListener(Event.ADDED_TO_STAGE, function(event: Event): void {
+                _rootViewController.view.removeEventListener(Event.ADDED_TO_STAGE, arguments.callee);
+                _rootViewController.notifyViewDidAppear();
+            })
+        }
 
         if (_topViewController) {
             _topViewController.setDrawersController(this);

@@ -2,11 +2,13 @@
  * Created by max.rozdobudko@gmail.com on 9/13/17.
  */
 package feathersx.mvvc {
+import feathersx.data.EdgeInsets;
+
 import starling.display.DisplayObject;
 
 public class AlertController extends ViewController implements AlertViewDelegate {
 
-    // Static initialization
+    // MARK: - Static initialization
 
     {
         if (!Contracts.hasImplementationFor(AlertView)) {
@@ -14,7 +16,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
         }
     }
 
-    // Constructor
+    // MARK: - Constructor
 
     public function AlertController(title: String, message: String, preferredStyle: AlertControllerStyle) {
         super();
@@ -23,6 +25,8 @@ public class AlertController extends ViewController implements AlertViewDelegate
         _preferredStyle = preferredStyle;
         _modalPresentationStyle = ModalPresentationStyle.none;
     }
+
+    // MARK: - Properties
 
     // title
 
@@ -51,7 +55,13 @@ public class AlertController extends ViewController implements AlertViewDelegate
         return _preferredStyle;
     }
 
-    // View lifecycle
+    // MARK: - Overridden behaviour
+
+    override public function get safeArea(): EdgeInsets {
+        return additionalSafeAreaInsets;
+    }
+
+    // MARK: - View lifecycle
 
     override protected function loadView(): DisplayObject {
         var alert: AlertView = Contracts.newInstanceFor(AlertView) as AlertView;
@@ -64,7 +74,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
         return alert as DisplayObject;
     }
 
-    // Show / Hide Alert
+    // MARK: - Show / Hide Alert
 
     public function showAlertFromViewController(vc: ViewController): void {
         AlertView(view).show(isModalInPopover);
@@ -74,7 +84,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
         AlertView(view).hide();
     }
 
-    // Actions
+    // MARK: - Actions
 
     private var _actions: Vector.<AlertAction> = new <AlertAction>[];
     public function get actions(): Vector.<AlertAction> {
@@ -101,7 +111,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
         preferredAction = action;
     }
 
-    // <AlertViewDelegate>
+    // MARK: <AlertViewDelegate>
 
     public function alertViewDidCloseWithAction(alert: AlertView, action: AlertAction): void {
         dismiss(true);

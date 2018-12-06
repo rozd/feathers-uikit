@@ -58,9 +58,9 @@ public class AlertController extends ViewController implements AlertViewDelegate
         alert.delegate = this;
         alert.setTitle(_title);
         alert.setMessage(_message);
-        alert.setActions(_actions);
         alert.setPreferredStyle(_preferredStyle);
         alert.setDefaultAction(_preferredAction);
+        alert.setActions(_actions);
         return alert as DisplayObject;
     }
 
@@ -94,6 +94,11 @@ public class AlertController extends ViewController implements AlertViewDelegate
 
     public function addAction(action: AlertAction): void {
         _actions[_actions.length] = action;
+    }
+
+    public function addPreferredAction(action: AlertAction): void {
+        addAction(action);
+        preferredAction = action;
     }
 
     // <AlertViewDelegate>

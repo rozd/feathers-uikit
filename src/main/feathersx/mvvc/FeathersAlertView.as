@@ -15,16 +15,16 @@ import starling.events.Event;
 
 public class FeathersAlertView extends Alert implements AlertView {
 
-    public static const BUTTON_NORMAL: String       = "mvvc-alert-view-normal-button";
-    public static const BUTTON_DEFAULT: String      = "mvvc-alert-view-default-button";
-    public static const BUTTON_DESTRUCTIVE: String  = "mvvc-alert-view-destructive-button";
-    public static const BUTTON_CANCELLATION: String = "mvvc-alert-view-cancellation-button";
+    public static const buttonNormal: String       = "mvvc-alert-view-normal-button";
+    public static const buttonDefault: String      = "mvvc-alert-view-default-button";
+    public static const buttonDestructive: String  = "mvvc-alert-view-destructive-button";
+    public static const buttonCancellation: String = "mvvc-alert-view-cancellation-button";
 
     private static const STYLE_NAMES:Dictionary = new Dictionary();
     {
-        STYLE_NAMES[AlertActionStyle.normal] = BUTTON_NORMAL;
-        STYLE_NAMES[AlertActionStyle.destructive] = BUTTON_DESTRUCTIVE;
-        STYLE_NAMES[AlertActionStyle.cancellation] = BUTTON_CANCELLATION;
+        STYLE_NAMES[AlertActionStyle.normal] = buttonNormal;
+        STYLE_NAMES[AlertActionStyle.destructive] = buttonDestructive;
+        STYLE_NAMES[AlertActionStyle.cancellation] = buttonCancellation;
     }
 
     public function FeathersAlertView() {
@@ -61,25 +61,25 @@ public class FeathersAlertView extends Alert implements AlertView {
 
             if (i == 0) {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customFirstButtonStyleName = BUTTON_DEFAULT;
+                    buttonGroupProperties.customFirstButtonStyleName = buttonDefault;
                 } else {
                     buttonGroupProperties.customFirstButtonStyleName = STYLE_NAMES[actions[i].style];
                 }
             } else if (i == (n - 1)) {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customLastButtonStyleName = BUTTON_DEFAULT;
+                    buttonGroupProperties.customLastButtonStyleName = buttonDefault;
                 } else {
                     buttonGroupProperties.customLastButtonStyleName = STYLE_NAMES[actions[i].style];
                 }
             } else {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customButtonStyleName = BUTTON_DEFAULT;
+                    buttonGroupProperties.customButtonStyleName = buttonDefault;
                 } else {
                     buttonGroupProperties.customButtonStyleName = STYLE_NAMES[actions[i].style];
                 }
             }
         }
-        this.buttonsDataProvider = new ArrayCollection(buttons);
+        buttonsDataProvider = new ArrayCollection(buttons);
     }
 
     private var _defaultAction: AlertAction;

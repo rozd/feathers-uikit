@@ -24,6 +24,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
         _message = message;
         _preferredStyle = preferredStyle;
         _modalPresentationStyle = ModalPresentationStyle.none;
+        isModalInPopover = true;
     }
 
     // MARK: - Properties

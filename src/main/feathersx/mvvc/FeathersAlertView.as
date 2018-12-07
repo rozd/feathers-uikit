@@ -98,7 +98,7 @@ public class FeathersAlertView extends Alert implements AlertView {
     }
 
     public function hide(): void {
-        PopUpManager.removePopUp(this);
+        PopUpManager.removePopUp(this, true);
     }
 
     public function setPreferredStyle(preferredStyle: AlertControllerStyle): void {

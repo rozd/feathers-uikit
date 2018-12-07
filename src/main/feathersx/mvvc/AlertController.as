@@ -79,6 +79,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
 
     public function showAlertFromViewController(vc: ViewController): void {
         AlertView(view).show(isModalInPopover);
+        dispose();
     }
 
     public function hideAlertFromViewController(vc: ViewController): void {

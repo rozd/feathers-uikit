@@ -357,9 +357,7 @@ public class ViewController {
         _isModalInPopover = value;
     }
 
-    //-------------------------------------
-    //  Showing View Controller
-    //-------------------------------------
+    //  MARK: Showing View Controller
 
     public function show(vc: ViewController, sender: Object = null): void {
         if (_navigationController != null) {
@@ -381,9 +379,7 @@ public class ViewController {
         }
     }
 
-    //-------------------------------------
-    //  Presenting View Controller
-    //-------------------------------------
+    //  MARK: - Presenting View Controller
 
     public function present(vc: ViewController, animated: Boolean, completion: Function = null): void {
         if (presentedViewController != null) {
@@ -392,31 +388,23 @@ public class ViewController {
         }
 
         vc.setPresentingViewController(this);
-        this.setPresentedViewController(vc);
+        setPresentedViewController(vc);
 
-        PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
-
-        if (vc is AlertController) {
-            AlertController(vc).showAlertFromViewController(this);
-        } else {
-            vc.view.width = view.stage.stageWidth;
-            vc.view.height = view.stage.stageHeight;
-            PopUpManager.addPopUp(vc.view, vc.isModalInPopover, false);
-            if (animated) {
-                currentPresentTransition(this, vc, function(): void {
-                    if (completion != null) {
-                        completion();
-                    }
-                });
-            } else {
-                if (completion != null) {
-                    completion();
-                }
+        function onAdded(): void {
+            presentedViewController.notifyViewDidAppear();
+            if (completion != null) {
+                completion();
             }
         }
 
-        layoutPresentedViewController();
+        if (vc is AlertController) {
+            presentAlertController(vc as AlertController, animated, onAdded);
+        } else {
+            presentViewController(vc, animated, onAdded);
+        }
     }
+
+    // MARK: - Dismissing View Controller
 
     public function dismiss(animated: Boolean, completion: Function = null): void {
         doDismiss(animated, true, completion);
@@ -436,28 +424,80 @@ public class ViewController {
             return;
         }
 
-        PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+        function onRemoved(): void {
+            presentedViewController.setPresentingViewController(null);
+            setPresentedViewController(null);
+            if (completion != null) {
+                completion();
+            }
+        }
+
+        presentedViewController.notifyViewWillDisappear();
 
         if (presentedViewController is AlertController) {
-            AlertController(presentedViewController).hideAlertFromViewController(this);
-        } else if (PopUpManager.isPopUp(presentedViewController.view)) {
+            dismissAlertController(presentedViewController as AlertController, animated, onRemoved);
+        } else {
+            dismissViewController(presentedViewController, animated, shouldDispose, onRemoved);
+        }
+    }
+
+    // MARK: - Present & Dismiss Alert Controller
+
+    protected function presentAlertController(vc: AlertController, animated: Boolean, completion: Function): void {
+        AlertController(vc).showAlertFromViewController(this);
+        // TODO: adds transition support
+        completion();
+    }
+
+    private function dismissAlertController(vc: AlertController, animated: Boolean, completion: Function): void {
+        AlertController(vc).hideAlertFromViewController(this);
+        // TODO: adds transition support
+        completion();
+    }
+
+    // MARK: - Present & Dismiss View Controller
+
+    protected function presentViewController(vc: ViewController, animated: Boolean, completion: Function): void {
+        PopUpManager.root.stage.addEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+
+        layoutPresentedViewController();
+
+        PopUpManager.addPopUp(vc.view, vc.isModalInPopover, false);
+
+        if (animated) {
+            currentPresentTransition(this, vc, completion);
+        } else {
+            completion();
+        }
+    }
+
+    private function dismissViewController(vc: ViewController, animated: Boolean, shouldDispose: Boolean, completion: Function): void {
+        PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
+
+        function doRemovePopup(): void {
             PopUpManager.removePopUp(presentedViewController.view, shouldDispose);
             if (shouldDispose) {
                 presentedViewController.dispose();
             }
+            completion();
         }
 
-        presentedViewController.setPresentingViewController(null);
-        this.setPresentedViewController(null);
+        if (animated) {
+            currentDismissTransition(this, presentedViewController, doRemovePopup);
+        } else {
+            doRemovePopup();
+        }
     }
+
+    // MARK: - Layout Presented View Controller
 
     protected function layoutPresentedViewController(): void {
         if (presentedViewController == null) {
             return;
         }
 
-        var stage:Stage = Starling.current.stage;
-        var view:DisplayObject = presentedViewController.view;
+        var stage: Stage = Starling.current.stage;
+        var view: DisplayObject = presentedViewController.view;
 
         switch (presentedViewController.modalPresentationStyle) {
             case ModalPresentationStyle.fullScreen :
@@ -469,9 +509,9 @@ public class ViewController {
         }
     }
 
-    //-------------------------------------
-    //  Transitions
-    //-------------------------------------
+    //  MARK: - Present & Dismiss Transitions
+
+    // present transition
 
     protected static function defaultPresentTransition(presentingViewController: ViewController, presentedViewController: ViewController, completeCallback: Function): void {
         completeCallback();
@@ -495,6 +535,32 @@ public class ViewController {
 
     protected function get currentPresentTransition(): Function {
         return _presentTransition || ViewController._presentTransition || defaultPresentTransition;
+    }
+
+    // dismiss transition
+
+    protected static function defaultDismissTransition(presentingViewController: ViewController, presentedViewController: ViewController, completeCallback: Function): void {
+        completeCallback();
+    }
+
+    public static var _dismissTransition: Function;
+    public static function get dismissTransition(): Function {
+        return _dismissTransition;
+    }
+    public static function set dismissTransition(value: Function): void {
+        _dismissTransition = value;
+    }
+
+    private var _dismissTransition: Function;
+    public function get dismissTransition(): Function {
+        return _dismissTransition;
+    }
+    public function set dismissTransition(value: Function): void {
+        _dismissTransition = value;
+    }
+
+    protected function get currentDismissTransition(): Function {
+        return _dismissTransition || ViewController._dismissTransition || defaultPresentTransition;
     }
 
     //--------------------------------------------------------------------------

@@ -179,13 +179,13 @@ public class ViewController {
 
     //--------------------------------------------------------------------------
     //
-    //  Work Layout
+    //  MARK: - Work with Layout
     //
     //--------------------------------------------------------------------------
 
     public function get safeArea(): EdgeInsets {
         if (parent != null) {
-            return additionalSafeAreaInsets;
+            return new EdgeInsets(0, 0, 0, 0);
         }
         var insets: EdgeInsets = Integration.safeArea;
         if (navigationController) {
@@ -203,9 +203,37 @@ public class ViewController {
         _additionalSafeAreaInsets = value;
     }
 
+    private function updateViewSafeArea(): void {
+        var topGuide: Number    = safeArea.top    + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.top    : 0);
+        var leftGuide: Number   = safeArea.left   + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.left   : 0);
+        var bottomGuide: Number = safeArea.bottom + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.bottom : 0);
+        var rightGuide: Number  = safeArea.right  + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.right  : 0);
+        if (_view is View) {
+            View(_view).topGuide = topGuide;
+            View(_view).bottomGuide = bottomGuide;
+        } else if (_view is Scroller && _automaticallyAdjustsScrollerInsets) {
+            Scroller(_view).paddingTop    = topGuide;
+            Scroller(_view).paddingLeft   = leftGuide;
+            Scroller(_view).paddingBottom = bottomGuide;
+            Scroller(_view).paddingRight  = rightGuide;
+        }
+    }
+
+    private function installOrientationHandlers(view: DisplayObject): void {
+        view.stage.starling.nativeStage.addEventListener("orientationChange", nativeStage_orientationChangeHandler);
+    }
+
+    private function removeOrientationHandlers(view: DisplayObject): void {
+        view.stage.starling.nativeStage.removeEventListener("orientationChange", nativeStage_orientationChangeHandler);
+    }
+
+    private function nativeStage_orientationChangeHandler(event: Object): void {
+        updateViewSafeArea();
+    }
+
     //--------------------------------------------------------------------------
     //
-    //  Work with View
+    //  MARK: - Work with View
     //
     //--------------------------------------------------------------------------
 
@@ -235,19 +263,7 @@ public class ViewController {
         if (_view == null) {
             viewWillLoad();
             _view = loadView();
-            var topGuide: Number    = safeArea.top    + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.top    : 0);
-            var leftGuide: Number   = safeArea.left   + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.left   : 0);
-            var bottomGuide: Number = safeArea.bottom + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.bottom : 0);
-            var rightGuide: Number  = safeArea.right  + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.right  : 0);
-            if (_view is View) {
-                View(_view).topGuide = topGuide;
-                View(_view).bottomGuide = bottomGuide;
-            } else if (_view is Scroller && _automaticallyAdjustsScrollerInsets) {
-                Scroller(_view).paddingTop    = topGuide;
-                Scroller(_view).paddingLeft   = leftGuide;
-                Scroller(_view).paddingBottom = bottomGuide;
-                Scroller(_view).paddingRight  = rightGuide;
-            }
+            updateViewSafeArea();
             _view.addEventListener(FeathersEventType.INITIALIZE, function(event:Event):void {
                 _view.removeEventListener(FeathersEventType.INITIALIZE, arguments.callee);
             });
@@ -267,10 +283,12 @@ public class ViewController {
             });
             _view.addEventListener(Event.ADDED_TO_STAGE, function(event: Event): void {
                 installHardKeysSupport(_view);
+                installOrientationHandlers(_view);
                 notifyViewWillAppear();
             });
             _view.addEventListener(Event.REMOVED_FROM_STAGE, function(event: Event): void {
                 removeHardKeysSupport(_view);
+                removeOrientationHandlers(_view);
                 notifyViewDidDisappear();
             });
             if (_view is IFeathersControl) {
@@ -287,9 +305,7 @@ public class ViewController {
         }
     }
 
-    //------------------------------------
-    //  View Lifecycle
-    //------------------------------------
+    //  MARK: - View Lifecycle
 
     protected function viewWillLoad():void {
 

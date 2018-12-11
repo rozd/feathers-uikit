@@ -210,7 +210,9 @@ public class ViewController {
         var rightGuide: Number  = safeArea.right  + (_additionalSafeAreaInsets ? _additionalSafeAreaInsets.right  : 0);
         if (_view is View) {
             View(_view).topGuide = topGuide;
+            View(_view).leftGuide = leftGuide;
             View(_view).bottomGuide = bottomGuide;
+            View(_view).rightGuide = rightGuide;
         } else if (_view is Scroller && _automaticallyAdjustsScrollerInsets) {
             Scroller(_view).paddingTop    = topGuide;
             Scroller(_view).paddingLeft   = leftGuide;

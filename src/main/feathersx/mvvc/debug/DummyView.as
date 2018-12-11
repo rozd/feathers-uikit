@@ -43,6 +43,32 @@ public class DummyView extends LayoutGroup implements View {
         _bottomGuide = value;
     }
 
+    //  MARK: leftGuide
+
+    private var _leftGuide:Number = 0;
+    [Bindable(event="leftGuideChanged")]
+    public function get leftGuide():Number {
+        return _leftGuide;
+    }
+    public function set leftGuide(value:Number):void {
+        if (_leftGuide == value) return;
+        _leftGuide = value;
+        dispatchEventWith("leftGuideChanged");
+    }
+
+    //  MARK: leftGuide
+
+    private var _rightGuide:Number = 0;
+    [Bindable(event="rightGuideChanged")]
+    public function get rightGuide():Number {
+        return _rightGuide;
+    }
+    public function set rightGuide(value:Number):void {
+        if (_rightGuide == value) return;
+        _rightGuide = value;
+        dispatchEventWith("rightGuideChanged");
+    }
+
     // MARK: Overridden methods
 
     override protected function initialize(): void {

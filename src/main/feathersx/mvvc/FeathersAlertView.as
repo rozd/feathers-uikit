@@ -27,9 +27,13 @@ public class FeathersAlertView extends Alert implements AlertView {
         STYLE_NAMES[AlertActionStyle.cancellation] = buttonCancellation;
     }
 
+    // MARK: Constructor
+
     public function FeathersAlertView() {
         super();
     }
+
+    // MARK: Delegate
 
     private var _delegate: WeakReference;
     public function get delegate(): AlertViewDelegate {
@@ -39,13 +43,19 @@ public class FeathersAlertView extends Alert implements AlertView {
         _delegate = new WeakReference(value);
     }
 
+    // MARK: Title
+
     public function setTitle(title: String): void {
         this.title = title;
     }
 
+    // MARK: Message
+
     public function setMessage(message: String): void {
         this.message = message;
     }
+
+    // MARK: Actions
 
     public function setActions(actions: Vector.<AlertAction>): void {
         var buttons: Array = [];
@@ -61,21 +71,21 @@ public class FeathersAlertView extends Alert implements AlertView {
 
             if (i == 0) {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customFirstButtonStyleName = buttonDefault;
+                    buttonGroupProperties.customFirstButtonStyleName = getDefaultStyleNameForAction();
                 } else {
-                    buttonGroupProperties.customFirstButtonStyleName = STYLE_NAMES[actions[i].style];
+                    buttonGroupProperties.customFirstButtonStyleName = getStyleNameForAction(actions[i]);
                 }
             } else if (i == (n - 1)) {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customLastButtonStyleName = buttonDefault;
+                    buttonGroupProperties.customLastButtonStyleName = getDefaultStyleNameForAction();
                 } else {
-                    buttonGroupProperties.customLastButtonStyleName = STYLE_NAMES[actions[i].style];
+                    buttonGroupProperties.customLastButtonStyleName = getStyleNameForAction(actions[i]);
                 }
             } else {
                 if (actions[i] == _defaultAction) {
-                    buttonGroupProperties.customButtonStyleName = buttonDefault;
+                    buttonGroupProperties.customButtonStyleName = getDefaultStyleNameForAction();
                 } else {
-                    buttonGroupProperties.customButtonStyleName = STYLE_NAMES[actions[i].style];
+                    buttonGroupProperties.customButtonStyleName = getStyleNameForAction(actions[i]);
                 }
             }
         }
@@ -87,11 +97,15 @@ public class FeathersAlertView extends Alert implements AlertView {
         _defaultAction = action;
     }
 
-    private function buttons_triggeredHandler(event: Event, data: Object, button: Object): void {
-        if (delegate) {
-            delegate.alertViewDidCloseWithAction(this, button.action as AlertAction);
-        }
+    protected function getDefaultStyleNameForAction(): String {
+        return buttonDefault;
     }
+
+    protected function getStyleNameForAction(action: AlertAction): String {
+        return STYLE_NAMES[action.style];
+    }
+
+    // MARK: Appearing
 
     public function show(modal: Boolean): void {
         PopUpManager.addPopUp(this, modal, true, Alert.overlayFactory);
@@ -101,7 +115,17 @@ public class FeathersAlertView extends Alert implements AlertView {
         PopUpManager.removePopUp(this, true);
     }
 
+    // MARK: Styles
+
     public function setPreferredStyle(preferredStyle: AlertControllerStyle): void {
+    }
+
+    // MARK: Event handlers
+
+    private function buttons_triggeredHandler(event: Event, data: Object, button: Object): void {
+        if (delegate) {
+            delegate.alertViewDidCloseWithAction(this, button.action as AlertAction);
+        }
     }
 }
 }

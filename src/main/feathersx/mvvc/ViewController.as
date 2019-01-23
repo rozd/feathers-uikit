@@ -493,6 +493,7 @@ public class ViewController {
         PopUpManager.root.stage.removeEventListener(ResizeEvent.RESIZE, stage_resizeHandler);
 
         function doRemovePopup(): void {
+            // FIXME(dev): sometime app crashes here
             PopUpManager.removePopUp(presentedViewController.view, shouldDispose);
             if (shouldDispose) {
                 presentedViewController.dispose();

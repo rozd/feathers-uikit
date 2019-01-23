@@ -2,6 +2,7 @@
  * Created by max.rozdobudko@gmail.com on 9/13/17.
  */
 package feathersx.mvvc {
+import feathersx.core.feathers_mvvc;
 import feathersx.data.EdgeInsets;
 
 import starling.display.DisplayObject;
@@ -77,13 +78,26 @@ public class AlertController extends ViewController implements AlertViewDelegate
 
     // MARK: - Show / Hide Alert
 
-    public function showAlertFromViewController(vc: ViewController): void {
+    feathers_mvvc function showAlertFromViewController(vc: ViewController): void {
         AlertView(view).show(isModalInPopover);
     }
 
-    public function hideAlertFromViewController(vc: ViewController): void {
+    feathers_mvvc function hideAlertFromViewController(vc: ViewController): void {
         AlertView(view).hide();
         dispose();
+    }
+
+    // MARK: - Dismiss
+
+    public function dismissWithCancellationIfPossible(animated: Boolean, completion: Function = null): void {
+        for each (var action: AlertAction in _actions) {
+            if (action.style == AlertActionStyle.cancellation) {
+                action.notify();
+                dismiss(animated, completion);
+                return;
+            }
+        }
+        dismiss(animated, completion);
     }
 
     // MARK: - Actions

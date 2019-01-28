@@ -21,6 +21,7 @@ import skein.utils.StringUtil;
 import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
+import starling.core.Starling;
 import starling.display.DisplayObject;
 
 public class NavigationController extends ViewController {
@@ -446,6 +447,26 @@ public class NavigationController extends ViewController {
 
     private function resetNavigationBar(): void {
         _navigationBar.resetAppearanceToDefault();
+    }
+
+    private var _isNavigationBarHidden: Boolean = false;
+    public function get isNavigationBarHidden(): Boolean {
+        return _isNavigationBarHidden;
+    }
+    public function set isNavigationBarHidden(value: Boolean): void {
+        setNavigationBarHidden(value, false);
+    }
+
+    public function setNavigationBarHidden(hidden: Boolean, animated: Boolean): void {
+        if (hidden == _isNavigationBarHidden) {
+            return;
+        }
+        _isNavigationBarHidden = hidden;
+        if (animated) {
+            Starling.current.juggler.tween(_navigationBar, 0.3, {alpha: hidden ? 0.0 : 1.0});
+        } else {
+            _navigationBar.alpha = hidden ? 0.0 : 1.0;
+        }
     }
 
     //--------------------------------------------------------------------------

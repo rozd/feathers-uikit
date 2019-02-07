@@ -200,7 +200,9 @@ public class ViewController {
         return _additionalSafeAreaInsets;
     }
     public function set additionalSafeAreaInsets(value: EdgeInsets): void {
+        if (value == _additionalSafeAreaInsets) return;
         _additionalSafeAreaInsets = value;
+        updateViewSafeArea();
     }
 
     private function updateViewSafeArea(): void {

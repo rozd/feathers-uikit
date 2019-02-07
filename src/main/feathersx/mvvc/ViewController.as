@@ -23,6 +23,7 @@ import flash.ui.Keyboard;
 
 import skein.logger.Log;
 import skein.utils.StringUtil;
+import skein.utils.delay.callLater;
 
 import starling.core.Starling;
 import starling.display.DisplayObject;
@@ -465,14 +466,26 @@ public class ViewController {
 
     protected function presentAlertController(vc: AlertController, animated: Boolean, completion: Function): void {
         AlertController(vc).showAlertFromViewController(this);
-        // TODO: adds transition support
-        completion();
+        if (completion != null) {
+            if (animated) {
+                // TODO: adds transition support
+                callLater(completion);
+            } else {
+                completion();
+            }
+        }
     }
 
     private function dismissAlertController(vc: AlertController, animated: Boolean, completion: Function): void {
         AlertController(vc).hideAlertFromViewController(this);
-        // TODO: adds transition support
-        completion();
+        if (completion != null) {
+            if (animated) {
+                // TODO: adds transition support
+                callLater(completion);
+            } else {
+                completion();
+            }
+        }
     }
 
     // MARK: - Present & Dismiss View Controller

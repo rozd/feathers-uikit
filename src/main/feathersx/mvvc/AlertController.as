@@ -130,10 +130,7 @@ public class AlertController extends ViewController implements AlertViewDelegate
     // MARK: <AlertViewDelegate>
 
     public function alertViewDidCloseWithAction(alert: AlertView, action: AlertAction): void {
-        dismiss(true);
-        if (action) {
-            action.notify();
-        }
+        dismiss(true, action.notify);
     }
 }
 }

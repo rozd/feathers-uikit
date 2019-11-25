@@ -115,6 +115,8 @@ public class ViewController {
         _presentedViewController = vc;
     }
 
+    protected var dismissingViewController: ViewController;
+
     // automaticallyAdjustsScrollerPadding
 
     private var _automaticallyAdjustsScrollerInsets: Boolean = true;
@@ -445,7 +447,15 @@ public class ViewController {
             return;
         }
 
+        if (dismissingViewController != null) {
+            Log.w("feathers-uikit", StringUtil.substitute("Attempt to dismiss view controller {0} on {1} that already dismissing {2}", presentedViewController, this, dismissingViewController));
+            return;
+        }
+
+        dismissingViewController = presentedViewController;
+
         function onRemoved(): void {
+            dismissingViewController = null;
             presentedViewController.setPresentingViewController(null);
             setPresentedViewController(null);
             if (completion != null) {
@@ -509,15 +519,15 @@ public class ViewController {
 
         function doRemovePopup(): void {
             // FIXME(dev): sometime app crashes here
-            PopUpManager.removePopUp(presentedViewController.view, shouldDispose);
+            PopUpManager.removePopUp(vc.view, shouldDispose);
             if (shouldDispose) {
-                presentedViewController.dispose();
+                vc.dispose();
             }
             completion();
         }
 
         if (animated) {
-            currentDismissTransition(this, presentedViewController, doRemovePopup);
+            currentDismissTransition(this, vc, doRemovePopup);
         } else {
             doRemovePopup();
         }
@@ -594,7 +604,7 @@ public class ViewController {
     }
 
     protected function get currentDismissTransition(): Function {
-        return _dismissTransition || ViewController._dismissTransition || defaultPresentTransition;
+        return _dismissTransition || ViewController._dismissTransition || defaultDismissTransition;
     }
 
     //--------------------------------------------------------------------------

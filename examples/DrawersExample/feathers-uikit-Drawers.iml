@@ -8,20 +8,11 @@
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="421c01ab-9436-440e-8382-b92bf3e280d7">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry library-id="f514d8c8-597f-4d5e-90c3-8b980bf6e0d7">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="skein-utils" build-configuration-name="skein-utils">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="skein-core" build-configuration-name="skein-core">
+            <entry library-id="cc8fd5e1-a46b-4c34-aac0-1087382594f1">
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="4.0.x" />
+          <sdk name="4.0.0-air33.0-starling2.5.1" />
         </dependencies>
         <compiler-options>
           <option name="additionalOptions" value="-preloader=" />
@@ -29,7 +20,7 @@
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample" />
         <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/DrawersExample-app.xml" package-file-name="DrawersExample">
-          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
+          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.apple.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
         </packaging-ios>
       </configuration>
     </configurations>
@@ -40,32 +31,20 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.0.0-starling2.4.1" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.0.0-air33.0-starling2.5.1" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="feathers-sdk-frameworks-libs" level="application" />
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="421c01ab-9436-440e-8382-b92bf3e280d7" />
+        <properties id="cc8fd5e1-a46b-4c34-aac0-1087382594f1" />
         <CLASSES>
-          <root url="file://$USER_HOME$/sdks/feathers/3.3.1/frameworks/libs" />
+          <root url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0.2-starling2.5.1-aot-patched/frameworks/themes/MetalWorksMobileTheme" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.3.1/frameworks/libs" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0.2-starling2.5.1-aot-patched/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="f514d8c8-597f-4d5e-90c3-8b980bf6e0d7" />
-        <CLASSES>
-          <root url="jar://$USER_HOME$/sdks/feathers/3.3.1/frameworks/themes/MetalWorksMobileTheme/MetalWorksMobileTheme.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="skein-utils" exported="" />
-    <orderEntry type="module" module-name="skein-core" exported="" />
   </component>
 </module>

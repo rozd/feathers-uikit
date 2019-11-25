@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/feathers-mvvc.iml" filepath="$PROJECT_DIR$/feathers-mvvc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/DrawersExample/feathers-uikit-Drawers.iml" filepath="$PROJECT_DIR$/examples/DrawersExample/feathers-uikit-Drawers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/HelloWorld/feathers-uikit-HelloWorld.iml" filepath="$PROJECT_DIR$/examples/HelloWorld/feathers-uikit-HelloWorld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/IssueTests/feathers-uikit-IssueTests.iml" filepath="$PROJECT_DIR$/examples/IssueTests/feathers-uikit-IssueTests.iml" />
+    </modules>
+  </component>
+</project>

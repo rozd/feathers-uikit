@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="feathers-uikit-IssueTests">
+    <configurations>
+      <configuration name="feathers-uikit-IssueTests" target-platform="Mobile" main-class="IssueTests" output-file="IssueTests.swf" output-folder="$MODULE_DIR$/bin">
+        <dependencies target-player="32.0">
+          <entries>
+            <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="c48eb696-3fe5-4963-a3ff-a7c8338fd78f">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="dacb2449-43f4-4c7c-88aa-efe40032ddac">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="41746da9-1ab9-4aad-9c3c-a79c39a102c7">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="4.0.0-air33.0-starling2.5.1" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/IssueTests-app.xml" package-file-name="IssueTests" />
+        <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/IssueTests-app.xml" package-file-name="IssueTests" />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="4.0.0-air33.0-starling2.5.1" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="c48eb696-3fe5-4963-a3ff-a7c8338fd78f" />
+        <CLASSES>
+          <root url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/themes/MetalWorksMobileTheme" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="feathers-mvvc" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="dacb2449-43f4-4c7c-88aa-efe40032ddac" />
+        <CLASSES>
+          <root url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="41746da9-1ab9-4aad-9c3c-a79c39a102c7" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+      </library>
+    </orderEntry>
+  </component>
+</module>

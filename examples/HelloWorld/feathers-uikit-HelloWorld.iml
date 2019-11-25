@@ -8,23 +8,14 @@
             <entry library-id="906977b8-c660-4d51-9a2f-39a570bac3aa">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="a0ddd04f-eb02-4103-98f6-a682bd4e7507">
-              <dependency linkage="Merged" />
-            </entry>
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="4a352fe3-d86d-4e2b-83fa-18430d78edb1">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="skein-core" build-configuration-name="skein-core">
-              <dependency linkage="Merged" />
-            </entry>
-            <entry module-name="skein-utils" build-configuration-name="skein-utils">
+            <entry library-id="27b97f49-d7f0-4173-b7e2-40163fb84975">
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="3.5.x" />
+          <sdk name="4.0.0-air33.0-starling2.5.1" />
         </dependencies>
         <compiler-options>
           <option name="additionalOptions" value="-preloader= -advanced-telemetry=true" />
@@ -32,7 +23,7 @@
         <packaging-air-desktop />
         <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld" />
         <packaging-ios enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/HelloWorld-app.xml" package-file-name="HelloWorld">
-          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
+          <AirSigningOptions keystore-path="$USER_HOME$/cert/rozd/max.rozdobudko.apple.dev.p12" provisioning-profile-path="$USER_HOME$/cert/rozd/whateverdev.mobileprovision" />
         </packaging-ios>
       </configuration>
     </configurations>
@@ -43,7 +34,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="3.5.x" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.0.0-air33.0-starling2.5.1" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
@@ -56,30 +47,17 @@
         <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="a0ddd04f-eb02-4103-98f6-a682bd4e7507" />
-        <CLASSES>
-          <root url="file://$USER_HOME$/sdks/feathers/3.3.0/frameworks/libs" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.3.0/frameworks/libs" recursive="false" />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="4a352fe3-d86d-4e2b-83fa-18430d78edb1" />
+        <properties id="27b97f49-d7f0-4173-b7e2-40163fb84975" />
         <CLASSES>
-          <root url="file://$USER_HOME$/sdks/feathers/3.5.0-starling2.4/frameworks/themes/MetalWorksMobileTheme" />
+          <root url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/themes/MetalWorksMobileTheme" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/sdks/feathers/3.5.0-starling2.4/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0-starling2.5.1/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="skein-core" exported="" />
-    <orderEntry type="module" module-name="skein-utils" exported="" />
   </component>
 </module>

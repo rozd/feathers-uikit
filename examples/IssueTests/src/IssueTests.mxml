@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<f:TabNavigatorApplication
+        xmlns:f="library://ns.feathersui.com/mxml"
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        theme="feathers.themes.MetalWorksMobileTheme">
+
+    <fx:Script>
+        <![CDATA[
+        ]]>
+    </fx:Script>
+
+    <f:TabNavigatorItem id="issue3" label="Issue3">
+        <f:screenClass>screens.issue3.Issue3Tab</f:screenClass>
+    </f:TabNavigatorItem>
+
+</f:TabNavigatorApplication>

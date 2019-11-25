@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<f:PanelScreen xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:f="library://ns.feathersui.com/mxml" title="issue#3">
+
+    <fx:Script>
+        <![CDATA[
+        ]]>
+    </fx:Script>
+
+    <f:layout>
+        <f:VerticalLayout />
+    </f:layout>
+
+    <f:Button id="testButton" label="Test" />
+
+</f:PanelScreen>

@@ -224,7 +224,13 @@ public class NavigationBar extends StackScreenNavigator {
             oldScreen.release();
         });
 
-        helper.removeScreenWithIds(idsForNavigationItems(oldNavigationItems), null);
+        var idsToRemove: Vector.<String> = idsForNavigationItems(oldNavigationItems).filter(function(id: String, ...rest): Boolean {
+            return navigationItems.every(function(item: NavigationItem, ...rest): Boolean {
+                return item.identifier != id;
+            })
+        });
+
+        helper.removeScreenWithIds(idsToRemove, null);
 
         // newItems
 

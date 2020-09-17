@@ -283,7 +283,13 @@ public class NavigationController extends ViewController {
             oldScreen.release();
         });
 
-        helper.removeScreenWithIds(idsForViewControllers(oldViewControllers), function(): void {
+        var idsToRemove: Vector.<String> = idsForViewControllers(oldViewControllers).filter(function(id: String, ...rest): Boolean {
+            return viewControllers.every(function(controller: ViewController, ...rest): Boolean {
+                return controller.identifier != id;
+            })
+        });
+
+        helper.removeScreenWithIds(idsToRemove, function(): void {
             clearNavigationControllerForViewControllers(oldViewControllers);
         });
 

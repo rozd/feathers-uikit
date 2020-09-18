@@ -16,7 +16,6 @@ import flash.geom.Point;
 
 import skein.logger.Log;
 import skein.utils.StringUtil;
-import skein.utils.VectorUtil;
 
 import starling.animation.Transitions;
 
@@ -54,14 +53,6 @@ public class NavigationBar extends StackScreenNavigator {
 
         super.dispose();
     }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Variables
-    //
-    //--------------------------------------------------------------------------
-
-    private var _items:Vector.<NavigationItem> = new <NavigationItem>[];
 
     //--------------------------------------------------------------------------
     //
@@ -140,26 +131,33 @@ public class NavigationBar extends StackScreenNavigator {
     //--------------------------------------------------------------------------
 
     public function get items(): Vector.<NavigationItem> {
-        return _items;
+        var result: Vector.<NavigationItem> = new <NavigationItem>[];
+
+        for (var i: int = 0, n: int = _stack.length; i < n; i++) {
+            result[result.length] = NavigationBarStackScreenNavigatorItem(getScreen(_stack[i].id)).item;
+        }
+
+        if (activeScreenID != null) {
+            result[result.length] = NavigationBarStackScreenNavigatorItem(getScreen(activeScreenID)).item;
+        }
+
+        return result;
     }
 
     public function pushItem(item: NavigationItem, animated: Boolean): void {
-
-        _items.push(item);
-
         doPushNavigationItem(item, animated, null);
     }
 
     public function popItem(animated: Boolean): NavigationItem {
-        if (_items.length == 0) {
+        if (items.length == 0) {
             return null;
         }
 
-        if (_items.length == 1) {
-            return _items[0];
+        if (items.length == 1) {
+            return null;
         }
 
-        var popped: NavigationItem = _items.pop();
+        var popped: NavigationItem = items[items.length - 1];
 
         doPopNavigationItem(popped, animated, null);
 
@@ -167,15 +165,15 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     public function popToRootItem(animated: Boolean): Vector.<NavigationItem> {
-        if (_items.length == 0) {
+        if (items.length == 0) {
             return null;
         }
 
-        if (_items.length == 1) {
+        if (items.length == 1) {
             return null;
         }
 
-        var popped: Vector.<NavigationItem> = _items.splice(1, _items.length - 1);
+        var popped: Vector.<NavigationItem> = items.splice(1, items.length - 1);
         doPopToRootNavigationItem(popped, animated, function(): void {
             popped.forEach(function (item: NavigationItem, ...rest): void {
                 item.dispose();
@@ -202,7 +200,7 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     private function setItemsInternal(navigationItems: Vector.<NavigationItem>): void {
-        if (navigationItems == _items) {
+        if (navigationItems == this.items) {
             enterDebugger();
             return;
         }
@@ -211,7 +209,7 @@ public class NavigationBar extends StackScreenNavigator {
 
         // oldItems
 
-        var oldNavigationItems: Vector.<NavigationItem> = _items.filter(function(oldNavigationItem: NavigationItem, ...rest): Boolean {
+        var oldNavigationItems: Vector.<NavigationItem> = this.items.filter(function(oldNavigationItem: NavigationItem, ...rest): Boolean {
             return navigationItems.indexOf(oldNavigationItem) == -1;
         });
 
@@ -248,10 +246,6 @@ public class NavigationBar extends StackScreenNavigator {
                 newScreen.retain();
             });
         });
-
-        // copy navigation items
-
-        VectorUtil.copy(navigationItems, _items);
     }
 
     //--------------------------------------------------------------------------
@@ -304,12 +298,15 @@ public class NavigationBar extends StackScreenNavigator {
     }
 
     protected function replaceTopNavigationItem(item: NavigationItem, animated: Boolean, completion: Function): void {
-        var screen: NavigationBarStackScreenNavigatorItem = new NavigationBarStackScreenNavigatorItem(item);
-        screen.retain();
+        var oldItem: NavigationBarStackScreenNavigatorItem = navigator.getScreen(navigator.activeScreenID) as NavigationBarStackScreenNavigatorItem;
+        oldItem.release();
+
+        var newItem: NavigationBarStackScreenNavigatorItem = new NavigationBarStackScreenNavigatorItem(item);
+        newItem.retain();
 
         var transition: Function = getReplaceTransition(animated);
 
-        new StackScreenNavigatorHolderHelper(navigator).replaceScreenWithId(item.identifier, screen, transition, completion);
+        new StackScreenNavigatorHolderHelper(navigator).replaceScreenWithId(item.identifier, newItem, transition, completion);
     }
 
     //--------------------------------------------------------------------------
@@ -526,6 +523,9 @@ class NavigationBarStackScreenNavigatorItem extends StackScreenNavigatorItem {
     }
 
     private var _item: NavigationItem;
+    public function get item(): NavigationItem {
+        return _item;
+    }
 
     private var _retained: Boolean = false;
     override public function get canDispose(): Boolean {

@@ -390,7 +390,7 @@ public class ViewController {
         if (navigator.hasScreen(vc.identifier)) {
             navigator.removeScreen(vc.identifier);
         }
-        navigator.addScreen(vc.identifier, new ViewControllerNavigatorItem(vc));
+        navigator.addScreen(vc.identifier, new ViewControllerScreenNavigatorItem(vc));
         vc.setPresentingViewController(this);
         navigator.showScreen(vc.identifier, Cover.createCoverUpTransition());
         this.setPresentedViewController(vc);
@@ -767,7 +767,7 @@ public class ViewController {
         }
         _navigator = new ScreenNavigator();
         _root.addChild(_navigator);
-        _navigator.addScreen(this.identifier, new ViewControllerNavigatorItem(this));
+        _navigator.addScreen(this.identifier, new ViewControllerScreenNavigatorItem(this));
         _navigator.showScreen(this.identifier);
     }
 
@@ -821,8 +821,8 @@ import feathersx.mvvc.ViewController;
 
 import starling.display.DisplayObject;
 
-class ViewControllerNavigatorItem extends ScreenNavigatorItem {
-    public function ViewControllerNavigatorItem(vc: ViewController): void {
+class ViewControllerScreenNavigatorItem extends ScreenNavigatorItem {
+    public function ViewControllerScreenNavigatorItem(vc: ViewController): void {
         super();
         _viewController = vc;
     }

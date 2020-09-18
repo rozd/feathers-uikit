@@ -11,7 +11,9 @@ import feathers.layout.AnchorLayoutData;
 import feathers.motion.Fade;
 
 import feathersx.motion.Slide;
+import feathersx.mvvc.support.NavigationControllerStackScreenNavigator;
 import feathersx.mvvc.support.StackScreenNavigatorHolderHelper;
+import feathersx.mvvc.support.ViewControllerStackScreenNavigatorItem;
 
 import flash.debugger.enterDebugger;
 
@@ -108,7 +110,11 @@ public class NavigationController extends ViewController {
         if (animated) {
             return Fade.createFadeInTransition();
         } else {
-            return null;
+            return function (oldScreen: DisplayObject, newScreen: DisplayObject, onComplete: Function): void {
+                if (onComplete != null) {
+                    onComplete();
+                }
+            }
         }
     }
 
@@ -132,7 +138,6 @@ public class NavigationController extends ViewController {
             delegate.navigationControllerWillShow(this, vc, animated);
         }
 
-        _viewControllers.push(vc);
         setupNavigationControllerForViewControllers(new <ViewController>[vc]);
 
         doPushScreenOfViewController(vc, animated, null);
@@ -145,15 +150,15 @@ public class NavigationController extends ViewController {
     // Pop
 
     public function popViewController(animated: Boolean): ViewController {
-        if (_viewControllers.length == 0) {
+        if (viewControllers.length == 0) {
             return null;
         }
 
-        if (_viewControllers.length == 1) {
-            return _viewControllers[0];
+        if (viewControllers.length == 1) {
+            return null;
         }
 
-        var popped: ViewController = _viewControllers.pop();
+        var popped: ViewController = viewControllers[viewControllers.length - 1];
         doPopScreenOfViewController(popped, animated, function(): void {
             clearNavigationControllerForViewControllers(new <ViewController>[popped]);
         });
@@ -162,19 +167,19 @@ public class NavigationController extends ViewController {
 
         _toolbar.setItems(topViewController.toolbarItems, true);
 
-        return _viewControllers[_viewControllers.length - 1];
+        return popped;
     }
 
     public function popToRootViewController(animated: Boolean): Vector.<ViewController> {
-        if (_viewControllers.length == 0) {
+        if (viewControllers.length == 0) {
             return null;
         }
 
-        if (_viewControllers.length == 1) {
+        if (viewControllers.length == 1) {
             return null;
         }
 
-        var popped: Vector.<ViewController> = _viewControllers.splice(1, _viewControllers.length - 1);
+        var popped: Vector.<ViewController> = viewControllers.splice(1, viewControllers.length - 1);
         doPopToRootScreenOfViewControllers(popped, animated, function (): void {
             clearNavigationControllerForViewControllers(popped);
             popped.forEach(function(vc: ViewController, ...rest): void {
@@ -203,16 +208,15 @@ public class NavigationController extends ViewController {
 
     // viewControllers
 
-    protected var _viewControllers: Vector.<ViewController> = new <ViewController>[];
     public function get viewControllers(): Vector.<ViewController> {
-        return _viewControllers;
+        return _navigator ? NavigationControllerStackScreenNavigator(_navigator).viewControllers : new <ViewController>[];
     }
 
     // topViewController
 
     public function get topViewController(): ViewController {
-        if (_viewControllers.length > 0) {
-            return _viewControllers[_viewControllers.length - 1];
+        if (viewControllers.length > 0) {
+            return viewControllers[viewControllers.length - 1];
         }
         return null;
     }
@@ -261,7 +265,7 @@ public class NavigationController extends ViewController {
     }
 
     protected function setViewControllersInternal(viewControllers: Vector.<ViewController>): void {
-        if (viewControllers == _viewControllers) {
+        if (viewControllers == this.viewControllers) {
             enterDebugger();
             return;
         }
@@ -270,12 +274,12 @@ public class NavigationController extends ViewController {
 
         // oldViewControllers
 
-        var oldViewControllers: Vector.<ViewController> = _viewControllers.filter(function(oldViewController: ViewController, ...rest): Boolean {
+        var oldViewControllers: Vector.<ViewController> = this.viewControllers.filter(function(oldViewController: ViewController, ...rest): Boolean {
             return viewControllers.indexOf(oldViewController) == -1;
         });
 
         oldViewControllers.forEach(function (oldViewController: ViewController, ...rest): void {
-            var oldScreen: ViewControllerNavigatorItem = helper.getScreenWithId(oldViewController.identifier) as ViewControllerNavigatorItem;
+            var oldScreen: ViewControllerStackScreenNavigatorItem = helper.getScreenWithId(oldViewController.identifier) as ViewControllerStackScreenNavigatorItem;
             if (oldScreen == null) {
                 Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to release view controller's navigator item for view controller {0} failed due to {1} is an invalid navigator item.", oldViewController, helper.getScreenWithId(oldViewController.identifier)));
                 return;
@@ -293,6 +297,10 @@ public class NavigationController extends ViewController {
             clearNavigationControllerForViewControllers(oldViewControllers);
         });
 
+        if (!VectorUtil.same(idsToRemove, idsForViewControllers(oldViewControllers))) {
+            enterDebugger();
+        }
+
         // newViewControllers
 
         var newViewControllers: Vector.<ViewController> = viewControllers.filter(function(newViewController: ViewController, ...rest): Boolean {
@@ -302,7 +310,7 @@ public class NavigationController extends ViewController {
         helper.addScreensWithIds(idsForViewControllers(newViewControllers), screensForViewControllers(newViewControllers), function(): void {
             setupNavigationControllerForViewControllers(newViewControllers);
             newViewControllers.forEach(function (newViewController: ViewController, ...rest): void {
-                var newScreen: ViewControllerNavigatorItem = helper.getScreenWithId(newViewController.identifier) as ViewControllerNavigatorItem;
+                var newScreen: ViewControllerStackScreenNavigatorItem = helper.getScreenWithId(newViewController.identifier) as ViewControllerStackScreenNavigatorItem;
                 if (newScreen == null) {
                     Log.w("feathers-uikit", StringUtil.substitute("Warning: attempt to retain view controllers navigator item for view controller {0} failed due to {1} is an invalid navigator item.", newViewController, helper.getScreenWithId(newViewController.identifier)));
                     return;
@@ -310,16 +318,12 @@ public class NavigationController extends ViewController {
                 newScreen.retain();
             });
         });
-
-        // copy view controllers
-
-        VectorUtil.copy(viewControllers, _viewControllers);
     }
 
     // MARK: StackScreenNavigator utils
 
     protected function doPushScreenOfViewController(vc: ViewController, animated: Boolean, completion: Function): void {
-        var item: ViewControllerNavigatorItem = new ViewControllerNavigatorItem(vc);
+        var item: ViewControllerStackScreenNavigatorItem = new ViewControllerStackScreenNavigatorItem(vc);
         item.retain();
 
         var transition: Function = getPushTransition(animated);
@@ -328,7 +332,7 @@ public class NavigationController extends ViewController {
     }
 
     protected function doPopScreenOfViewController(vc: ViewController, animated: Boolean, completion: Function): void {
-        var item: ViewControllerNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerNavigatorItem;
+        var item: ViewControllerStackScreenNavigatorItem = navigator.getScreen(vc.identifier) as ViewControllerStackScreenNavigatorItem;
         item.release();
 
         var transition: Function = getPopTransition(animated);
@@ -339,7 +343,7 @@ public class NavigationController extends ViewController {
     protected function doPopToRootScreenOfViewControllers(viewControllers: Vector.<ViewController>, animated: Boolean, completion: Function): void {
         var ids: Vector.<String> = idsForViewControllers(viewControllers);
         ids.forEach(function(id: String, ...rest): void {
-            var item: ViewControllerNavigatorItem = navigator.getScreen(id) as ViewControllerNavigatorItem;
+            var item: ViewControllerStackScreenNavigatorItem = navigator.getScreen(id) as ViewControllerStackScreenNavigatorItem;
             item.release();
         });
 
@@ -349,17 +353,17 @@ public class NavigationController extends ViewController {
     }
 
     protected function setRootViewController(vc: ViewController, completion: Function = null):void {
-        var item: ViewControllerNavigatorItem = new ViewControllerNavigatorItem(vc);
+        var item: ViewControllerStackScreenNavigatorItem = new ViewControllerStackScreenNavigatorItem(vc);
         item.retain();
 
         new StackScreenNavigatorHolderHelper(navigator).setRootScreenWithId(vc.identifier, item, completion);
     }
 
     protected function replaceTopViewController(vc: ViewController, animated: Boolean, completion: Function): void {
-        var oldItem: ViewControllerNavigatorItem = navigator.getScreen(navigator.activeScreenID) as ViewControllerNavigatorItem;
+        var oldItem: ViewControllerStackScreenNavigatorItem = navigator.getScreen(navigator.activeScreenID) as ViewControllerStackScreenNavigatorItem;
         oldItem.release();
 
-        var newItem: ViewControllerNavigatorItem = new ViewControllerNavigatorItem(vc);
+        var newItem: ViewControllerStackScreenNavigatorItem = new ViewControllerStackScreenNavigatorItem(vc);
         newItem.retain();
 
         var transition: Function = getReplaceTransition(animated);
@@ -391,7 +395,7 @@ public class NavigationController extends ViewController {
         view.autoSizeMode = AutoSizeMode.STAGE;
         view.layout = new AnchorLayout();
 
-        _navigator = new StackScreenNavigator();
+        _navigator = new NavigationControllerStackScreenNavigator();
         _navigator.layoutData = new AnchorLayoutData(0, 0, 0, 0);
         view.addChild(_navigator);
 
@@ -545,7 +549,7 @@ public class NavigationController extends ViewController {
     protected function screensForViewControllers(viewControllers: Vector.<ViewController>): Vector.<StackScreenNavigatorItem> {
         var screens: Vector.<StackScreenNavigatorItem> = new <StackScreenNavigatorItem>[];
         viewControllers.forEach(function (vc: ViewController, ...rest): void {
-            screens.push(new ViewControllerNavigatorItem(vc));
+            screens.push(new ViewControllerStackScreenNavigatorItem(vc));
         });
         return screens;
     }
@@ -560,45 +564,4 @@ public class NavigationController extends ViewController {
         return "[NavigationController("+identifier+")]";
     }
 }
-}
-
-//--------------------------------------------------------------------------
-//
-//  ViewControllerNavigatorItem
-//
-//--------------------------------------------------------------------------
-
-import feathers.controls.StackScreenNavigatorItem;
-
-import feathersx.mvvc.ViewController;
-
-import starling.display.DisplayObject;
-
-class ViewControllerNavigatorItem extends StackScreenNavigatorItem {
-
-    public function ViewControllerNavigatorItem(vc: ViewController): void {
-        super();
-        _viewController = vc;
-    }
-
-    private var _retained: Boolean = false;
-    private var _viewController: ViewController;
-
-    override public function get canDispose(): Boolean {
-        return !_retained;
-    }
-
-    override public function getScreen(): DisplayObject {
-        return _viewController.view;
-    }
-
-    public function retain():void {
-        trace("retain", _viewController);
-        _retained = true;
-    }
-
-    public function release():void {
-        trace("release", _viewController);
-        _retained = false;
-    }
 }

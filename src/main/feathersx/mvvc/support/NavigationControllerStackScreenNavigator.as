@@ -27,6 +27,10 @@ public class NavigationControllerStackScreenNavigator extends StackScreenNavigat
             result[result.length] = ViewControllerStackScreenNavigatorItem(getScreen(activeScreenID)).viewController;
         }
 
+        if (_tempRootScreenID != null) {
+            result[result.length] = ViewControllerStackScreenNavigatorItem(getScreen(_tempRootScreenID)).viewController;
+        }
+
         return result;
     }
 }

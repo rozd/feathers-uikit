@@ -1,4 +1,4 @@
 package feathersx.mvvc
 {
-public const FEATHERS_MVVM_VERSION:String = "0.12.0";
+public const FEATHERS_MVVM_VERSION:String = "0.12.1";
 }

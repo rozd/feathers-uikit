@@ -8,11 +8,14 @@
             <entry module-name="feathers-mvvc" build-configuration-name="feathers-mvvc">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="cc8fd5e1-a46b-4c34-aac0-1087382594f1">
-              <dependency linkage="Merged" />
+            <entry library-name="MetalWorksMobileTheme" library-level="project">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-name="libs" library-level="project">
+              <dependency linkage="External" />
             </entry>
           </entries>
-          <sdk name="4.0.0-air33.0-starling2.5.1" />
+          <sdk name="4.1.1" />
         </dependencies>
         <compiler-options>
           <option name="additionalOptions" value="-preloader=" />
@@ -31,20 +34,13 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.0.0-air33.0-starling2.5.1" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="4.1.1" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="feathers-sdk-frameworks-libs" level="application" />
     <orderEntry type="module" module-name="feathers-mvvc" exported="" />
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="cc8fd5e1-a46b-4c34-aac0-1087382594f1" />
-        <CLASSES>
-          <root url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0.2-starling2.5.1-aot-patched/frameworks/themes/MetalWorksMobileTheme" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$USER_HOME$/sdks/feathers/4.0.0-air33.0.2-starling2.5.1-aot-patched/frameworks/themes/MetalWorksMobileTheme" recursive="false" />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="4.1.1-libs" level="project" />
+    <orderEntry type="library" exported="" name="4.1.1-MetalWorksMobileTheme" level="project" />
+    <orderEntry type="library" exported="" name="MetalWorksMobileTheme" level="project" />
+    <orderEntry type="library" exported="" name="libs" level="project" />
   </component>
 </module>

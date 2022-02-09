@@ -441,16 +441,26 @@ public class ViewController {
         var topmostViewController: ViewController = ViewController.topmostViewController(this);
         var intermediateViewControllers: Array = [];
 
+        // find intermediate view controller between current and topmost one where
+        // - first intermediate view controller is that that presents this view
+        // controller or this view controller itself
+        // - last intermediate view controller is that that present topmost view
+        // controller
+
         var vc: ViewController = this.presentedViewController == null ? (this.presentingViewController || this) : this;
-        while (vc.presentedViewController != topmostViewController) {
+        while (vc != null && vc.presentedViewController != topmostViewController) {
             intermediateViewControllers.push(vc);
             vc = vc.presentedViewController
         }
+
+        // immediately dismiss all intermediate view controllers
 
         intermediateViewControllers = intermediateViewControllers.reverse();
         intermediateViewControllers.forEach(function(vc: ViewController, ...rest): void {
             vc.doDismiss(false, dispose);
         });
+
+        // dismiss topmost view controller wiht animation if needed
 
         topmostViewController.doDismiss(animated, dispose, completion);
     }

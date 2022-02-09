@@ -51,8 +51,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="feathers-uikit" exported="" />
-    <orderEntry type="library" exported="" name="MetalWorksMobileTheme" level="project" />
-    <orderEntry type="library" exported="" name="libs" level="project" />
     <orderEntry type="library" exported="" name="4.1.1-MetalWorksMobileTheme" level="project" />
     <orderEntry type="library" exported="" name="4.1.1-libs" level="project" />
   </component>

@@ -430,17 +430,35 @@ public class ViewController {
     // MARK: - Dismissing View Controller
 
     public function dismiss(animated: Boolean, completion: Function = null): void {
-        doDismiss(animated, true, completion);
+        dismissIncludingIntermediate(animated, true, completion);
     }
 
     public function dismissWithoutDisposing(animated: Boolean, completion: Function = null): void {
-        doDismiss(animated, false, completion);
+        dismissIncludingIntermediate(animated, false, completion);
+    }
+
+    protected function dismissIncludingIntermediate(animated: Boolean, dispose: Boolean, completion: Function = null): void {
+        var topmostViewController: ViewController = ViewController.topmostViewController(this);
+        var intermediateViewControllers: Array = [];
+
+        var vc: ViewController = this.presentedViewController == null ? (this.presentingViewController || this) : this;
+        while (vc.presentedViewController != topmostViewController) {
+            intermediateViewControllers.push(vc);
+            vc = vc.presentedViewController
+        }
+
+        intermediateViewControllers = intermediateViewControllers.reverse();
+        intermediateViewControllers.forEach(function(vc: ViewController, ...rest): void {
+            vc.doDismiss(false, dispose);
+        });
+
+        topmostViewController.doDismiss(animated, dispose, completion);
     }
 
     protected function doDismiss(animated: Boolean, shouldDispose: Boolean, completion: Function = null): void {
         if (presentedViewController == null) {
             if (presentingViewController != null) {
-                presentingViewController.dismiss(animated, completion);
+                presentingViewController.doDismiss(animated, shouldDispose, completion);
             } else {
                 setAsRootViewController(null);
             }

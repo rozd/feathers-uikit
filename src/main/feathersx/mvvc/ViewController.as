@@ -73,6 +73,24 @@ public class ViewController {
         return findTopmostViewControllerRecursively(vc);
     }
 
+    protected static function topmostModalViewController(vc: ViewController): ViewController {
+        if (vc == null) {
+            return null;
+        }
+
+        function findTopmostModalViewControllerRecursively(vc: ViewController): ViewController {
+            if (vc.presentedViewController == null) {
+                return vc;
+            }
+            if (vc.presentedViewController is AlertController) {
+                return vc;
+            }
+            return findTopmostModalViewControllerRecursively(vc.presentedViewController);
+        }
+
+        return findTopmostModalViewControllerRecursively(vc);
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Constructor
@@ -438,7 +456,7 @@ public class ViewController {
     }
 
     protected function dismissIncludingIntermediate(animated: Boolean, dispose: Boolean, completion: Function = null): void {
-        var topmostViewController: ViewController = ViewController.topmostViewController(this);
+        var topmostModalViewController: ViewController = ViewController.topmostModalViewController(this);
         var intermediateViewControllers: Array = [];
 
         // find intermediate view controller between current and topmost one where
@@ -448,7 +466,7 @@ public class ViewController {
         // controller
 
         var vc: ViewController = this.presentedViewController == null ? (this.presentingViewController || this) : this;
-        while (vc != null && vc.presentedViewController != topmostViewController) {
+        while (vc != null && vc.presentedViewController != topmostModalViewController) {
             intermediateViewControllers.push(vc);
             vc = vc.presentedViewController
         }
@@ -462,7 +480,7 @@ public class ViewController {
 
         // dismiss topmost view controller wiht animation if needed
 
-        topmostViewController.doDismiss(animated, dispose, completion);
+        topmostModalViewController.doDismiss(animated, dispose, completion);
     }
 
     protected function doDismiss(animated: Boolean, shouldDispose: Boolean, completion: Function = null): void {
